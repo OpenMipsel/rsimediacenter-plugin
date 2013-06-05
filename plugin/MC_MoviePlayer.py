@@ -170,13 +170,13 @@ class MC_MoviePlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, Inf
 				language = i.getLanguage()
 				self["audioLabel"].setText(language + "  ( " + description + " )")
 		subtitle = service.subtitle()
-		if subtitle:
-			subtitlelist = subtitle.getSubtitleList()
-			self.session.infobar = self
-			if self.session.infobar.subtitles_enabled and self.session.infobar.selected_subtitle:
-				for x in subtitlelist:
-					if self.session.infobar.selected_subtitle[:4] == x[:4]:
-						self["subtitleLabel"].setText(x[4])
+#		if subtitle:
+#			subtitlelist = subtitle.getSubtitleList()
+#			self.session.infobar = self
+#			if self.session.infobar.subtitles_enabled and self.session.infobar.selected_subtitle:
+#				for x in subtitlelist:
+#					if self.session.infobar.selected_subtitle[:4] == x[:4]:
+#						self["subtitleLabel"].setText(x[4])
 
 	def keyNumberGlobal(self, number):
 		#print "You pressed number " + str(number)

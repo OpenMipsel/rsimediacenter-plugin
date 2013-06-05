@@ -94,6 +94,8 @@
 		<key id="KEY_FORWARD" mapto="seekFwd" flags="m" />
 		<key id="KEY_REWIND" mapto="seekBwd" flags="m" />
 		<key id="KEY_MENU" mapto="keyMenu" flags="m" />
+		<key id="KEY_VIDEO" mapto="subtitles" flags="m" />
+		<key id="KEY_AUDIO" mapto="AudioSelection" flags="m" />
 	</map>
 
 	<map context="AZDVDPlayerActions">

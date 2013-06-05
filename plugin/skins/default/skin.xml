@@ -3,145 +3,160 @@
 			<resolution xres="1280" yres="720" bpp="32" />
 		</output>
 
+		<screen name="PlayerTemplate">
+			<widget source="session.CurrentService" render="Label" position="224,4" size="832,52" backgroundColor="black" transparent="1" zPosition="1" foregroundColor="foreground" borderWidth="2" font="Regular;24" borderColor="black" valign="center" halign="center">
+				<convert type="ServiceName">Name</convert>
+			</widget>
+			<eLabel backgroundColor="infobarBG" position="120,56" size="1040,14" zPosition="0"/>
+			<ePixmap pixmap="PLi-HD/dvr/scale1024.png" position="128,61" size="1024,4" zPosition="1" />
+			<widget source="session.CurrentService" render="PositionGauge" position="128,57" size="1024,12" transparent="1" zPosition="4" pointer="PLi-HD/dvr/position_pointer1024.png:1012,0">
+				<convert type="ServicePosition">Gauge</convert>
+			</widget>
+			<widget source="session.CurrentService" render="Label" position="128,31" size="90,25" backgroundColor="black" transparent="1" zPosition="4" foregroundColor="foreground" borderWidth="2" font="Regular;22" borderColor="black" valign="center" halign="left">
+				<convert type="ServicePosition">Position,ShowHours</convert>
+			</widget>
+			<widget source="session.CurrentService" render="Label" position="1035,31" size="117,25" backgroundColor="black" transparent="1" zPosition="4" foregroundColor="foreground" borderWidth="2" font="Regular;22" borderColor="black" valign="center" halign="right">
+				<convert type="ServicePosition">Remaining,Negate,ShowHours</convert>
+			</widget>
+			<widget source="session.RecordState" render="Pixmap" pixmap="PLi-HD/buttons/rec.png" position="1160,53" size="20,20" zPosition="3" alphatest="on">
+				<convert type="ConditionalShowHide"></convert>
+			</widget>
+			<widget source="global.CurrentTime" render="Label" borderWidth="2" position="1052,3" size="100,25" backgroundColor="black" transparent="1" noWrap="1" zPosition="1" foregroundColor="foreground" font="Regular;22" valign="center" halign="right">
+				<convert type="ClockToText">Format:%-H:%M</convert>
+			</widget>
+		</screen>
+
 		<!-- DMC Settings Menu -->
 		<screen name="MC_Settings" position="0,0" size="1280,720" title="Media Center - Settings" flags="wfNoBorder" backgroundColor="#000000" >
 			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/settingsbg.jpg" position="0,0" zPosition="1" size="1280,720" transparent="1" alphatest="on" />
 			<widget name="configlist" zPosition="2" transparent="1" position="270,200" size="400,700" />
 		</screen>
 
+		<!-- DMC Main Menu -->
+		<screen name="DMC_MainMenu" position="0,0" size="1280,720" title="MRUAPlayer" flags="wfNoBorder" backgroundColor="#000000" >
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/openrsi_logo.png" position="465,50" zPosition="1" size="350,79" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/menu_videos.png" position="160,200" zPosition="1" size="460,130" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/menu_recordings.png" position="660,200" zPosition="1" size="460,130" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/menu_audio.png" position="160,400" zPosition="1" size="460,130" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/menu_photos.png" position="660,400" zPosition="1" size="460,130" transparent="1" alphatest="on" />
+<!--			<widget name="key_red" position="50,250" zPosition="3" size="250,250" font="Regular;14" valign="center" halign="center" transparent="1" />
+			<widget name="key_green" position="350,250" zPosition="3" size="250,250" font="Regular;14" valign="center" halign="center" transparent="1" />
+			<widget name="key_yellow" position="650,250" zPosition="3" size="250,250" font="Regular;14" valign="center" halign="center" transparent="1" />
+			<widget name="key_blue" position="950,250" zPosition="3" size="250,250" font="Regular;14" valign="center" halign="center" transparent="1" /> -->
+		</screen>
+
 		<!-- DMC Audio Player -->
 		<screen name="MC_AudioPlayer" position="0,0" size="1280,720" title="Music" flags="wfNoBorder" backgroundColor="#000000" >
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/mc-bg.png" position="0,0" zPosition="1" size="1280,720" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/banner.png" position="142,42" zPosition="1" size="1000,80" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/video_off.png" position="900,50" zPosition="1" size="66,60" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/music_on.png" position="970,50" zPosition="1" size="66,60" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/photo_off.png" position="1040,50" zPosition="1" size="66,60" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/filelist-375.png" position="142,136" zPosition="1" size="1000,375" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/filelist-95.png" position="142,520" zPosition="1" size="1000,95" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/openrsi_logo.png" position="465,50" zPosition="1" size="350,79" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/filelist_category.png" position="142,136" zPosition="1" size="150,475" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/filelist-375.png" position="295,136" zPosition="1" size="847,375" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/filelist-105.png" position="295,514" zPosition="1" size="847,97" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/video_off.png" position="154,156" zPosition="1" size="128,143" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/music_on.png" position="154,305" zPosition="1" size="128,143" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/photo_off.png" position="154,457" zPosition="1" size="128,143" transparent="1" alphatest="on" />
 			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/button_bar.png" position="142,620" zPosition="1" size="1000,50" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/key_red.png" position="156,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/key_green.png" position="422,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/key_yellow.png" position="708,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/key_blue.png" position="974,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/buttons/key_red_150x30.png" position="156,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/buttons/key_green_150x30.png" position="422,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/buttons/key_yellow_150x30.png" position="708,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/buttons/key_blue_150x30.png" position="974,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
 			<widget name="key_red" position="156,630" zPosition="3" size="150,30" font="Regular;14" valign="center" halign="center" transparent="1" />
 			<widget name="key_green" position="422,630" zPosition="3" size="150,30" font="Regular;14" valign="center" halign="center" transparent="1" />
 			<widget name="key_yellow" position="708,630" zPosition="3" size="150,30" font="Regular;14" valign="center" halign="center" transparent="1" />
 			<widget name="key_blue" position="974,630" zPosition="3" size="150,30" font="Regular;14" valign="center" halign="center" transparent="1" />
-			<widget name="coverArt" position="200,530" size="75,75" zPosition="5" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/aafcoverart.png" transparent="1" alphatest="blend" />
-			<widget name="filelist" transparent="1" position="170,160" zPosition="2" size="940,325" scrollbarMode="showOnDemand" enableWrapAround="1"/>
-			<widget name="curplayingtitle" zPosition="2" transparent="1" halign="left" position="390,530" size="700,25" font="Regular;20" foregroundColor="#f0f0f0"/>
-			<widget source="session.CurrentService" render="Label" position="335,565" size="120,20" zPosition="3" font="Regular;18" halign="right" transparent="1">
+			<widget name="filelist" transparent="1" position="310,160" zPosition="2" size="810,325" scrollbarMode="showOnDemand" enableWrapAround="1"/>
+			<widget name="coverArt" position="330,525" size="75,75" zPosition="5" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/no-coverart.png" transparent="1" alphatest="blend" />
+			<widget name="curplayingtitle" zPosition="2" transparent="1" halign="left" position="440,535" size="550,25" font="Regular;20" foregroundColor="#f0f0f0"/>
+			<widget source="session.CurrentService" render="Label" position="385,570" size="120,20" zPosition="3" font="Regular;18" halign="right" transparent="1">
 				<convert type="ServicePosition">Position,ShowHours</convert>
 			</widget>
-			<widget source="session.CurrentService" render="Label" position="825,565" size="120,20" zPosition="3" font="Regular;18" halign="left" transparent="1">
+			<widget source="session.CurrentService" render="Label" position="1000,570" size="120,20" zPosition="3" font="Regular;18" halign="left" transparent="1">
 				<convert type="ServicePosition">Remaining,InMinutes</convert>
 			</widget>
-			<widget source="session.CurrentService" render="Progress" position="475,570" size="350,8" zPosition="3" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/progress_mp.png">
+			<widget source="session.CurrentService" render="Progress" position="515,570" size="475,20" zPosition="3" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/progress_mp.png">
 				<convert type="ServicePosition">Position</convert>
 			</widget>
 		</screen>
 
 		<!-- DMC Audio Player -->
 		<screen name="MC_AudioPlaylist" position="0,0" size="1280,720" title="Music Playlist" flags="wfNoBorder" backgroundColor="#000000" >
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/mc-bg.png" position="0,0" zPosition="1" size="1280,720" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/banner.png" position="142,42" zPosition="1" size="1000,80" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/video_off.png" position="900,50" zPosition="1" size="66,60" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/music_on.png" position="970,50" zPosition="1" size="66,60" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/photo_off.png" position="1040,50" zPosition="1" size="66,60" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/filelist-375.png" position="142,136" zPosition="1" size="1000,375" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/filelist-95.png" position="142,520" zPosition="1" size="1000,95" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/openrsi_logo.png" position="465,50" zPosition="1" size="350,79" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/filelist_category.png" position="142,136" zPosition="1" size="150,475" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/filelist-375.png" position="295,136" zPosition="1" size="847,375" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/filelist-105.png" position="295,514" zPosition="1" size="847,97" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/video_off.png" position="154,156" zPosition="1" size="128,143" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/music_on.png" position="154,305" zPosition="1" size="128,143" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/photo_off.png" position="154,457" zPosition="1" size="128,143" transparent="1" alphatest="on" />
 			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/button_bar.png" position="142,620" zPosition="1" size="1000,50" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/key_red.png" position="156,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/key_green.png" position="422,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/key_yellow.png" position="708,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/key_blue.png" position="974,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/buttons/key_red_150x30.png" position="156,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/buttons/key_green_150x30.png" position="422,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/buttons/key_yellow_150x30.png" position="708,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/buttons/key_blue_150x30.png" position="974,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
 			<widget name="key_red" position="156,630" zPosition="3" size="150,30" font="Regular;14" valign="center" halign="center" transparent="1" />
 			<widget name="key_green" position="422,630" zPosition="3" size="150,30" font="Regular;14" valign="center" halign="center" transparent="1" />
 			<widget name="key_yellow" position="708,630" zPosition="3" size="150,30" font="Regular;14" valign="center" halign="center" transparent="1" />
 			<widget name="key_blue" position="974,630" zPosition="3" size="150,30" font="Regular;14" valign="center" halign="center" transparent="1" />
-			<widget name="coverArt" position="200,530" size="75,75" zPosition="5" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/aafcoverart.png" transparent="1" alphatest="blend" />
-			<widget name="playlist" position="170,160" zPosition="2" size="940,325" scrollbarMode="showOnDemand" transparent="1"/>
-			<widget name="curplayingtitle" zPosition="2" transparent="1" halign="left" position="390,530" size="700,25" font="Regular;20" foregroundColor="#f0f0f0"/>
-			<widget source="session.CurrentService" render="Label" position="335,565" size="120,20" zPosition="3" font="Regular;18" halign="right" transparent="1">
+			<widget name="filelist" transparent="1" position="310,160" zPosition="2" size="810,325" scrollbarMode="showOnDemand" enableWrapAround="1"/>
+			<widget name="coverArt" position="330,525" size="75,75" zPosition="5" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/no-coverart.png" transparent="1" alphatest="blend" />
+			<widget name="playlist" position="320,160" zPosition="2" size="790,325" scrollbarMode="showOnDemand" transparent="1"/>
+			<widget name="curplayingtitle" zPosition="2" transparent="1" halign="left" position="440,535" size="550,25" font="Regular;20" foregroundColor="#f0f0f0"/>
+			<widget source="session.CurrentService" render="Label" position="385,570" size="120,20" zPosition="3" font="Regular;18" halign="right" transparent="1">
 				<convert type="ServicePosition">Position,ShowHours</convert>
 			</widget>
-			<widget source="session.CurrentService" render="Label" position="825,565" size="120,20" zPosition="3" font="Regular;18" halign="left" transparent="1">
+			<widget source="session.CurrentService" render="Label" position="1000,570" size="120,20" zPosition="3" font="Regular;18" halign="left" transparent="1">
 				<convert type="ServicePosition">Remaining,InMinutes</convert>
 			</widget>
-			<widget source="session.CurrentService" render="Progress" position="475,570" size="350,8" zPosition="3" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/progress_mp.png">
+			<widget source="session.CurrentService" render="Progress" position="515,570" size="475,20" zPosition="3" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/progress_mp.png">
 				<convert type="ServicePosition">Position</convert>
 			</widget>
 		</screen>
 
 		<!-- DMC Video Player -->
 		<screen name="MC_VideoPlayer" position="0,0" size="1280,720" title="Movies" flags="wfNoBorder" backgroundColor="#000000" >
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/mc-bg.png" position="0,0" zPosition="1" size="1280,720" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/banner.png" position="142,42" zPosition="1" size="1000,80" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/video_on.png" position="900,50" zPosition="1" size="66,60" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/music_off.png" position="970,50" zPosition="1" size="66,60" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/photo_off.png" position="1040,50" zPosition="1" size="66,60" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/filelist.png" position="142,136" zPosition="1" size="1000,475" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/openrsi_logo.png" position="465,50" zPosition="1" size="350,79" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/filelist.png" position="295,136" zPosition="1" size="847,475" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/filelist_category.png" position="142,136" zPosition="1" size="150,475" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/video_on.png" position="154,156" zPosition="1" size="128,143" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/music_off.png" position="154,305" zPosition="1" size="128,143" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/photo_off.png" position="154,457" zPosition="1" size="128,143" transparent="1" alphatest="on" />
 			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/button_bar.png" position="142,620" zPosition="1" size="1000,50" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/key_red.png" position="156,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/key_green.png" position="422,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/key_yellow.png" position="708,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/key_blue.png" position="974,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/buttons/key_red_150x30.png" position="156,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/buttons/key_green_150x30.png" position="422,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/buttons/key_yellow_150x30.png" position="708,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/buttons/key_blue_150x30.png" position="974,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
 			<widget name="key_red" position="156,630" zPosition="3" size="150,30" font="Regular;14" valign="center" halign="center" transparent="1" />
-			<widget name="key_green" position="422,630" zPosition="3" size="150,30" font="Regular;14" valign="center" halign="center" transparent="1" />
+<!--			<widget name="key_green" position="422,630" zPosition="3" size="150,30" font="Regular;14" valign="center" halign="center" transparent="1" /> -->
 			<widget name="key_yellow" position="708,630" zPosition="3" size="150,30" font="Regular;14" valign="center" halign="center" transparent="1" />
 			<widget name="key_blue" position="974,630" zPosition="3" size="150,30" font="Regular;14" valign="center" halign="center" transparent="1" />
-			<widget name="filelist" transparent="1" position="160,160" zPosition="2" size="970,430" scrollbarMode="showOnDemand" enableWrapAround="1"/>
+			<widget name="filelist" transparent="1" position="310,160" zPosition="2" size="820,430" scrollbarMode="showOnDemand" enableWrapAround="1"/>
 		</screen>
 		
 		<!-- DMC Picture Player -->
 		<screen name="MC_PictureViewer" position="0,0" size="1280,720" title="Pictures" flags="wfNoBorder" backgroundColor="#000000" >
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/mc-bg.png" position="0,0" zPosition="1" size="1280,720" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/banner.png" position="142,42" zPosition="1" size="1000,80" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/video_off.png" position="900,50" zPosition="1" size="66,60" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/music_off.png" position="970,50" zPosition="1" size="66,60" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/photo_on.png" position="1040,50" zPosition="1" size="66,60" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/filelist.png" position="142,136" zPosition="1" size="1000,475" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/openrsi_logo.png" position="465,50" zPosition="1" size="350,79" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/filelist.png" position="295,136" zPosition="1" size="847,475" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/filelist_category.png" position="142,136" zPosition="1" size="150,475" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/video_off.png" position="154,156" zPosition="1" size="128,143" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/music_off.png" position="154,305" zPosition="1" size="128,143" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/photo_on.png" position="154,457" zPosition="1" size="128,143" transparent="1" alphatest="on" />
 			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/button_bar.png" position="142,620" zPosition="1" size="1000,50" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/key_red.png" position="156,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/key_green.png" position="422,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/key_yellow.png" position="708,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/key_blue.png" position="974,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/buttons/key_red_150x30.png" position="156,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/buttons/key_green_150x30.png" position="422,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/buttons/key_yellow_150x30.png" position="708,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/buttons/key_blue_150x30.png" position="974,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
 			<widget name="key_red" position="156,630" zPosition="3" size="150,30" font="Regular;14" valign="center" halign="center" transparent="1" />
 			<widget name="key_green" position="422,630" zPosition="3" size="150,30" font="Regular;14" valign="center" halign="center" transparent="1" />
 			<widget name="key_yellow" position="708,630" zPosition="3" size="150,30" font="Regular;14" valign="center" halign="center" transparent="1" />
 			<widget name="key_blue" position="974,630" zPosition="3" size="150,30" font="Regular;14" valign="center" halign="center" transparent="1" />
 			<widget name="thumbnail" position="800,250" size="250,250" zPosition="5" alphatest="on" />
-			<widget name="filelist" transparent="1" position="170,160" zPosition="2" size="540,440" scrollbarMode="showOnDemand" enableWrapAround="1"/>
-		</screen>
-		
-		<screen name="IMDB" position="0,0" size="1280,720" title="IMDb" flags="wfNoBorder" >
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/key-red.png" position="136,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/key-green.png" position="422,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/key-yellow.png" position="708,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/key-blue.png" position="994,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
-			<widget name="key_red" position="136,630" zPosition="3" size="150,30" font="Regular;14" valign="center" halign="center" transparent="1" />
-			<widget name="key_green" position="422,630" zPosition="3" size="150,30" font="Regular;14" valign="center" halign="center" transparent="1" />
-			<widget name="key_yellow" position="708,630" zPosition="3" size="150,30" font="Regular;14" valign="center" halign="center" transparent="1" />
-			<widget name="key_blue" position="994,630" zPosition="3" size="150,30" font="Regular;14" valign="center" halign="center" transparent="1" />
-			<widget source="title" render="Label" position="530,80" size="600,100" valign="left" font="Regular;28"/>
-			<widget name="extralabel" position="530,180" size="620,550" font="Regular;18" />
-			<widget name="castlabel" position="500,450" size="500,155" font="Regular;18" />
-			<widget name="statusbar" zPosition="11" position="1000,680" size="200,16" halign="right" font="Regular;16" foregroundColor="#cccccc" />
-			<widget name="poster" position="80,70" size="220,320" alphatest="on" />
-			<widget name="starsbg" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/starsbar_empty.png" position="80,400" zPosition="0" size="210,21" transparent="1" alphatest="on" />
-			<widget name="stars" position="80,400" size="210,21" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/starsbar_filled.png" transparent="1" />
-			<widget name="ratinglabel" position="80,420" size="210,20" halign="center" font="Regular;18" foregroundColor="#f0b400"/>
-			<widget name="menu" position="350,130" size="650,350" zPosition="3" scrollbarMode="showOnDemand" />
-			<widget name="menulabel" position="480,500" size="485,240" font="Regular;18" />
+			<widget name="filelist" transparent="1" position="310,160" zPosition="2" size="390,440" scrollbarMode="showOnDemand" enableWrapAround="1"/>
 		</screen>
 
 		<screen name="MC_PicThumbViewer" position="fill" title="Media Center - My Pictures Thumviewer" flags="wfNoBorder" backgroundColor="000000">
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/mc-bg.png" position="0,0" zPosition="1" size="1280,720" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/banner.png" position="142,42" zPosition="1" size="1000,80" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/video_off.png" position="900,50" zPosition="1" size="66,60" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/music_off.png" position="970,50" zPosition="1" size="66,60" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/photo_on.png" position="1040,50" zPosition="1" size="66,60" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/filelist.png" position="142,136" zPosition="1" size="1000,475" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/openrsi_logo.png" position="465,50" zPosition="1" size="350,79" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/video_off.png" position="154,156" zPosition="1" size="128,143" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/music_off.png" position="154,305" zPosition="1" size="128,143" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/photo_on.png" position="154,457" zPosition="1" size="128,143" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/filelist-thmb.png" position="142,136" zPosition="1" size="1000,475" transparent="1" alphatest="on" />
 			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/button_bar.png" position="142,620" zPosition="1" size="1000,50" transparent="1" alphatest="on" />
 
 			<widget name="frame" position="170,145" size="300,300" pixmap="pic_frame.png" zPosition="3" alphatest="on" />
@@ -163,15 +178,14 @@
 			<widget name="label6" position="670,550" size="200,20" halign="center" font="Regular;14" zPosition="2" transparent="1" noWrap="1" />
 			<widget name="label7" position="920,550" size="200,20" halign="center" font="Regular;14" zPosition="2" transparent="1" noWrap="1" />
 
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/key_red.png" position="156,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/key_green.png" position="422,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/key_yellow.png" position="708,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
-			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/key_blue.png" position="974,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/buttons/key_red_150x30.png" position="156,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/buttons/key_green_150x30.png" position="422,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/buttons/key_yellow_150x30.png" position="708,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/buttons/key_blue_150x30.png" position="974,630" zPosition="2" size="150,30" transparent="1" alphatest="on" />
 			<widget name="key_red" position="156,630" zPosition="3" size="150,30" font="Regular;14" valign="center" halign="center" transparent="1" />
 			<widget name="key_green" position="422,630" zPosition="3" size="150,30" font="Regular;14" valign="center" halign="center" transparent="1" />
 			<widget name="key_yellow" position="708,630" zPosition="3" size="150,30" font="Regular;14" valign="center" halign="center" transparent="1" />
 			<widget name="key_blue" position="974,630" zPosition="3" size="150,30" font="Regular;14" valign="center" halign="center" transparent="1" />
-
 		</screen>
 
 </skin>
