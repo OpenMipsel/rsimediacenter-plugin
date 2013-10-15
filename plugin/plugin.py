@@ -30,25 +30,29 @@ class DMC_MainMenu(Screen):
 		
 		self.skinName = ["DMC_MainMenu", "menu_mainmenu" ]
 
-		azplay_vctrl = VolumeControl.instance
-		self.azplay_currebtvol = azplay_vctrl.volctrl.getVolume()
-		self.azplay_ismute = azplay_vctrl.volctrl.isMuted()
-
 		self.oldService = self.session.nav.getCurrentlyPlayingServiceReference()
 		self.session.nav.stopService()
 		
-#		self["HomeActions"] = HelpableActionMap(self, "MC_Home",
 		self["HomeActions"] = ActionMap(["OkCancelActions", "ColorActions"],
 		{
 			"cancel": self.Exit,
-#			"ok": (self.okbuttonClick, _("Ok")),
 			"red": self.startMC_VideoPlayer,
 			"green": self.startRecordings,
 			"yellow": self.startMC_AudioPlayer,
 			"blue": self.startMC_PictureViewer,
 		}, -1)
 		
-
+		#Check if AzBox because of using MRUA
+		self.procstarted = False
+		if os.path.exists("/proc/player"):
+			self.azbox = True
+			azplay_vctrl = VolumeControl.instance
+			self.azplay_currebtvol = azplay_vctrl.volctrl.getVolume()
+			self.azplay_ismute = azplay_vctrl.volctrl.isMuted()
+			#Preparing system for playback and starting rmfp_player
+			self.session.nav.playService(None)
+		else:
+			self.azbox = False
 
 		list = []
 		list.append((_("My Videos"), "videos", "", "50"))
@@ -57,15 +61,6 @@ class DMC_MainMenu(Screen):
 		list.append((_("My Pictures"), "pictures", "", "50"))
 		self["menu"] = List(list)
 		
-		#Check if AzBox because of using MRUA
-		self.procstarted = False
-		if os.path.exists("/proc/player"):
-			self.azbox = True
-			#Preparing system for playback and starting rmfp_player
-			self.session.nav.playService(None)
-		else:
-			self.azbox = False
-
 # BUTTON MAINMENU MRUAPLAYER - VIDEOPLAYER
 	def startMC_VideoPlayer(self):
 		selection = self["menu"].getCurrent()

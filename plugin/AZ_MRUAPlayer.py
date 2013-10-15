@@ -1,1358 +1,813 @@
+from enigma import iPlayableService, eTimer, eWidget, eRect, eServiceReference, iServiceInformation, iServiceKeys, getDesktop
 from Screens.Screen import Screen
-from Screens.ServiceScan import ServiceScan
+from Screens.MinuteInput import MinuteInput
+from Screens.ServiceInfo import ServiceInfoList, ServiceInfoListEntry
+from Screens.HelpMenu import HelpableScreen
 from Screens.MessageBox import MessageBox
+from Screens.ChoiceBox import ChoiceBox
+from Screens.InfoBarGenerics import InfoBarSeek, InfoBarPVRState, InfoBarCueSheetSupport, InfoBarShowHide, InfoBarNotifications, InfoBarAudioSelection, InfoBarSubtitleSupport
+
+from Components.ActionMap import ActionMap, NumberActionMap, HelpableActionMap
+from Components.Pixmap import Pixmap, MovingPixmap
 from Components.Label import Label
-from Components.TuneTest import Tuner
-from Components.ConfigList import ConfigListScreen
-from Components.ProgressBar import ProgressBar
-from Components.Pixmap import Pixmap
-from Components.Sources.StaticText import StaticText
-from Components.ActionMap import NumberActionMap, ActionMap
-from Components.NimManager import nimmanager, getConfigSatlist
-from Components.config import config, ConfigSubsection, ConfigSelection, ConfigYesNo, ConfigInteger, getConfigListEntry, ConfigSlider, ConfigEnableDisable
-from Tools.HardwareInfo import HardwareInfo
-from Tools.Directories import resolveFilename
-from enigma import eTimer, eDVBFrontendParametersSatellite, eDVBFrontendParameters, eComponentScan, eDVBSatelliteEquipmentControl, eDVBFrontendParametersTerrestrial, eDVBFrontendParametersCable, eConsoleAppContainer, eDVBResourceManager, getDesktop
-import time
-from Components.FileList import FileList
-import re
-import os
-import sys
-from os import system, listdir, statvfs, popen, makedirs, stat, major, minor, path, access
-from Components.AVSwitch import AVSwitch
-from Components.SystemInfo import SystemInfo
-from Components.Console import Console
-import datetime
-import os.path
-from Tools.LoadPixmap import LoadPixmap
 from Components.Sources.List import List
-from enigma import *
-from Components.config import configfile, getConfigListEntry, ConfigEnableDisable, ConfigYesNo, ConfigText, ConfigDateTime, ConfigClock, ConfigNumber, ConfigSelectionNumber, ConfigSelection, config, ConfigSubsection, ConfigSubList, ConfigSubDict, ConfigIP, ConfigSlider, ConfigDirectory, ConfigInteger
-from os.path import isdir as os_path_isdir
+from Components.Sources.StaticText import StaticText
+from Components.Button import Button
+from Components.ServiceEventTracker import ServiceEventTracker
+from Components.ConfigList import ConfigList, ConfigListScreen
+from Components.config import *
+from Components.Harddisk import harddiskmanager
+from Tools.Directories import resolveFilename, fileExists, pathExists, createDir, SCOPE_MEDIA
+from Components.Sources.StaticText import StaticText
 from Components.MenuList import MenuList
-from Components.VolumeControl import VolumeControl
+from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
+
+import os
+from os import path as os_path, remove as os_remove, listdir as os_listdir, system
+
+from MC_SeekInput import SeekInput
+from MC_Menus import IniciaSelListMC, IniciaSelListEntryMC, Scalingmode_Menu, ScalingmodeEntryComponent, SubOptionsEntryComponent
+
+#Load C++ parts of Mrua player and DVD player
+import servicemrua
+import serviceazdvd
+
 
 config.plugins.mc_mrua = ConfigSubsection()
-config.plugins.mc_mrua.lastDir = ConfigText(default='/')
-config.plugins.mc_mrua.lastFile = ConfigText(default='None')
-config.plugins.mc_mrua.lastPosition = ConfigText(default='0')
-config.plugins.mc_mrua.ExtSub_Enable = ConfigSelection(choices={'0': _('ON'),
- '1': _('OFF')}, default='0')
-config.plugins.mc_mrua.ExtSub_Size = ConfigSelection(default=50, choices=['30',
- '35',
- '40',
- '45',
- '50',
- '55',
- '60',
- '65',
- '70',
- '75',
- '80',
- '85',
- '90'])
-config.plugins.mc_mrua.ExtSub_Position = ConfigSelection(default='0', choices=['0',
- '10',
- '20',
- '30',
- '40',
- '50',
- '60',
- '70',
- '80',
- '90'])
-config.plugins.mc_mrua.ExtSub_Color = ConfigSelection(choices={'1': _('White'),
- '2': _('Yellow'),
- '3': _('Blue'),
- '4': _('Red'),
- '5': _('Green'),
- '6': _('Orange'),
- '7': _('Blue2'),
- '8': _('Blue3'),
- '9': _('Pink'),
- '0': _('Black')}, default='1')
-config.plugins.mc_mrua.ExtSub_OutColor = ConfigSelection(choices={'1': _('White'),
- '2': _('Yellow'),
- '3': _('Blue'),
- '4': _('Red'),
- '5': _('Green'),
- '6': _('Orange'),
- '7': _('Blue2'),
- '8': _('Blue3'),
- '9': _('Pink'),
- '0': _('Black')}, default='0')
-config.plugins.mc_mrua.ExtSub_Encoding = ConfigSelection(choices={'none': _('None'),
- 'windows-1256': _('Arabic'),
- 'windows-1257': _('Baltic'),
- 'csbig5': _('Chinese'),
- 'windows-1251': _('Cyrlic'),
- 'windows-1250': _('EastEurope'),
- 'windows-1253': _('Greek'),
- 'windows-1255': _('Hebrew'),
- 'windows-1254': _('Turkish'),
- 'windows-1258': _('Vietnamese'),
- 'windows-1252': _('WestEurope'),
- 'iso-8859-1': _('Spanish (es)')}, default='none')
+config.plugins.mc_mrua.subenc = ConfigSelection(default="43", choices = [("42", _("Latin")), ("43", _("Utf-8"))])
+config.plugins.mc_mrua.subpos = ConfigInteger(default=40, limits=(0, 100))
+config.plugins.mc_mrua.subcolorname = ConfigText("White", fixed_size=False)
+config.plugins.mc_mrua.subcolorinside = ConfigText("FFFFFFFF", fixed_size=False)
+config.plugins.mc_mrua.subcoloroutside = ConfigText("FF000000", fixed_size=False)
+config.plugins.mc_mrua.subsize = ConfigInteger(default=30, limits=(5, 100))
+config.plugins.mc_mrua.subdelay = ConfigInteger(default=0, limits=(-999999, 999999))
+config.plugins.mc_mrua.screenres = ConfigInteger(default=0, limits=(-999999, 999999))
 
-config.plugins.mc_mrua.Scaling = ConfigSelection(default='Just Scale', choices=['Just Scale', 'Pan&Scan', 'Pillarbox'])
+class MRUASummary(Screen):
+	skin = """
+	<screen name="MRUASummary" position="0,0" size="90,64" id="3">
+		<widget source="session.CurrentService" render="Label" position="0,0" size="120,25" font="Display;16" halign="center" valign="center">
+			<convert type="ServicePosition">Position,ShowHours</convert>
+		</widget>
+	</screen>"""
 
-config.plugins.mc_mrua.UPnP_Enable = ConfigSelection(choices={'0': _('OFF'),
- '1': _('ON')}, default='0')
-path = '/usr/share/fonts/'
-cache = {}
-try:
-    cached_mtime, list = cache[path]
-    del cache[path]
-except KeyError:
-    cached_mtime, list = (-1, [])
-
-mtime = os.stat(path).st_mtime
-if mtime != cached_mtime:
-    list = os.listdir(path)
-    list.sort()
-cache[path] = (mtime, list)
-n = 0
-for fontchk in list:
-    if fontchk[len(fontchk) - 3:] != 'ttf':
-        del list[n]
-    n += 1
-
-scriptliste = list
-
-config.plugins.mc_mrua.ExtSub_FontSel = ConfigSelection(choices=scriptliste, default='nmsbd.ttf')
-
-class MRUAPlayer(Screen):
-	skin = '\n\t\t<screen position="0,0" size="0,0" title="Infobar" flags="wfNoBorder" >\n\t\t</screen>'
-	
-	def __init__(self, session, ref, path="/", ftype="video"):
+	def __init__(self, session, parent):
 		Screen.__init__(self, session)
-		self.session = session
-		self.MediaFileName = ref
-		self.MediaFilePath = path
-		self.MediaFType = ftype
-		self['actions'] = NumberActionMap([ 'MRUAPlayerActions',
-		 'MediaPlayerActions',
-		 'MediaPlayerSeekActions',
-		 'InputActions',
-		 'OkCancelActions',
-		 'ColorActions',
-		 'DirectionActions',
-		 'StandbyActions',
-		 'MenuActions',
-		 'MoviePlayerActions'], {'ok': self.ok,
-		 'cancel': self.exit1,
-		 'up': self.ZapUp,
-		 'down': self.ZapDown,
-		 'left': self.ZapLeft,
-		 'right': self.ZapRight,
-		 'nextBouquet': self.ZapUp,
-		 'prevBouquet': self.ZapDown,
-		 'power': self.exit2,
-		 'play': self.keyPlay,
-		 'pause': self.keyPlay,
-		 'stop': self.exit1,
-		 'previous': self.keyPrev,
-		 'next': self.keyNext,
-		 'seekFwd': self.keyFF,
-		 'seekBack': self.keyREW,
-		 'menu': self.Konfig,
-		 'subtitles': self.SubSel,
-		 'delete': self.SubSel,
-		 'AudioSelection': self.ALngSel}, -1)
-		
-		#TOMMY: ff printen hier
-		print "\n\n"
-		print "Filename:"
-		print ref
-		print "\n\n"
-		
-		self.playpause = 102
-		self.VCodec = ''
-		self.Resol = ''
-		self.Format = ''
-		self.ACodec = ''
-		self.SRate = '48000'
-		self.ChNo = ''
-		self.FFval = 0
-		self.REWval = 0
-		self.info1 = 'Play |>'
-		self.ALanguages = []
-		self.SubtitlesL = []
-		self.onLayoutFinish.append(self.keyGo)
-		
-		#Detect box type and set command
-		self.cmdV0 = ''
-		self.cmdV1 = ''
-		self.cmdV2 = ''
-		self.cmdV3 = ''
-		hw_type = HardwareInfo().get_device_name()
-		if hw_type == 'minime' or hw_type == 'me':
-			self.cmdA = 'rmfp_player -dram 0 -ve 0 -vd 0 -ae 0 -no_disp -prebuf 256 -resetvcxo '
-			self.cmdV = 'rmfp_player -dram 0 -ve 0 -vd 0 -ae 0 -no_disp -resetvcxo -subs_res 1080 -forced_font /usr/share/fonts/' + config.plugins.mc_mrua.ExtSub_FontSel.value + ' '
-			self.cmdV0 = 'rmfp_player -dram 0 -ve 0 -vd 0 -ae 0 -no_disp -resetvcxo -no_close -oscaler spu -subs_res 1080 -yuv_palette_subs '
-		if hw_type == 'elite' or hw_type == 'premium' or hw_type == 'premium+' or hw_type == 'ultra':
-			self.cmdA = 'rmfp_player -dram 1 -ve 1 -vd 0 -ae 0 -no_disp -prebuf 256 -resetvcxo '
-			self.cmdV = 'rmfp_player -dram 1 -ve 1 -vd 0 -ae 0 -no_disp -resetvcxo -subs_res 1080 -forced_font /usr/share/fonts/' + config.plugins.mc_mrua.ExtSub_FontSel.value + ' '
-			self.cmdV0 = 'rmfp_player -dram 1 -ve 1 -vd 0 -ae 0 -no_disp -resetvcxo -no_close -oscaler spu -subs_res 1080 -yuv_palette_subs '
-		
-		#Actually launching rmfp_player. Video Only
-		self.cmd = self.cmdV0 + self.cmdV1 + self.cmdV2 + self.cmdV3 + "'" + self.MediaFileName + "' &"
-		os.popen('killall rmfp_player')
-		time.sleep(0.1)
-		os.popen(self.cmd)
-		time.sleep(2)
-		if os.path.exists('/tmp/rmfp.cmd2'):
-			os.remove('/tmp/rmfp.cmd2')
-		for n in range(0, 8):
-			try:
-				f = open('/tmp/rmfp.cmd2', 'wb')
-				try:
-					f.write('102\n')
-				finally:
-					f.close()
-			except Exception as e:
-				print e
-			if os.path.exists('/tmp/rmfp.cmd2'):
-				break
-			time.sleep(0.05)
 
-	def keyGo(self):
-		self.PlayerState = eTimer()
-		self.PlayerState.callback.append(self.PlayerStateCheck)
-		self.PlayerState.start(100, True)
-		self.PlayerGetInfo = eTimer()
-		self.PlayerGetInfo.callback.append(self.GetInfo)
-		self.PlayerGetInfo.start(3500, True)
+class MRUAPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarPVRState, InfoBarShowHide, HelpableScreen, InfoBarCueSheetSupport, InfoBarAudioSelection, InfoBarSubtitleSupport):
+	ALLOW_SUSPEND = Screen.SUSPEND_PAUSES
+	ENABLE_RESUME_SUPPORT = True
 
-    #Check if player is still running
-	def PlayerStateCheck(self):
-		f = os.popen('ps|grep -v ps| grep -v grep| grep rmfp_player')
-		Playtmp = f.readlines()
-		f.close()
-		self.AZP = len(Playtmp)
-		if self.AZP == 0:
-			if os.path.exists('/tmp/rmfp.cmd2'):
-				os.remove('/tmp/rmfp.cmd2')
-			for n in range(0, 8):
-				try:
-					f = open('/tmp/rmfp.cmd2', 'wb')
-					try:
-						f.write('100\n')
-					finally:
-						f.close()
-				except Exception as e:
-					print e
-				if os.path.exists('/tmp/rmfp.cmd2'):
-					break
-				time.sleep(0.05)
-			self.close('*Stop*')
-		self.PlayerState.start(300, True)
+	def save_infobar_seek_config(self):
+		self.saved_config_speeds_forward = config.seek.speeds_forward.value
+		self.saved_config_speeds_backward = config.seek.speeds_backward.value
+		self.saved_config_enter_forward = config.seek.enter_forward.value
+		self.saved_config_enter_backward = config.seek.enter_backward.value
+		self.saved_config_seek_on_pause = config.seek.on_pause.value
+		self.saved_config_seek_speeds_slowmotion = config.seek.speeds_slowmotion.value
+		self.saved_config_subenc = config.plugins.mc_mrua.subenc.value
+		self.saved_config_subpos = config.plugins.mc_mrua.subpos.value
+		self.saved_config_subcolorname = config.plugins.mc_mrua.subcolorname.value
+		self.saved_config_subsize = config.plugins.mc_mrua.subsize.value
+		self.saved_config_subdelay = config.plugins.mc_mrua.subdelay.value
 
-    #Get infro about video from player once video is started
-	def GetInfo(self):
-		self.ALanguages = []
-		self.SubtitlesL = []
-		if os.path.exists('/tmp/rmfp.out2'):
-			os.remove('/tmp/rmfp.out2')
-		if os.path.exists('/tmp/rmfp.cmd2'):
-			os.remove('/tmp/rmfp.cmd2')
-		for n in range(0, 8):
-			try:
-				f = open('/tmp/rmfp.cmd2', 'wb')
-				try:
-					f.write('130\n')
-				finally:
-					f.close()
-			except Exception as e:
-				print e
-			if os.path.exists('/tmp/rmfp.cmd2'):
-				break
-			time.sleep(0.05)
+	def change_infobar_seek_config(self):
+		config.seek.speeds_forward.value = [2, 4]
+		config.seek.speeds_backward.value = [2, 4]
+		config.seek.speeds_slowmotion.value = [ ]
+		config.seek.enter_forward.value = "2"
+		config.seek.enter_backward.value = "2"
+		config.seek.on_pause.value = "play"
 
-		time.sleep(0.05)
-		for n in range(0, 9):
-			try:
-				tmpfile = open('/tmp/rmfp.out2', 'r')
-				lines = tmpfile.readlines()
-				tmpfile.close()
-				lno = 0
-			except:
-				print "rmfp.out2 or no lines available yet, trying again later"
-				self.PlayerGetInfo = eTimer()
-				self.PlayerGetInfo.callback.append(self.GetInfo)
-				self.PlayerGetInfo.start(3500, True)
-				return
-			try:
-				for line in lines:
-					ipos = line.find('Video stream ID')
-					if ipos >= 0:
-						ipos1 = lines[lno + 1].find('(')
-						ipos2 = lines[lno + 1].find(')')
-						VCodec = lines[lno + 1][ipos1 + 1:ipos2]
-						self.VCodec = VCodec.replace(' ', '')
-						ipos1 = lines[lno + 2].find('Resolution')
-						Resol = lines[lno + 2][ipos1 + 10:-1]
-						self.Resol = Resol.replace(' ', '')
-						ipos1 = lines[lno + 3].find('Format')
-						Format = lines[lno + 3][ipos1 + 6:-1]
-						self.Format = Format.replace(' ', '')
-					ipos = line.find('Audio stream ID')
-					if ipos >= 0:
-						ipos1 = lines[lno + 1].find('(')
-						ipos2 = lines[lno + 1].find(')')
-						ACodec = lines[lno + 1][ipos1 + 1:ipos2]
-						self.ACodec = ACodec.replace(' ', '')
-						ipos1 = lines[lno + 2].find('SampleRate')
-						SRate = lines[lno + 2][ipos1 + 10:-1]
-						self.SRate = SRate.replace(' ', '')
-						ipos1 = lines[lno + 3].find('ChannelNumber')
-						ChNo = lines[lno + 3][ipos1 + 13:-1]
-						self.ChNo = ChNo.replace(' ', '')
-						if self.ChNo == '5':
-							self.ChNo = '5.1'
-					ipos = line.find('Video Streams count:')
-					if ipos >= 0:
-						ino = int(lines[lno][ipos + 20:-1])
-						print 'broj na Video strimovi:', ino
-						for n in range(0, ino):
-							print lines[lno + n + 1][:-1]
-					ipos = line.find('Audio Streams count:')
-					if ipos >= 0:
-						ino = int(lines[lno][ipos + 20:-1])
-						print 'No Of Audio streams:', ino
-						for n in range(0, ino):
-							print lines[lno + n + 1][:-1]
-							tmpstr = lines[lno + n + 1][:-1]
-							ipos = tmpstr.find('ID')
-							if ipos >= 0:
-								tmpstr = ' - ' + tmpstr[ipos:]
-							self.ALanguages.append(tmpstr)
-					ipos = line.find('Subtitles Streams count:')
-					if ipos >= 0:
-						ino = int(lines[lno][ipos + 24:-1])
-						print 'No Of Subtitles streams:', ino
-						for n in range(0, ino):
-							print lines[lno + n + 1][:-1]
-							tmpstr = lines[lno + n + 1][:-1]
-							ipos = tmpstr.find('ID')
-							if ipos >= 0:
-								tmpstr = ' - ' + tmpstr[ipos:]
-							self.SubtitlesL.append(tmpstr)
-					ipos = line.find('Duration:')
-					if ipos >= 0:
-						ino = int(lines[lno][ipos + 9:-3])
-						self.Duration = ino
-					lno += 1
-				break
-			except Exception:
-				print 'Error GetInfo'
-			time.sleep(0.1)
+	def restore_infobar_seek_config(self):
+		config.seek.speeds_forward.value = self.saved_config_speeds_forward
+		config.seek.speeds_backward.value = self.saved_config_speeds_backward
+		config.seek.speeds_slowmotion.value = self.saved_config_seek_speeds_slowmotion
+		config.seek.enter_forward.value = self.saved_config_enter_forward
+		config.seek.enter_backward.value = self.saved_config_enter_backward
+		config.seek.on_pause.value = self.saved_config_seek_on_pause
+		config.plugins.mc_mrua.subenc.value = self.saved_config_subenc
+		config.plugins.mc_mrua.subpos.value = self.saved_config_subpos 
+		config.plugins.mc_mrua.subcolorname.value = self.saved_config_subcolorname
+		config.plugins.mc_mrua.subsize.value = self.saved_config_subsize 
+		config.plugins.mc_mrua.subdelay.value = self.saved_config_subdelay 
 
-		if self.MediaFType != 'video':
-			return
-		if os.path.exists('/tmp/rmfp.out2'):
-			os.remove('/tmp/rmfp.out2')
-		if os.path.exists('/tmp/rmfp.cmd2'):
-			os.remove('/tmp/rmfp.cmd2')
-		time.sleep(0.05)
-		if config.plugins.mc_mrua.ExtSub_Enable.value == '0':
-			self.SendCMD2(config.plugins.mc_mrua.ExtSub_Size.value, 212)
-			time.sleep(0.05)
-			self.SendCMD2(config.plugins.mc_mrua.ExtSub_Position.value, 214)
-			time.sleep(0.05)
-			self.SendCMD2(config.plugins.mc_mrua.ExtSub_Color.value, 216)
-			time.sleep(0.05)
-		cmd = 0
-		if config.plugins.mc_mrua.Scaling.value == 'Just Scale':
-			cmd = 223
-		if config.plugins.mc_mrua.Scaling.value == 'Pan&Scan':
-			cmd = 224
-		if config.plugins.mc_mrua.Scaling.value == 'Pillarbox':
-			cmd = 225
-		if cmd > 0:
-			self.SendCMD2(-1, cmd)
-		#TOMMY: Ah hier word resume geregeld
-		if config.plugins.mc_mrua.lastFile.value == self.MediaFileName:
-			self.session.openWithCallback(self.ResumeConfirmed, MessageBox, _('Last position = ' + str(datetime.timedelta(seconds=long(config.plugins.mc_mrua.lastPosition.value))) + '\n\nResume ?'), timeout=5)
+	def __init__(self, session, ref = "", args = None):
 
-	def ResumeConfirmed(self, yesno):
-		if yesno:
-			self.GetSec1()
-			sec3 = long(config.plugins.mc_mrua.lastPosition.value)
-			if sec3 > 0 and sec3 < self.sec2:
-				time.sleep(0.11)
-				self.SendCMD2(sec3, 106)
-				time.sleep(0.75)
-				self.ok1(2)
-#TOMMY: Needed???
-#	def updateMsg(self):
-#		self.close()
+		Screen.__init__(self, session)
+		InfoBarBase.__init__(self)
+		InfoBarNotifications.__init__(self)
+		InfoBarCueSheetSupport.__init__(self, actionmap = "MediaPlayerCueSheetActions")
+		InfoBarShowHide.__init__(self)
+		InfoBarAudioSelection.__init__(self)
+		InfoBarSubtitleSupport.__init__(self)
+		HelpableScreen.__init__(self)
+		self.save_infobar_seek_config()
+		self.change_infobar_seek_config()
+		InfoBarSeek.__init__(self)
+		InfoBarPVRState.__init__(self)
 
-#	def exit(self):
-#		self.close('---')
+		self.skinName = ["MRUAPlayer", "DVDPlayer" ]
 
-	def exit1(self):
-		self.GetSec1()
-		#TOMMY: Hier moet wellicht de resume opgeslagen worden
-		#config.plugins.mc_mrua.lastPosition.value = str(self.sec1)
-		#config.plugins.mc_mrua.lastFile.value = str(self.MediaFileName)
-		if os.path.exists('/tmp/rmfp.cmd2'):
-			os.remove('/tmp/rmfp.cmd2')
-		for n in range(0, 8):
-			try:
-				f = open('/tmp/rmfp.cmd2', 'wb')
-				try:
-					f.write('100\n')
-				finally:
-					f.close()
-			except Exception as e:
-				print e
-			if os.path.exists('/tmp/rmfp.cmd2'):
-				break
-			time.sleep(0.05)
-		#Now we should return /proc/player
-		hdparm = os.popen('killall rmfp_player')
-		time.sleep(0.1)
-		#TOMMY: VOLUME???
-		self.close('*Stop*')
+		self.oldService = self.session.nav.getCurrentlyPlayingServiceReference()
+		self.session.nav.stopService()
+		self["audioLabel"] = Label("n/a")
+		self["subtitleLabel"] = Label("")
+		self["angleLabel"] = Label("")
+		self["chapterLabel"] = Label("")
+		self["anglePix"] = Pixmap()
+		self["anglePix"].hide()
+		self.last_audioTuple = None
+		self.last_subtitleTuple = None
+		self.last_angleTuple = None
+		self.totalChapters = 0
+		self.currentChapter = 0
+		self.totalTitles = 0
+		self.currentTitle = 0
 
-	#Directly go to standby disabled
-	def exit2(self):
+		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
+			{
+				iPlayableService.evStopped: self.__serviceStopped,
+				iPlayableService.evStart: self.__serviceStarted,
+				iPlayableService.evUser+1: self.__statePlay,
+				iPlayableService.evUser+2: self.__statePause,
+				iPlayableService.evUser+3: self.__osdStringAvail,
+				iPlayableService.evUser+4: self.__osdAudioInfoAvail,
+				iPlayableService.evUser+5: self.__osdSubtitleInfoAvail
+			})
+
+		self["MRUAPlayerDirectionActions"] = ActionMap(["DirectionActions"],
+			{
+				#MENU KEY DOWN ACTIONS
+				"left": self.keyLeft,
+				"right": self.keyRight,
+				#"up": self.keyUp,
+				#"down": self.keyDown,
+				
+				#MENU KEY REPEATED ACTIONS
+				"leftRepeated": self.doNothing,
+				"rightRepeated": self.doNothing,
+				"upRepeated": self.doNothing,
+				"downRepeated": self.doNothing,
+				
+				#MENU KEY UP ACTIONS
+				"leftUp": self.doNothing,
+				"rightUp": self.doNothing,
+				"upUp": self.doNothing,
+				"downUp": self.doNothing,
+			})
+
+		self["OkCancelActions"] = ActionMap(["OkCancelActions"],
+			{
+				"ok": self.keyOk,
+				"cancel": self.keyCancel,
+			})
+
+		self["DVDPlayerPlaybackActions"] = HelpableActionMap(self, "MRUAPlayerActions",
+			{
+				#MRUAPLAYER'S OWN ACTIONS
+				"stop": (self.stop, _("Stop Playback")),
+				"keyMenu": (self.menu, _("Show menu options")),
+				"seekTotime": (self.seekTotime, _("switch to the next angle")),
+				"seekFwdinput": (self.seekFwdInput, _("Seek forward with input box")),
+				"seekBwdinput": (self.seekBwdInput, _("Seek backward with input box")),
+				"subtitles": (self.subtitleSelection, _("Subtitle selection")),
+				
+				#Actions linked to inforbarseek
+				"playpause": (self.playpauseService, _("Pause / Resume")),
+				"toggleInfo": (self.toggleShow, _("toggle time, chapter, audio, subtitle info")),
+				#"seekFwd": (self.seekFwd, _("Seek forward")),
+				#"seekBwd": (self.seekBack, _("Seek backward")),
+				
+				#Actions from Inforbaraudioselection
+				"AudioSelection": (self.audioSelection, _("Select audio track")),
+			}, -2)
+
+		self["NumberActions"] = NumberActionMap( [ "NumberActions"],
+			{
+				"1": self.keyNumberGlobal,
+				"2": self.keyNumberGlobal,
+				"3": self.keyNumberGlobal,
+				"4": self.keyNumberGlobal,
+				"5": self.keyNumberGlobal,
+				"6": self.keyNumberGlobal,
+				"7": self.keyNumberGlobal,
+				"8": self.keyNumberGlobal,
+				"9": self.keyNumberGlobal,
+				"0": self.keyNumberGlobal,
+			})
+
+		self.onClose.append(self.__onClose)
+
+		config.plugins.mc_mrua.screenres.value = str(config.av.videomode[config.av.videoport.value].value)[:-1]
+		#print config.plugins.mc_mrua.sreenres.value
+
+		#Tmp Hack added to disable RTC while playing through mrua
+		os.system("echo 0 > /tmp/zerortc")
+		os.system("mount -o bind /tmp/zerortc /proc/stb/fp/rtc")
+
+		self.ref = ref
+		self.onFirstExecBegin.append(self.Start)
+		self.service = None
+		self.in_menu = False
+
+	def __serviceStopped(self):
+		self.exit()
+
+	def __serviceStarted(self):
+		self["SeekActions"].setEnabled(False)
+
+	def __statePlay(self):
+		print "statePlay"
+
+	def __statePause(self):
+		print "statePause"
+
+	def __osdStringAvail(self):
+		print "StringAvail"
+
+	def __osdAudioInfoAvail(self):
+		info = self.getServiceInterface("info")
+		audioTuple = info and info.getInfoObject(iServiceInformation.sUser+6)
+		print "AudioInfoAvail ", repr(audioTuple)
+		if audioTuple:
+			audioString = "%d: %s (%s)" % (audioTuple[0],audioTuple[1],audioTuple[2])
+			self["audioLabel"].setText(audioString)
+			if audioTuple != self.last_audioTuple and not self.in_menu:
+				self.doShow()
+		self.last_audioTuple = audioTuple
+
+	def __osdSubtitleInfoAvail(self):
+		info = self.getServiceInterface("info")
+		subtitleTuple = info and info.getInfoObject(iServiceInformation.sUser+7)
+		print "SubtitleInfoAvail ", repr(subtitleTuple)
+		if subtitleTuple:
+			subtitleString = ""
+			if subtitleTuple[0] is not 0:
+				subtitleString = "%d: %s" % (subtitleTuple[0],subtitleTuple[1])
+			self["subtitleLabel"].setText(subtitleString)
+			if subtitleTuple != self.last_subtitleTuple and not self.in_menu:
+				self.doShow()
+		self.last_subtitleTuple = subtitleTuple
+
+	def keyNumberGlobal(self, number):
+		#print "You pressed number " + str(number)
+		if number == 1:
+			self.quickSeek(-config.seek.selfdefined_13.value)
+		elif number == 3:
+			self.quickSeek(config.seek.selfdefined_13.value)
+		elif number == 4:
+			self.quickSeek(-config.seek.selfdefined_46.value)
+		elif number == 6:
+			self.quickSeek(config.seek.selfdefined_46.value)
+		elif number == 7:
+			self.quickSeek(-config.seek.selfdefined_79.value)
+		elif number == 9:
+			self.quickSeek(config.seek.selfdefined_79.value)
+
+	def quickSeek(self, dt):
+		service = self.session.nav.getCurrentService()
+		if service:
+			self.seek = service.seek()
+			if self.seek:
+				self.lengthpts = self.seek.getLength()
+				self.positionpts = self.seek.getPlayPosition()
+				self.length = int(self.lengthpts[1]) / 90000
+				self.position = int(self.positionpts[1]) / 90000
+				if self.length and self.position:
+					self.seekProcess((self.position + dt) * 90000)
+					self.show()
+
+	def getServiceInterface(self, iface):
+		service = self.service
+		if service:
+			attr = getattr(service, iface, None)
+			if callable(attr):
+				return attr()
+		return None
+
+	def doNothing(self):
 		pass
-		#self.close('*StandBy*')
 
-	def ok(self):
-		self.ok1(5)
+	def sendKey(self, key):
+		keys = self.getServiceInterface("keys")
+		if keys:
+			keys.keyPressed(key)
+		return keys
 
-	def ok1(self, vreme):
-		info1 = self.info1
-		info2 = 'Filename: ' + self.MediaFileName
-		info3 = self.GetFileSize(self.MediaFilePath)
-		info4 = 'Audio codec: ' + self.ACodec + ' ' + self.ChNo + 'ch ' + str(int(self.SRate) // 1000) + 'kHz'
-		info5 = 'Video codec: ' + self.VCodec + ' ' + self.Resol + ' ' + self.Format
-		self.session.openWithCallback(self.ClBack2, MRUAInfoBar, 2, info1, info2, info3, info4, info5, vreme, 0, 0, self.MediaFType)
+	def subtitleSelection(self):
+		from Screens.AudioSelection import SubtitleSelection
+		self.session.open(SubtitleSelection, self)
 
-	def GetFileSize(self, pateka):
-		tmp = os.stat(pateka).st_size
-		if tmp // 1073741824 > 0:
-			info3 = str(tmp // 107374182.4 / 10) + 'GB'
-		elif tmp // 1048576 > 0:
-			info3 = str(tmp // 104857.6 / 10) + 'MB'
-		elif tmp // 1024 > 0:
-			info3 = str(tmp // 102.4 / 10) + 'kB'
-		else:
-			info3 = str(tmp) + 'B'
-		return info3
+	def seekFwdInput(self):
+		self.session.openWithCallback(self.seekProcess, SeekInput, "fwd")				
 
-	def ZapRight(self):
-		self.GetSec1()
-		if self.MediaFType == 'audio':
-			x = 10
-		if self.MediaFType == 'video':
-			x = 60
-		sec3 = self.sec1 + x
-		if self.sec2 == 0 or self.sec1 == 0:
-			return
-		if sec3 < self.sec2:
-			info1 = self.info1
-			info2 = 'Filename: ' + self.MediaFileName
-			info3 = self.GetFileSize(self.MediaFilePath)
-			info4 = 'Audio: ' + self.ACodec + ' ' + self.ChNo + 'ch ' + str(int(self.SRate) // 1000) + 'kHz'
-			info5 = 'Video: ' + self.VCodec + ' ' + self.Resol + ' ' + self.Format
-			self.session.openWithCallback(self.ClBack2, MRUAInfoBar, 1, info1, info2, info3, info4, info5, 0, sec3, self.sec2, self.MediaFType)
-		else:
-			sec3 = self.sec2
+	def seekBwdInput(self):
+		self.session.openWithCallback(self.seekProcess, SeekInput, "bwd")
 
-	def ZapLeft(self):
-		self.GetSec1()
-		if self.MediaFType == 'audio':
-			x = 10
-		if self.MediaFType == 'video':
-			x = 60
-		sec3 = self.sec1 - x
-		if self.sec2 == 0 or self.sec1 == 0:
-			return
-		if sec3 > 0:
-			info1 = self.info1
-			info2 = 'Filename: ' + self.MediaFileName
-			info3 = self.GetFileSize(self.MediaFilePath)
-			info4 = 'Audio: ' + self.ACodec + ' ' + self.ChNo + 'ch ' + str(int(self.SRate) // 1000) + 'kHz'
-			info5 = 'Video: ' + self.VCodec + ' ' + self.Resol + ' ' + self.Format
-			self.session.openWithCallback(self.ClBack2, MRUAInfoBar, 1, info1, info2, info3, info4, info5, 0, sec3, self.sec2, self.MediaFType)
-		else:
-			sec3 = 0
+	def seekTotime(self):
+		self.session.openWithCallback(self.seekProcess, SeekInput, "totime")				
 
-	def ZapUp(self):
-		self.GetSec1()
-		if self.MediaFType == 'audio':
-			x = 60
-		if self.MediaFType == 'video':
-			x = 300
-		sec3 = self.sec1 + x
-		if self.sec2 == 0 or self.sec1 == 0:
-			return
-		if sec3 < self.sec2:
-			info1 = self.info1
-			info2 = 'Filename: ' + self.MediaFileName
-			info3 = self.GetFileSize(self.MediaFilePath)
-			info4 = 'Audio: ' + self.ACodec + ' ' + self.ChNo + 'ch ' + str(int(self.SRate) // 1000) + 'kHz'
-			info5 = 'Video: ' + self.VCodec + ' ' + self.Resol + ' ' + self.Format
-			self.session.openWithCallback(self.ClBack2, MRUAInfoBar, 1, info1, info2, info3, info4, info5, 0, sec3, self.sec2, self.MediaFType)
-		else:
-			sec3 = self.sec2
+	def seekProcess(self, pts):
+		print "test seek to time"
+		if pts is not -1:
+			if self.service:
+				seekable = self.getSeek()
+				if seekable:
+					seekable.seekTo(pts)
 
-	def ZapDown(self):
-		self.GetSec1()
-		if self.MediaFType == 'audio':
-			x = 60
-		if self.MediaFType == 'video':
-			x = 300
-		sec3 = self.sec1 - x
-		if self.sec2 == 0 or self.sec1 == 0:
-			return
-		if sec3 > 0:
-			info1 = self.info1
-			info2 = 'Filename: ' + self.MediaFileName
-			info3 = self.GetFileSize(self.MediaFilePath)
-			info4 = 'Audio: ' + self.ACodec + ' ' + self.ChNo + 'ch ' + str(int(self.SRate) // 1000) + 'kHz'
-			info5 = 'Video: ' + self.VCodec + ' ' + self.Resol + ' ' + self.Format
-			self.session.openWithCallback(self.ClBack2, MRUAInfoBar, 1, info1, info2, info3, info4, info5, 0, sec3, self.sec2, self.MediaFType)
-		else:
-			sec3 = 0
-
-	def keyPlay(self):
-		vreme = 5
-		self.FFval = 0
-		self.REWval = 0
-		if self.playpause == 103:
-			self.playpause = 102
-			self.info1 = 'Play |>'
-		else:
-			self.playpause = 103
-			self.info1 = 'Paused ||'
-		os.popen('echo ' + str(self.playpause) + ' > /tmp/rmfp.cmd2')
-		time.sleep(0.05)
-		os.popen('echo ' + str(self.playpause) + ' > /tmp/rmfp.cmd2')
-		info1 = self.info1
-		info2 = 'Filename: ' + self.MediaFileName
-		info3 = self.GetFileSize(self.MediaFilePath)
-		info4 = 'Audio: ' + self.ACodec + ' ' + self.ChNo + 'ch ' + str(int(self.SRate) // 1000) + 'kHz'
-		info5 = 'Video: ' + self.VCodec + ' ' + self.Resol + ' ' + self.Format
-		time.sleep(0.11)
-		self.session.openWithCallback(self.ClBack2, MRUAInfoBar, 2, info1, info2, info3, info4, info5, vreme, 0, 0, self.MediaFType)
-
-	def keyStop(self):
-		self.playpause = 103
-		os.popen('echo 105 > /tmp/rmfp.cmd2')
-		time.sleep(0.05)
-		os.popen('echo 105 > /tmp/rmfp.cmd2')
-
-	def keyPrev(self):
-		self.info1 = 'Play |>'
-		self.FFval = 0
-		self.GetSec1()
-		if self.MediaFType == 'audio':
-			x = 10
-		if self.MediaFType == 'video':
-			x = 60
-		sec3 = self.sec1 - x
-		if sec3 > 0:
-			self.SendCMD2(sec3, 106)
-			time.sleep(0.75)
-		self.ok1(2)
-
-	def keyNext(self):
-		self.info1 = 'Play |>'
-		self.FFval = 0
-		self.GetSec1()
-		if self.MediaFType == 'audio':
-			x = 10
-		if self.MediaFType == 'video':
-			x = 60
-		sec3 = self.sec1 + x
-		if sec3 < self.sec2:
-			self.SendCMD2(sec3, 106)
-			time.sleep(0.75)
-		self.ok1(2)
-
-	def GetSec1(self):
-		if os.path.exists('/tmp/rmfp.out2'):
-			os.remove('/tmp/rmfp.out2')
-		if os.path.exists('/tmp/rmfp.cmd2'):
-			os.remove('/tmp/rmfp.cmd2')
-		self.sec1 = 0
-		self.sec2 = 0
-		for n in range(0, 8):
-			try:
-				f = open('/tmp/rmfp.cmd2', 'wb')
-				try:
-					f.write('222\n')
-				finally:
-					f.close()
-			except Exception as e:
-				print e
-			if os.path.exists('/tmp/rmfp.cmd2'):
-				break
-			time.sleep(0.05)
-		time.sleep(0.03)
-		for n in range(0, 8):
-			try:
-				tmpfile = open('/tmp/rmfp.out2', 'r')
-				line = tmpfile.readlines()
-				tmpfile.close()
-				os.remove('/tmp/rmfp.out2')
-				self.sec1 = int(line[1]) // 1000
-				self.sec2 = int(line[0]) // 1000
-				break
-			except Exception:
-				sec1 = 0
-			time.sleep(0.1)
-
-	def keyFF(self):
-		if self.MediaFType != 'video':
-			return
-		vreme = 5
-		FFcmd = '102'
-		self.REWval = 0
-		self.FFval += 1
-		if self.FFval == 1:
-			FFcmd = '143'
-			self.info1 = 'Speed: x 1.2'
-		if self.FFval == 2:
-			FFcmd = '150'
-			self.info1 = 'Speed: x 2.0'
-		if self.FFval == 3:
-			FFcmd = '109'
-			self.info1 = 'Speed: x 4.0'
-		if self.FFval == 4:
-			FFcmd = '110'
-			self.info1 = 'Speed: x 0.5'
-		if self.FFval == 5:
-			FFcmd = '144'
-			self.info1 = 'Speed: x 0.8'
-		if self.FFval > 5:
-			self.FFval = 0
-			FFcmd = '102'
-			self.info1 = 'Play |>'
-		self.playpause = 103
-		cmd = 'echo ' + FFcmd + ' > /tmp/rmfp.cmd2'
-		os.popen(cmd)
-		time.sleep(0.05)
-		os.popen(cmd)
-		info1 = self.info1
-		info2 = 'Filename: ' + self.MediaFileName
-		info3 = self.GetFileSize(self.MediaFilePath)
-		info4 = 'Audio: ' + self.ACodec + ' ' + self.ChNo + 'ch ' + str(int(self.SRate) // 1000) + 'kHz'
-		info5 = 'Video: ' + self.VCodec + ' ' + self.Resol + ' ' + self.Format
-		time.sleep(0.11)
-		self.session.openWithCallback(self.ClBack2, MRUAInfoBar, 2, info1, info2, info3, info4, info5, vreme, 0, 0, self.MediaFType)
-
-	def keyREW(self):
-		if self.MediaFType != 'video':
-			return
-		vreme = 5
-		REWcmd = '102'
-		self.FFval = 0
-		self.REWval += 1
-		if self.REWval == 1:
-			REWcmd = '144'
-			self.info1 = 'Speed: x -0.5'
-		if self.REWval == 2:
-			REWcmd = '151'
-			self.info1 = 'Speed: x -2.0'
-		if self.REWval == 3:
-			REWcmd = '112'
-			self.info1 = 'Speed: x -4.0'
-		if self.REWval > 3:
-			REWcmd = '102'
-			self.info1 = 'Play |>'
-			self.REWval = 0
-		self.playpause = 103
-		cmd = 'echo ' + REWcmd + ' > /tmp/rmfp.cmd2'
-		os.popen(cmd)
-		time.sleep(0.05)
-		os.popen(cmd)
-		info1 = self.info1
-		info2 = 'Filename: ' + self.MediaFileName
-		info3 = self.GetFileSize(self.MediaFilePath)
-		info4 = 'Audio: ' + self.ACodec + ' ' + self.ChNo + 'ch ' + str(int(self.SRate) // 1000) + 'kHz'
-		info5 = 'Video: ' + self.VCodec + ' ' + self.Resol + ' ' + self.Format
-		time.sleep(0.11)
-		self.session.openWithCallback(self.ClBack2, MRUAInfoBar, 2, info1, info2, info3, info4, info5, vreme, 0, 0, self.MediaFType)
-
-	def ClBack2(self, komanda):
-		if komanda == '*REW*':
-			self.keyREW()
-		if komanda == '*FF*':
-			self.keyFF()
-		if komanda == '*PLAY*':
-			self.keyPlay()
-		if komanda == '*PREW*':
-			self.keyPrev()
-		if komanda == '*NEXT*':
-			self.keyNext()
-
-	def Konfig(self):
-		if self.MediaFType != 'video':
-			return
-		self.session.openWithCallback(self.ClBackCfg, MRUAConfig, '1')
-
-	def ALngSel(self):
-		print "Trying to open Audio selection Dialog"
-		#ino = len(self.ALanguages)
-		#if self.MediaFType != 'video' or ino < 2:
-		#	return
-		self.session.openWithCallback(self.ClBackCfg, MRUASelectLang, self.ALanguages)
-
-	def SubSel(self):
-		print "Trying to open Subtitle selection Dialog"
-		#ino = len(self.SubtitlesL)
-		#if self.MediaFType != 'video' or ino < 2:
-		#	return
-		self.session.openWithCallback(self.ClBackCfg, MRUASelectSub, self.SubtitlesL)
-
-	def ClBackCfg(self, komanda = None):
-		if komanda == 'ok' and self.MediaFType == 'video':
-			print 'ClBackCfg - return'
-
-	def SendCMD2(self, k1, k2):
-		if k1 >= 0:
-			if os.path.exists('/tmp/rmfp.in2'):
-				os.remove('/tmp/rmfp.in2')
-			if os.path.exists('/tmp/rmfp.cmd2'):
-				os.remove('/tmp/rmfp.cmd2')
-			cmd = 'echo ' + str(k1) + ' > /tmp/rmfp.in2;echo ' + str(k2) + ' > /tmp/rmfp.cmd2'
-			os.popen(cmd)
-		else:
-			if os.path.exists('/tmp/rmfp.cmd2'):
-				os.remove('/tmp/rmfp.cmd2')
-			os.popen('echo ' + str(k2) + ' > /tmp/rmfp.cmd2')
-
-class MRUAInfoBar(Screen):
-
-	skin = """
-		<screen position="center,490" size="1280,200" title="" flags="wfNoBorder" zPosition="-1" >
-		<ePixmap alphatest="off" pixmap="PLi-HD/infobar/hd.png" position="0,0" size="1280,220" zPosition="-1" />
-		<widget name="infoC" position="220,60" zPosition="2" size="840,30" font="Regular;26" foregroundColor="#ffffff" transparent="1" halign="left" valign="center" />
-		<widget name="media_progress" position="220,100" size="840,8" zPosition="2" pixmap="PLi-HD/infobar/pbar.png" backgroundColor="#333333" />
-		<widget name="infoA" position="220,115" zPosition="2" size="150,15" font="Regular;14" foregroundColor="#ffffff" transparent="1" halign="left" valign="center" />
-		<widget name="infoB" position="910,115" zPosition="2" size="150,15" font="Regular;14" foregroundColor="#ffffff" transparent="1" halign="right" valign="center" />
-		<widget name="infoF" position="220,140" zPosition="2" size="300,20" font="Regular;18" foregroundColor="#aaaaaa" transparent="1" halign="left" valign="center" />
-		<widget name="infoD" position="220,160" zPosition="2" size="300,20" font="Regular;18" foregroundColor="#aaaaaa" transparent="1" halign="left" valign="center" />
-		<widget name="infoE" position="910,160" zPosition="2" size="150,20" font="Regular;18" foregroundColor="#aaaaaa" transparent="1" halign="right" valign="center" />
-		</screen>"""
-
-	def __init__(self, session, mod, info1, info2, info3, info4, info5, vremetr, vreme1, vreme2, ftype):
-		Screen.__init__(self, session)
-		self.session = session
-
-		self.IMod = mod
-		self.info1 = info1
-		self.info2 = info2
-		self.info3 = info3
-		self.info4 = info4
-		self.info5 = info5
-		self.vremeT = vremetr
-		self.vreme1 = vreme1
-		self.vreme2 = vreme2
-		self.MediaFType = ftype
-		self['actions'] = ActionMap(['MediaPlayerActions',
-		 'MediaPlayerSeekActions',
-		 'ChannelSelectBaseActions',
-		 'WizardActions',
-		 'DirectionActions',
-		 'MenuActions',
-		 'NumberActions',
-		 'ColorActions'], {'ok': self.ok,
-		 'back': self.exit,
-		 'left': self.ZapLeft,
-		 'right': self.ZapRight,
-		 'up': self.ZapUp,
-		 'down': self.ZapDown,
-		 'play': self.keyPlay,
-		 'pause': self.keyPlay,
-		 'stop': self.keyStop,
-		 'seekFwd': self.keyFF,
-		 'seekBack': self.keyREW,
-		 'previous': self.keyPrev,
-		 'next': self.keyNext}, -1)
-		self.onLayoutFinish.append(self.StartScroll)
-		self['infoA'] = Label()
-		self['infoB'] = Label()
-		self['infoC'] = Label()
-		self['infoD'] = Label()
-		self['infoE'] = Label()
-		self['infoF'] = Label()
-		self['infoG'] = Label()
-		self['media_progress'] = ProgressBar()
-		self['pozadina'] = Pixmap()
-		self.msgno = 0
-		self['infoA'].setText('0:00:00 / 0:00:00')
-		self['infoB'].setText('0:00:00')
-		self['infoC'].setText(self.info2)
-		self['infoD'].setText(str(self.info4))
-		self['infoE'].setText(self.info1)
-		self['infoF'].setText(str(self.info5))
-		self['infoG'].setText('Size: ' + self.info3)
-		self.start_time = time.time()
-		self.last_val = 0
-
-	def exit(self):
-		self.close('*EXIT*')
-
-	def keyPlay(self):
-		self.close('*PLAY*')
-
-	def keyStop(self):
-		self.close('*STOP*')
-
-	def keyFF(self):
-		self.close('*FF*')
-
-	def keyREW(self):
-		self.close('*REW*')
-
-	def keyPrev(self):
-		self.close('*PREW*')
-
-	def keyNext(self):
-		self.close('*NEXT*')
-
-	def ok(self):
-		if self.skok == 1:
-			if os.path.exists('/tmp/rmfp.in2'):
-				os.remove('/tmp/rmfp.in2')
-			if os.path.exists('/tmp/rmfp.cmd2'):
-				os.remove('/tmp/rmfp.cmd2')
-			for n in range(0, 8):
-				try:
-					f = open('/tmp/rmfp.in2', 'wb')
-					try:
-						f.write(str(self.vreme1) + '\n')
-					finally:
-						f.close()
-				except Exception as e:
-					print e
-				if os.path.exists('/tmp/rmfp.in2'):
-					break
-				time.sleep(0.05)
-			time.sleep(0.03)
-			for n in range(0, 8):
-				try:
-					f = open('/tmp/rmfp.cmd2', 'wb')
-					try:
-						f.write('106\n')
-					finally:
-						f.close()
-				except Exception as e:
-					print e
-				if os.path.exists('/tmp/rmfp.cmd2'):
-					break
-				time.sleep(0.05)
-		else:
-			self.close('*EXIT*')
-
-	def StartScroll(self):
-		self.ExitTimer = eTimer()
-		self.ExitTimer.callback.append(self.exit)
-		self.ExitTimer.start(5000, True)
-		plugin_path = '/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter'
-		self.slikaon = LoadPixmap(plugin_path + '/skins/default/images/hd.png')
-		self['pozadina'].instance.setPixmap(self.slikaon)
-		self.skok = 0
-		if self.IMod == 1:
-			self.skok = 1
-			self.pozic = self.vreme1 * 100 // self.vreme2
-			self.position = str(datetime.timedelta(seconds=self.vreme1)) + ' / ' + str(datetime.timedelta(seconds=int(self.vreme2 - self.vremeT)))
-			self.length = str(datetime.timedelta(seconds=self.vreme2))
-			self['media_progress'].setValue(self.pozic)
-			self['infoA'].setText(self.position)
-			self['infoB'].setText(self.length)
-		if self.IMod == 2:
-			self.NoLoop = 0
-			self.position = '0:00:00 / 0:00:00'
-			self.length = '0:00:00'
-			self['media_progress'].setValue(0)
-			self['infoA'].setText(self.position)
-			self['infoB'].setText(self.length)
-			self.sec1 = 0
-			self.sec2 = 0
-			self.pozic = 0
-			self.msgTimer = eTimer()
-			self.msgTimer.callback.append(self.updateMsg)
-			self.msgTimer.start(10, True)
-		if self.IMod == 3:
-			self.NoLoop = 0
-			self.position = '0:00:00 / 0:00:00'
-			self.length = '0:00:00'
-			self['media_progress'].setValue(0)
-			self['infoA'].setText(self.position)
-			self['infoB'].setText(self.length)
-			self.sec1 = 0
-			self.sec2 = 0
-			self.pozic = 0
-			self.msgTimer = eTimer()
-			self.msgTimer.callback.append(self.updateMsg)
-			self.msgTimer.start(3000, True)
-
-	def ZapRight(self):
-		self.skok = 1
-		self.NoLoop = 0
-		if self.MediaFType == 'audio':
-			x = 10
-		if self.MediaFType == 'video':
-			x = 60
-		self.vreme1 += x
-		if self.vreme1 < self.vreme2:
-			self.ZapDoThis()
-		else:
-			self.vreme1 -= 60
-
-	def ZapLeft(self):
-		self.skok = 1
-		self.NoLoop = 0
-		if self.MediaFType == 'audio':
-			x = 10
-		if self.MediaFType == 'video':
-			x = 60
-		self.vreme1 -= x
-		if self.vreme1 > 0:
-			self.ZapDoThis()
-		else:
-			self.vreme1 += 60
-
-	def ZapUp(self):
-		self.skok = 1
-		self.NoLoop = 0
-		if self.MediaFType == 'audio':
-			x = 60
-		if self.MediaFType == 'video':
-			x = 300
-		self.vreme1 += x
-		if self.vreme1 < self.vreme2:
-			self.ZapDoThis()
-		else:
-			self.vreme1 -= 300
-
-	def ZapDown(self):
-		self.skok = 1
-		self.NoLoop = 0
-		if self.MediaFType == 'audio':
-			x = 60
-		if self.MediaFType == 'video':
-			x = 300
-		self.vreme1 -= x
-		if self.vreme1 > 0:
-			self.ZapDoThis()
-		else:
-			self.vreme1 += 300
-
-	def ZapDoThis(self):
-		if self.vreme2 > 0:
-			self.pozic = self.vreme1 * 100 // self.vreme2
-		else:
-			self.pozic = 0
-			return
-		self.position = str(datetime.timedelta(seconds=self.vreme1)) + ' / ' + str(datetime.timedelta(seconds=int(self.vreme2 - self.vreme1)))
-		self.length = str(datetime.timedelta(seconds=self.vreme2))
-		self['media_progress'].setValue(self.pozic)
-		self['infoA'].setText(self.position)
-		self['infoB'].setText(self.length)
-		self.ExitTimer = eTimer()
-		self.ExitTimer.callback.append(self.exit)
-		self.ExitTimer.start(5000, True)
-
-	def updateMsg(self):
-		if self.skok == 1:
-			return
-		if os.path.exists('/tmp/rmfp.out2'):
-			os.remove('/tmp/rmfp.out2')
-		if os.path.exists('/tmp/rmfp.cmd2'):
-			os.remove('/tmp/rmfp.cmd2')
-		for n in range(0, 8):
-			try:
-				f = open('/tmp/rmfp.cmd2', 'wb')
-				try:
-					f.write('222\n')
-				finally:
-					f.close()
-			except Exception as e:
-				print e
-			if os.path.exists('/tmp/rmfp.cmd2'):
-				break
-			time.sleep(0.05)
-		time.sleep(0.03)
-		for n in range(0, 8):
-			try:
-				tmpfile = open('/tmp/rmfp.out2', 'rb')
-				line = tmpfile.readlines()
-				tmpfile.close()
-				os.remove('/tmp/rmfp.out2')
-				self.sec1 = int(line[1]) // 1000
-				self.sec2 = int(line[0]) // 1000
-				self.position = str(datetime.timedelta(seconds=self.sec1)) + ' / ' + str(datetime.timedelta(seconds=int(self.sec2 - self.sec1)))
-				self.length = str(datetime.timedelta(seconds=self.sec2))
-				break
-			except Exception:
-				print 'Error updateMsg'
-			time.sleep(0.1)
-		if self.sec2 > 0:
-			self.pozic = self.sec1 * 100 // self.sec2
-		self['media_progress'].setValue(self.pozic)
-		self['infoA'].setText(self.position)
-		self['infoB'].setText(self.length)
-		self.NoLoop += 1
-		self.vreme1 = self.sec1
-		self.vreme2 = self.sec2
-		if self.NoLoop < self.vremeT and self.skok == 0:
-			self.msgTimer.start(1000, True)
-		else:
-			self.close('*EXIT*')
-
-class LoadSub(Screen):
-	skin = """
-		<screen position="center,center" size="710,390" title="MRUA - Load Subtitle">
-		<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/buttons/key_red_140x40.png" position="10,350" size="140,40" alphatest="on" />
-		<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/buttons/key_green_140x40.png" position="560,350" size="140,40" alphatest="on" />
-		<widget source="key_red" render="Label" position="10,350" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" foregroundColor="#ffffff" transparent="1"/>
-		<widget source="key_green" render="Label" position="560,350" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" foregroundColor="#ffffff" transparent="1"/>
-		<widget name="text" position="0,5" font="Regular;20" size="710,24" halign="center" />
-		<widget name="list_left" position="5,45" size="700,295" scrollbarMode="showOnDemand" />
-		</screen>"""
-
-	def __init__(self, session, pateka):
-		Screen.__init__(self, session)
-		self.session = session
-		self.Pateka = pateka
-		self['actions'] = ActionMap(['OkCancelActions', 'ShortcutActions', 'ColorActions'], {'red': self.quit,
-		 'green': self.keyGo,
-		 'blue': self.keyBlue,
-		 'ok': self.keyGo,
-		 'cancel': self.quit}, -2)
-		self['key_red'] = StaticText(_('Cancel'))
-		self['key_green'] = StaticText(_('Start'))
-		self['text'] = Label(_('Select Device :'))
-		path_left = self.Pateka
-		self['list_left'] = FileList(path_left, matchingPattern='(?i)^.*\\.(sub|srt)')
-		self.SOURCELIST = self['list_left']
-		self.onLayoutFinish.append(self.keyGo)
-
-	def keyGo(self):
-		if self.SOURCELIST.canDescent():
-			self.SOURCELIST.descent()
-			if self.SOURCELIST.getCurrentDirectory():
-				aaa = self.SOURCELIST.getCurrentDirectory()
-				if len(aaa) > 40:
-					aaa = '...' + aaa[len(aaa) - 40:]
-				self['text'].setText(aaa)
-			else:
-				self['text'].setText('Select Device :')
-		else:
-			fn = self['list_left'].getFilename()
-			self.SubFileName = fn
-			playfile = self.SOURCELIST.getCurrentDirectory() + fn
-			self.SubFilePath = playfile
-			if os.path.splitext(fn)[1][1:] == 'srt':
-				self.close(playfile)
-
-	def keyBlue(self):
-		print 'OK'
-
-	def quit(self):
-		self.close('empty')
-
-class MRUAConfig(ConfigListScreen, Screen):
-	skin = """
-		<screen position="center,center" size="710,275" title="Setup" >
-		<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/buttons/key_red_140x40.png" position="10,230" size="140,40" transparent="1" alphatest="on" />
-		<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/buttons/key_green_140x40.png" position="560,230" size="140,40" transparent="1" alphatest="on" />
-		<widget source="key_red" render="Label" position="10,230" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
-		<widget source="key_green" render="Label" position="560,230" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
-		<widget source="text" render="Label" position="150,230" zPosition="1" size="400,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
-		<widget name="config" position="10,10" size="690,210" scrollbarMode="showOnDemand" />
-		</screen>"""
-
-	def __init__(self, session, args = None):
-		Screen.__init__(self, session)
-		self.session = session
-		self.ActivePlay = args
-		self.list = []
-		self['actions'] = ActionMap(['ChannelSelectBaseActions',
-		 'WizardActions',
-		 'DirectionActions',
-		 'MenuActions',
-		 'NumberActions',
-		 'ColorActions'], {'save': self.SaveCfg,
-		 'back': self.Izlaz,
-		 'ok': self.SaveCfg,
-		 'green': self.SaveCfg,
-		 'red': self.Izlaz}, -2)
-		self['key_red'] = StaticText(_('Exit'))
-		self['key_green'] = StaticText(_('Save Conf'))
-		self['text'] = StaticText(_(' '))
-		ConfigListScreen.__init__(self, self.list)
-		self.ExtSub_Size_old = config.plugins.mc_mrua.ExtSub_Size.value
-		self.ExtSub_Position_old = config.plugins.mc_mrua.ExtSub_Position.value
-		self.ExtSub_Color_old = config.plugins.mc_mrua.ExtSub_Color.value
-		self.Scaling_old = config.plugins.mc_mrua.Scaling.value
-		self.UPnP_Enable_old = config.plugins.mc_mrua.UPnP_Enable.value
-		self.ExtSub_Size_old1 = config.plugins.mc_mrua.ExtSub_Size.value
-		self.ExtSub_Position_old1 = config.plugins.mc_mrua.ExtSub_Position.value
-		self.ExtSub_Color_old1 = config.plugins.mc_mrua.ExtSub_Color.value
-		self.Scaling_old1 = config.plugins.mc_mrua.Scaling.value
-		self.UPnP_Enable_old1 = config.plugins.mc_mrua.UPnP_Enable.value
-		self.createSetup()
-
-	def keyLeft(self):
-		ConfigListScreen.keyLeft(self)
-		self.createSetup()
+	def stop(self):
+		self.exit()
 
 	def keyRight(self):
-		ConfigListScreen.keyRight(self)
-		self.createSetup()
+		self.sendKey(iServiceKeys.keyRight)
 
-	def createSetup(self):
-		self.list = []
-		self.list.append(getConfigListEntry(_('Subtitle Enable:'), config.plugins.mc_mrua.ExtSub_Enable))
-		self.list.append(getConfigListEntry(_('Encoding (After changing, Player must be restarted):'), config.plugins.mc_mrua.ExtSub_Encoding))
-		self.list.append(getConfigListEntry(_('Font Select (After changing, Player must be restarted):'), config.plugins.mc_mrua.ExtSub_FontSel))
-		self.list.append(getConfigListEntry(_('Subtitle Font Size:'), config.plugins.mc_mrua.ExtSub_Size))
-		self.list.append(getConfigListEntry(_('Subtitle Position:'), config.plugins.mc_mrua.ExtSub_Position))
-		self.list.append(getConfigListEntry(_('Subtitle Color:'), config.plugins.mc_mrua.ExtSub_Color))
-		self.list.append(getConfigListEntry(_('Scaling:'), config.plugins.mc_mrua.Scaling))
-		if self.ActivePlay == None:
-			self.list.append(getConfigListEntry(_('UPnP Enable:'), config.plugins.mc_mrua.UPnP_Enable))
-		self['config'].list = self.list
-		self['config'].l.setList(self.list)
-		if self.ExtSub_Size_old != config.plugins.mc_mrua.ExtSub_Size.value:
-			self.SendCMD2(config.plugins.mc_mrua.ExtSub_Size.value, 212)
-		if self.ExtSub_Position_old != config.plugins.mc_mrua.ExtSub_Position.value:
-			self.SendCMD2(config.plugins.mc_mrua.ExtSub_Position.value, 214)
-		if self.ExtSub_Color_old != config.plugins.mc_mrua.ExtSub_Color.value:
-			self.SendCMD2(config.plugins.mc_mrua.ExtSub_Color.value, 216)
-		if self.Scaling_old != config.plugins.mc_mrua.Scaling.value:
-			cmd = 0
-		if config.plugins.mc_mrua.Scaling.value == 'Just Scale':
-			cmd = 223
-		if config.plugins.mc_mrua.Scaling.value == 'Pan&Scan':
-			cmd = 224
-		if config.plugins.mc_mrua.Scaling.value == 'Pillarbox':
-			cmd = 225
-		if cmd > 0:
-			self.SendCMD2(-1, cmd)
-		if self.UPnP_Enable_old != config.plugins.mc_mrua.UPnP_Enable.value:
-			if config.plugins.mc_mrua.UPnP_Enable.value == '1':
-				try:
-					os.system('/etc/init.d/djmount start &')
-					print ' >> START UPnP'
-				except IOError:
-					print 'Error START_UPnP'
-			else:
-				try:
-					os.system('/etc/init.d/djmount stop &')
-					print ' >> STOP UPnP'
-				except IOError:
-					print 'Error STOP_UPnP'
-		self.ExtSub_Size_old = config.plugins.mc_mrua.ExtSub_Size.value
-		self.ExtSub_Position_old = config.plugins.mc_mrua.ExtSub_Position.value
-		self.ExtSub_Color_old = config.plugins.mc_mrua.ExtSub_Color.value
-		self.Scaling_old = config.plugins.mc_mrua.Scaling.value
-		self.UPnP_Enable_old = config.plugins.mc_mrua.UPnP_Enable.value
+	def keyLeft(self):
+		self.sendKey(iServiceKeys.keyLeft)
 
-	def SendCMD2(self, k1, k2):
-		if k1 >= 0:
-			if os.path.exists('/tmp/rmfp.in2'):
-				os.remove('/tmp/rmfp.in2')
-			if os.path.exists('/tmp/rmfp.cmd2'):
-				os.remove('/tmp/rmfp.cmd2')
-			cmd = 'echo ' + str(k1) + ' > /tmp/rmfp.in2;echo ' + str(k2) + ' > /tmp/rmfp.cmd2'
-			os.popen(cmd)
+	def keyOk(self):
+		 self.toggleShow()
+ 
+	def keyCancel(self):
+		self.exit()
+
+	def menu(self):
+		self.session.openWithCallback(self.menuCallback, MRUAPlayer_Menu)
+
+	def menuCallback(self, value):
+		if value == 0:
+			self.session.openWithCallback(self.subOptionsCallback, MRUAPlayer_Suboptions2)
+		if value == 1:
+			self.session.open(Scalingmode_Menu)
+		elif value == 2:
+			self.subtitleSelection()
+		elif value == 3:
+			self.audioSelection()
+		elif value == 4:
+			self.seekTotime()
+	
+	def subOptionsCallback(self, value):
+		if value == 1:
+			self.saved_config_subenc = config.plugins.mc_mrua.subenc.value
+			self.saved_config_subpos = config.plugins.mc_mrua.subpos.value
+			self.saved_config_subcolorname = config.plugins.mc_mrua.subcolorname.value
+			self.saved_config_subsize = config.plugins.mc_mrua.subsize.value
+			self.saved_config_subdelay = config.plugins.mc_mrua.subdelay.value
+			config.plugins.mc_mrua.save()
+			configfile.save()
+
+	def Start(self):
+		print "Mrua Starting Playback", self.ref
+		if self.ref is None:
+			self.exit()
 		else:
-			if os.path.exists('/tmp/rmfp.cmd2'):
-				os.remove('/tmp/rmfp.cmd2')
-			os.popen('echo ' + str(k2) + ' > /tmp/rmfp.cmd2')
-
-	def SaveCfg(self):
-		config.plugins.mc_mrua.ExtSub_Enable.save()
-		config.plugins.mc_mrua.ExtSub_Encoding.save()
-		config.plugins.mc_mrua.ExtSub_FontSel.save()
-		config.plugins.mc_mrua.ExtSub_Size.save()
-		config.plugins.mc_mrua.ExtSub_Position.save()
-		config.plugins.mc_mrua.ExtSub_Color.save()
-		config.plugins.mc_mrua.ExtSub_OutColor.save()
-		config.plugins.mc_mrua.Scaling.save()
-		config.plugins.mc_mrua.UPnP_Enable.save()
-		self.close('ok')
-
-	def Izlaz(self):
-		config.plugins.mc_mrua.ExtSub_Size.value = self.ExtSub_Size_old1
-		config.plugins.mc_mrua.ExtSub_Position.value = self.ExtSub_Position_old1
-		config.plugins.mc_mrua.ExtSub_Color.value = self.ExtSub_Color_old1
-		config.plugins.mc_mrua.Scaling.value = self.Scaling_old1
-		config.plugins.mc_mrua.UPnP_Enable.value = self.UPnP_Enable_old1
-		self.SendCMD2(config.plugins.mc_mrua.ExtSub_Size.value, 212)
-		time.sleep(0.11)
-		self.SendCMD2(config.plugins.mc_mrua.ExtSub_Position.value, 214)
-		time.sleep(0.11)
-		self.SendCMD2(config.plugins.mc_mrua.ExtSub_Color.value, 216)
-		time.sleep(0.11)
-		cmd = 0
-		if config.plugins.mc_mrua.Scaling.value == 'Just Scale':
-			cmd = 223
-		if config.plugins.mc_mrua.Scaling.value == 'Pan&Scan':
-			cmd = 224
-		if config.plugins.mc_mrua.Scaling.value == 'Pillarbox':
-			cmd = 225
-		if cmd > 0:
-			self.SendCMD2(-1, cmd)
-		time.sleep(0.11)
-		if self.ActivePlay == None:
-			if config.plugins.mc_mrua.UPnP_Enable.value == '1':
+			newref = eServiceReference(4370, 0, self.ref)
+			print "play", newref.toString()
+			############# spaze team added for fix filenames ANSI to utf8
+			name = str(self.ref)
+			try:
+				name = name.decode("utf-8").encode("utf-8")
+			except:
 				try:
-					os.system('/etc/init.d/djmount start &')
-					print ' >> START UPnP'
-				except IOError:
-					print 'Error START_UPnP'
-			else:
-				try:
-					os.system('/etc/init.d/djmount stop &')
-					print ' >> STOP UPnP'
-				except IOError:
-					print 'Error STOP_UPnP'
+					name = name.decode("windows-1252").encode("utf-8")
+				except:
+					pass
+			############################################################# 
+			self["chapterLabel"].setText(self.ref)
+			self.session.nav.playService(newref)
+			self.service = self.session.nav.getCurrentService()
+			print "self.service", self.service
+			print "cur_dlg", self.session.current_dialog
+
+	def exit(self):
+		if self.service:
+			self.session.nav.stopService()
+			self.service = None
 		self.close()
 
+	def __onClose(self):
+		#tmp HACK enable rtc again
+		os.system("umount /proc/stb/fp/rtc")
+		self.restore_infobar_seek_config()
 
-class MRUASelectLang(ConfigListScreen, Screen):
+	def createSummary(self):
+		return MRUASummary
+
+#override some InfoBarSeek functions
+	def playLastCB(self, answer): # overwrite infobar cuesheet function
+		print "playLastCB", answer, self.resume_point
+		if self.service:
+			if answer == True:
+				seekable = self.getSeek()
+				if seekable:
+					seekable.seekTo(self.resume_point)
+		self.hideAfterResume()
+
+	def showAfterCuesheetOperation(self):
+		if not self.in_menu:
+			self.show()
+
+	def doEof(self):
+		self.setSeekState(self.SEEK_STATE_PLAY)
+
+	def calcRemainingTime(self):
+		return 0
+
+	def hotplugCB(self, dev, media_state):
+		print "[hotplugCB]", dev, media_state
+		if dev == harddiskmanager.getCD():
+			if media_state == "1":
+				self.scanHotplug()
+			else:
+				self.physicalDVD = False
+
+	def scanHotplug(self):
+		devicepath = harddiskmanager.getAutofsMountpoint(harddiskmanager.getCD())
+		if pathExists(devicepath):
+			from Components.Scanner import scanDevice
+			res = scanDevice(devicepath)
+			list = [ (r.description, r, res[r], self.session) for r in res ]
+			if list:
+				(desc, scanner, files, session) = list[0]
+				for file in files:
+					print file
+					if file.mimetype == "video/x-dvd":
+						print "physical dvd found:", devicepath
+						self.physicalDVD = True
+						return
+		self.physicalDVD = False
+
+#--------------------------------------------------------------------------------------
+
+class MRUAPlayer_Menu(Screen):
 	skin = """
-		<screen position="center,center" size="710,275" title="Language Selection" >
-		<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/buttons/key_red_140x40.png" position="10,230" size="140,40" transparent="1" alphatest="on" />
-		<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/buttons/key_green_140x40.png" position="560,230" size="140,40" transparent="1" alphatest="on" />
-		<widget source="key_red" render="Label" position="10,230" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
-		<widget source="key_green" render="Label" position="560,230" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
-		<widget source="text" render="Label" position="150,230" zPosition="1" size="400,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
-		<widget name="list" position="10,10" size="690,210" scrollbarMode="showOnDemand" />
-		</screen>"""
+	<screen name="MRUAPlayer_Menu" position="30,55" size="350,240" title="%s" >
+	<widget name="pathlabel" transparent="1" zPosition="2" position="0,170" size="380,20" font="Regular;16" />
+	<widget name="list" zPosition="5" transparent="1" position="10,10" size="330,200" scrollbarMode="showOnDemand" />
+	</screen>""" % _("VideoPlayer - Menu")
 
-	def __init__(self, session, ALanguages):
+	def __init__(self, session):
+		
 		Screen.__init__(self, session)
-		self.session = session
-		self.ALanguages = ALanguages
+		self["list"] = IniciaSelListMC([])
 		self.list = []
-		self['actions'] = ActionMap(['ChannelSelectBaseActions',
-		 'WizardActions',
-		 'DirectionActions',
-		 'MenuActions',
-		 'NumberActions',
-		 'ColorActions'], {'save': self.SetLang,
-		 'back': self.Exit,
-		 'ok': self.SetLang,
-		 'green': self.SetLang,
-		 'red': self.Exit}, -2)
-		self['key_red'] = StaticText(_('Exit'))
-		self['key_green'] = StaticText(_('Set'))
-		self['text'] = StaticText(_(' '))
+		
+		self.list.append(_("Subtitle Options"))
+		self.list.append(_("Scaling Mode"))
+		self.list.append(_("Subtitle Selection"))
+		self.list.append(_("Audio Selection"))
+		self.list.append(_("Go to Position"))
+		
+		self["pathlabel"] = Label(_("Select option"))
+		
+		self["actions"] = ActionMap(["OkCancelActions","ColorActions"],
+		{
+			"yellow":self.setaudio,
+			"red":self.setsubtitle,
+			"cancel": self.Exit,
+			"ok": self.okbuttonClick
+		}, -1)
+		self.onLayoutFinish.append(self.buildList)
+
+	def buildList(self):
 		list = []
-		for subitem in self.ALanguages:
-			ipos = subitem.find(':')
-			ipos1 = subitem.rfind("'")
-			if ipos > -1 and ipos1 > -1:
-				subtmp = '   - Audio track :  | ' + subitem[ipos + 3:ipos1 - 1] + ' |'
-				list.append(subtmp)
-		self['list'] = MenuList(list)
+		for i in range(0,len(self.list)):
+			texto=""+self.list[i]
+			list.append(IniciaSelListEntryMC(texto, str(i)))
+		self["list"].setList(list)
 
-	def SendCMD2(self, k1, k2):
-		if k1 >= 0:
-			if os.path.exists('/tmp/rmfp.in2'):
-				os.remove('/tmp/rmfp.in2')
-			if os.path.exists('/tmp/rmfp.cmd2'):
-				os.remove('/tmp/rmfp.cmd2')
-			cmd = 'echo ' + str(k1) + ' > /tmp/rmfp.in2;echo ' + str(k2) + ' > /tmp/rmfp.cmd2'
-			os.popen(cmd)
-		else:
-			if os.path.exists('/tmp/rmfp.cmd2'):
-				os.remove('/tmp/rmfp.cmd2')
-			os.popen('echo ' + str(k2) + ' > /tmp/rmfp.cmd2')
+	def setaudio(self):
+		self.close(2)
 
-	def SetLang(self):
-		ind = self['list'].getSelectionIndex()
-		tmpstr = self.ALanguages[ind]
-		ipos = tmpstr.find('ID')
-		ipos1 = tmpstr.find('(')
-		if ipos >= 0 and ipos1 >= 0:
-			AudioL = int(tmpstr[ipos + 2:ipos1])
-		self.SendCMD2(AudioL, 116)
-		time.sleep(0.11)
-		self.close()
+	def setsubtitle(self):
+		self.close(3)
+
+	def okbuttonClick(self):
+		selection = self["list"].getSelectionIndex()
+		self.close(selection)
 
 	def Exit(self):
-		self.close()
+		self.close(None)
 
-class MRUASelectSub(ConfigListScreen, Screen):
+#-----------------------------------------------------------------------------------------------------------------------
+class MRUAPlayer_Suboptions2(Screen):
 	skin = """
-		<screen position="center,center" size="710,275" title="Subtitle Selection" >
-		<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/buttons/key_red_140x40.png" position="10,230" size="140,40" transparent="1" alphatest="on" />
-		<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/buttons/key_green_140x40.png" position="560,230" size="140,40" transparent="1" alphatest="on" />
-		<widget source="key_red" render="Label" position="10,230" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
-		<widget source="key_green" render="Label" position="560,230" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
-		<widget source="text" render="Label" position="150,230" zPosition="1" size="400,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
-		<widget name="list" position="10,10" size="690,210" scrollbarMode="showOnDemand" />
-		</screen>"""
+	<screen name="MRUAPlayer_Suboptions2" position="30,55" size="600,250" title="%s" >
+	<widget name="list" zPosition="2" transparent="1" position="10,10" size="600,250" scrollbarMode="showOnDemand" />
+	<widget name="sizeval" position="300,10" zPosition="3" size="250,40" font="Regular;20" valign="top" halign="left" transparent="1" />
+	<widget name="posval" position="300,40" zPosition="3" size="250,40" font="Regular;20" valign="top" halign="left" transparent="1" />
+	<widget name="colorval" position="300,70" zPosition="3" size="250,40" font="Regular;20" valign="top" halign="left" transparent="1" />
+	<widget name="encval" position="300,100" zPosition="3" size="250,40" font="Regular;20" valign="top" halign="left" transparent="1" />
+	<widget name="delayval" position="300,130" zPosition="3" size="250,40" font="Regular;20" valign="top" halign="left" transparent="1" />
+	<widget name="note" position="0,170" zPosition="3" size="600,30" font="Regular;18" valign="top" halign="center" transparent="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/key-red.png" position="400,210" zPosition="2" size="150,30" transparent="1" alphatest="on" />
+	<widget name="key_red" position="400,210" zPosition="3" size="150,30" font="Regular;16" valign="center" halign="center" transparent="1" />
+	</screen>""" % _("VideoPlayer - Menu")
 
-	def __init__(self, session, SubtitlesL):
+	def __init__(self, session):
+		
 		Screen.__init__(self, session)
-		self.session = session
-		self.SubtitlesL = SubtitlesL
+		self.save = False
+		self["sizeval"] = Label()
+		self["posval"] = Label()
+		self["colorval"] = Label()
+		self["encval"] = Label()
+		self["delayval"] = Label()
+		self["note"] = Label()
+		self["key_red"] = Button(_("Save as Defaults"))
+		self["list"] = IniciaSelListMC([])
 		self.list = []
-		self['actions'] = ActionMap(['ChannelSelectBaseActions',
-		 'WizardActions',
-		 'DirectionActions',
-		 'MenuActions',
-		 'NumberActions',
-		 'ColorActions'], {'save': self.SetLang,
-		 'back': self.Exit,
-		 'ok': self.SetLang,
-		 'green': self.SetLang,
-		 'red': self.Exit}, -2)
-		self['key_red'] = StaticText(_('Exit'))
-		self['key_green'] = StaticText(_('Set'))
-		self['text'] = StaticText(_(' '))
-		list = []
-		for subitem in self.SubtitlesL:
-			ipos = subitem.find(':')
-			ipos1 = subitem.find('[')
-			if ipos > -1 and ipos1 > -1:
-				subtrack = subitem[ipos + 3:ipos1 - 2]
-				if subtrack == 'tmp.srt':
-					subtrack = 'External'
-				subtmp = '   - Subtitle track :  | ' + subtrack + ' |'
-				list.append(subtmp)
-		self['list'] = MenuList(list)
+		self.list.append(_("Subtitle Size"))
+		self.list.append(_("Subtitle Position"))
+		self.list.append(_("Subtitle Color"))
+		self.list.append(_("Subtitle Encoding"))
+		self.list.append(_("Subtitle Delay (in seconds)"))
+		
+		self.colorindex = -1
+		self.colorcount = -1
+		
+		from xml.dom.minidom import parse
+		self.dom = parse("/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/subcolors.xml")
+		self.colors = self.dom.getElementsByTagName('color')
+		
+		#self.colorlist = []
+		#list.append(("Titel", "nothing", "entryID", "weight"))
+		#self.colorlist.append(("12", "13", "44", "46"))
+		#self.colorlist.append(("11", "14", "42", "45"))
 
-	def SendCMD2(self, k1, k2):
-		if k1 >= 0:
-			if os.path.exists('/tmp/rmfp.in2'):
-				os.remove('/tmp/rmfp.in2')
-			if os.path.exists('/tmp/rmfp.cmd2'):
-				os.remove('/tmp/rmfp.cmd2')
-			cmd = 'echo ' + str(k1) + ' > /tmp/rmfp.in2;echo ' + str(k2) + ' > /tmp/rmfp.cmd2'
-			os.popen(cmd)
+		self["actions"] = ActionMap(["MC_AudioPlayerActions"],
+		{
+			"cancel": self.Exit,
+			"ok": self.okbuttonClick,
+			"right": self.right,
+			"left": self.left,
+			"blue": self.setcolor,
+			"red": self.Dosave
+		}, -1)
+		self.onLayoutFinish.append(self.buildList)
+
+	def getServiceInterface(self, iface):
+		service = self.session.nav.getCurrentService()
+		if service:
+			attr = getattr(service, iface, None)
+			if callable(attr):
+				return attr()
+		return None
+		
+	def getInfo(self):
+		info = self.getServiceInterface("info")
+		infoTuple = info and info.getInfoObject(iServiceInformation.sUser+9)
+		print "Getting Subtitle Info ", repr(infoTuple)
+		if infoTuple:
+			self.size = infoTuple[0]
+			self.pos = infoTuple[1]
+			self.color = infoTuple[2]
+			self.enc = infoTuple[3]
+			self.delay = infoTuple[4]
+			self.enctype = infoTuple[5]
+		#Size
+		if self.size == 1:
+			self["sizeval"].setText(("%02d") % (config.plugins.mc_mrua.subsize.value))
 		else:
-			if os.path.exists('/tmp/rmfp.cmd2'):
-				os.remove('/tmp/rmfp.cmd2')
-			os.popen('echo ' + str(k2) + ' > /tmp/rmfp.cmd2')
+			self["sizeval"].setText(_("Fixed"))
+		#Position
+		if self.pos == 1:
+			self["posval"].setText(("%02d") % (config.plugins.mc_mrua.subpos.value))
+		else:
+			self["posval"].setText(_("Fixed"))
+		#Color
+		if self.color == 1:
+			self["colorval"].setText(("%s") % (config.plugins.mc_mrua.subcolorname.value))
+			for entry in self.colors:
+				self.colorcount = self.colorcount + 1
+				color=entry.getElementsByTagName('Name')[0].childNodes[0].nodeValue
+				if color == config.plugins.mc_mrua.subcolorname.value:
+					self.colorindex = self.colorcount
+		else:
+			self["colorval"].setText(_("Fixed"))
+		#Encoding
+		if self.enc == 1:
+			if self.enctype == 1:
+				self["encval"].setText(_("Latin-1"))
+				config.plugins.mc_mrua.subenc.value = "42"
+			elif self.enctype == 2:
+				self["encval"].setText(_("UTF-8"))
+				config.plugins.mc_mrua.subenc.value = "43"
+			elif self.enctype == 0:
+				if config.plugins.mc_mrua.subenc.value == 42:
+					self["encval"].setText(_("Latin-1"))
+				else:
+					self["encval"].setText(_("UTF-8"))
+		else:
+			self["encval"].setText(_("Fixed"))
+		#Delay
+		if self.delay == 1:
+			self["delayval"].setText(("%.1f") % (config.plugins.mc_mrua.subdelay.value))
+		else:
+			self["delayval"].setText(_("Fixed"))
 
-	def SetLang(self):
-		ind = self['list'].getSelectionIndex()
-		tmpstr = self.SubtitlesL[ind]
-		ipos = tmpstr.find('ID')
-		ipos1 = tmpstr.find('(')
-		if ipos >= 0 and ipos1 >= 0:
-			SubtitleL = int(tmpstr[ipos + 2:ipos1])
-		self.SendCMD2(SubtitleL, 118)
-		time.sleep(0.11)
-		self.close()
+	def buildList(self):
+		list = []
+		for i in range(0,len(self.list)):
+			text=""+self.list[i]
+			list.append(SubOptionsEntryComponent(text))
+		self["list"].setList(list)
+		self.getInfo()
+		self["note"].setText(_("Please use left/right keys to change settings"))
+
+	def right(self):
+		selection = self["list"].getSelectionIndex()
+		keys = self.getServiceInterface("keys")
+		#Size
+		if selection == 0 and self.size == 1:
+			val = config.plugins.mc_mrua.subsize.value + 5
+			if val <= 100:
+				config.plugins.mc_mrua.subsize.setValue(val)
+				self["sizeval"].setText(("%02d") % (config.plugins.mc_mrua.subsize.value))
+			keys.keyPressed(iServiceKeys.keyUser)
+		#Position
+		if selection == 1 and self.pos == 1:
+			val = config.plugins.mc_mrua.subpos.value + 5
+			if val <= 100:
+				config.plugins.mc_mrua.subpos.setValue(val)
+				self["posval"].setText(("%02d") % (config.plugins.mc_mrua.subpos.value))
+			keys.keyPressed(iServiceKeys.keyUser+1)
+		#Color
+		if selection == 2 and self.color == 1:
+			if self.colorindex < self.colorcount:
+				self.colorindex = self.colorindex + 1
+			else:
+				self.colorindex = 0
+			color = self.colors[self.colorindex].getElementsByTagName('Name')[0].childNodes[0].nodeValue
+			print color
+			config.plugins.mc_mrua.subcolorname.value = self.colors[self.colorindex].getElementsByTagName('Name')[0].childNodes[0].nodeValue
+			config.plugins.mc_mrua.subcolorinside.value = self.colors[self.colorindex].getElementsByTagName('inside')[0].childNodes[0].nodeValue 
+			config.plugins.mc_mrua.subcoloroutside.value = self.colors[self.colorindex].getElementsByTagName('outside')[0].childNodes[0].nodeValue
+			self["colorval"].setText(("%s") % (config.plugins.mc_mrua.subcolorname.value))
+			keys.keyPressed(iServiceKeys.keyUser+5)
+		#Encoding
+		if selection == 3 and self.enc == 1:
+			config.plugins.mc_mrua.subenc.handleKey(KEY_RIGHT)
+			print config.plugins.mc_mrua.subenc.value
+			if config.plugins.mc_mrua.subenc.value == "42":
+				self["encval"].setText(_("Latin-1"))
+			else:
+				self["encval"].setText(_("UTF-8"))
+			keys.keyPressed(iServiceKeys.keyUser+3)
+		#Delay
+		if selection == 4 and self.delay == 1:
+			val = config.plugins.mc_mrua.subdelay.value + 1
+			if val <= 90:
+				config.plugins.mc_mrua.subdelay.setValue(val)
+				self["delayval"].setText(("%.1f") % (config.plugins.mc_mrua.subdelay.value))
+			keys.keyPressed(iServiceKeys.keyUser+4)
+
+	def left(self):
+		selection = self["list"].getSelectionIndex()
+		keys = self.getServiceInterface("keys")
+		#Size
+		if selection == 0 and self.size == 1:
+			val = config.plugins.mc_mrua.subsize.value - 5
+			if val >= 5:
+				config.plugins.mc_mrua.subsize.setValue(val)
+				self["sizeval"].setText(("%02d") % (config.plugins.mc_mrua.subsize.value))
+			keys.keyPressed(iServiceKeys.keyUser)
+		#Position
+		if selection == 1 and self.pos == 1:
+			val = config.plugins.mc_mrua.subpos.value - 5
+			if val >= 0:
+				config.plugins.mc_mrua.subpos.setValue(val)
+				self["posval"].setText(("%02d") % (config.plugins.mc_mrua.subpos.value))
+			keys.keyPressed(iServiceKeys.keyUser+1)
+		#Color
+		if selection == 2 and self.color == 1:
+			if self.colorindex > 0:
+				self.colorindex = self.colorindex - 1
+			else:
+				self.colorindex = self.colorcount
+			color = self.colors[self.colorindex].getElementsByTagName('Name')[0].childNodes[0].nodeValue
+			print color
+			config.plugins.mc_mrua.subcolorname.value = self.colors[self.colorindex].getElementsByTagName('Name')[0].childNodes[0].nodeValue
+			config.plugins.mc_mrua.subcolorinside.value = self.colors[self.colorindex].getElementsByTagName('inside')[0].childNodes[0].nodeValue 
+			config.plugins.mc_mrua.subcoloroutside.value = self.colors[self.colorindex].getElementsByTagName('outside')[0].childNodes[0].nodeValue
+			self["colorval"].setText(("%s") % (config.plugins.mc_mrua.subcolorname.value))
+			keys.keyPressed(iServiceKeys.keyUser+5)
+		#Encoding
+		if selection == 3 and self.enc == 1:
+			config.plugins.mc_mrua.subenc.handleKey(KEY_LEFT)
+			print config.plugins.mc_mrua.subenc.value
+			if config.plugins.mc_mrua.subenc.value == "42":
+				self["encval"].setText(_("Latin-1"))
+			else:
+				self["encval"].setText(_("UTF-8"))
+			keys.keyPressed(iServiceKeys.keyUser+3)
+		#Delay
+		if selection == 4 and self.delay == 1:
+			val = config.plugins.mc_mrua.subdelay.value - 1
+			if val >= -90:
+				config.plugins.mc_mrua.subdelay.setValue(val)
+				self["delayval"].setText(("%.1f") % (config.plugins.mc_mrua.subdelay.value))
+			keys.keyPressed(iServiceKeys.keyUser+4)
+
+	def Dosave(self):
+		print "Saving settings as default"
+		self["note"].setText(_("Please use left/right keys to change settings...SAVED"))
+		self.save = True
+
+	def setcolor(self):
+		keys = self.getServiceInterface("keys")
+		keys.keyPressed(iServiceKeys.keyUser+5)
+
+	def okbuttonClick(self):
+		self.Exit()
 
 	def Exit(self):
-		self.close()
+		if self.save == True:
+			val = 1
+		else:
+			val = 0
+		self.close(val)
 
-global cache
+#-----------------------------------------------------------------------------------------------------------------------
+#Depreciated - Not used anymore
+class MRUAPlayer_SubOptions(Screen):
+	skin = """
+		<screen position="80,80" size="600,220" title="Subtitle Options" >
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/key-yellow.png" position="360,30" zPosition="2" size="150,30" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/key-blue.png" position="360,90" zPosition="2" size="150,30" transparent="1" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/images/icons/key-red.png" position="360,150" zPosition="2" size="150,30" transparent="1" alphatest="on" />
+			<widget name="key_yellow" position="360,30" zPosition="3" size="150,30" font="Regular;20" valign="center" halign="center" transparent="1" />
+			<widget name="key_blue" position="360,90" zPosition="3" size="150,30" font="Regular;20" valign="center" halign="center" transparent="1" />
+			<widget name="key_red" position="360,150" zPosition="3" size="150,30" font="Regular;20" valign="center" halign="center" transparent="1" />
+			<widget name="navigation" position="40,30" zPosition="3" size="200,200" font="Regular;20" valign="top" halign="left" transparent="1" />
+		</screen>"""
+		
+	def __init__(self, session):
+		self.skin = MRUAPlayer_SubOptions.skin
+		Screen.__init__(self, session)
+		
+		self["DVDPlayerPlaybackActions"] = HelpableActionMap(self, "MC_AudioPlayerActions",
+		{
+			"ok": (self.close, _("Play selected file")),
+			"cancel": (self.close, _("Exit Video Player")),
+			"left": (self.left, _("Move left")),
+			"right": (self.right, _("Move right")),
+			"up": (self.up, _("Move up")),
+			"down": (self.down, _("Move down")),
+			"nextBouquet": (self.increase, _("Increase Size")),
+			"prevBouquet": (self.decrease, _("Decrease Size")),
+			"red": (self.reset, _("Reset to defaults")),
+			"yellow": (self.encoding, _("Change Subtitle Encoding")),
+			"blue": (self.color, _("Change Subtitle Color")),
+		}, -2)
+		
+		self["key_red"] = Button(_("Reset"))
+		self["key_yellow"] = Button(_("Encoding"))
+		self["key_blue"] = Button(_("Color"))
+		self["navigation"] = Button(_("Use the navigation buttons on the remote to move the subtitles around"))
+		
+		self.service = self.session.nav.getCurrentService()
+
+	def getServiceInterface(self, iface):
+		service = self.service
+		if service:
+			attr = getattr(service, iface, None)
+			if callable(attr):
+				return attr()
+			return None	
+
+	def up(self):
+		keys = self.getServiceInterface("keys")
+		keys.keyPressed(iServiceKeys.keyUp)
+
+	def down(self):
+		keys = self.getServiceInterface("keys")
+		keys.keyPressed(iServiceKeys.keyDown)
+
+	def left(self):
+		keys = self.getServiceInterface("keys")
+		keys.keyPressed(iServiceKeys.keyLeft)
+
+	def right(self):
+		keys = self.getServiceInterface("keys")
+		keys.keyPressed(iServiceKeys.keyRight)
+
+	def increase(self):
+		keys = self.getServiceInterface("keys")
+		keys.keyPressed(iServiceKeys.keyUser)
+
+	def decrease(self):
+		keys = self.getServiceInterface("keys")
+		keys.keyPressed(iServiceKeys.keyUser+1)
+
+	def reset(self):
+		keys = self.getServiceInterface("keys")
+		keys.keyPressed(iServiceKeys.keyUser+4)
+
+	def encoding(self):
+		keys = self.getServiceInterface("keys")
+		keys.keyPressed(iServiceKeys.keyUser+2)
+
+	def color(self):
+		keys = self.getServiceInterface("keys")
+		keys.keyPressed(iServiceKeys.keyUser+3)

@@ -25,7 +25,7 @@ class MC_VideoPlayer(Screen, HelpableScreen):
 		
 		self["key_red"] = Button(_("Exit"))
 		self["key_green"] = Button(_("Info"))
-		self["key_yellow"] = Button(_(" "))
+		self["key_yellow"] = Button(_("IMDb"))
 		self["key_blue"] = Button(_("Menu"))
 		self["currentfolder"] = Label("")
 		
@@ -57,6 +57,7 @@ class MC_VideoPlayer(Screen, HelpableScreen):
 				"menu": (self.showMenu, _("File / Folder Options")),
 				"info": (self.showFileInfo, _("Show File Info")),
 				#"red": (self.Exit, _("Exit Videos")),
+				"yellow": (self.startIMDb, ("Start IMDb")),
 				"home": (self.Exit, _("Exit Videos")),
 			}, -2)
 
@@ -134,6 +135,8 @@ class MC_VideoPlayer(Screen, HelpableScreen):
 				self.session.open(AZDVDPlayer, dvd_device = dvdDevice, dvd_filelist = dvdFilelist)
 			else:
 				print "Play dvd normal"
+				from Screens import DVD
+				self.session.open(DVD.DVDPlayer, dvd_filelist=dvdFilelist)
 
 		elif self.isFile:
 			if self.azbox == True:
@@ -207,6 +210,11 @@ class MC_VideoPlayer(Screen, HelpableScreen):
 			delfile = self["filelist"].getFilename()
 			os.remove(delfile)
 			self["filelist"].refresh()
+
+	def startIMDb(self):
+		from MC_Imdb import IMDB
+		name = self["filelist"].getName()
+		self.session.open(IMDB, name.partition('(')[0])
 
 class MC_VideoInfoView(Screen):
 	skin = """

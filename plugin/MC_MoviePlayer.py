@@ -55,7 +55,7 @@ class MC_MoviePlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, Inf
 		InfoBarSeek.__init__(self)
 		InfoBarPVRState.__init__(self)
 
-		self.skinName = ["MC_MoviePlayer"]
+		self.skinName = ["MC_MoviePlayer", "DVDPlayer"]
 
 		self.oldService = self.session.nav.getCurrentlyPlayingServiceReference()
 		self.session.nav.stopService()
@@ -99,6 +99,7 @@ class MC_MoviePlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, Inf
 		self["MC_MoviePlayerActions"] = HelpableActionMap(self, "MC_MoviePlayerActions",
 			{
 				#OWN ACTIONS
+				"ok": (self.keyOk, _("Toggle info")),
 				"stop": (self.stop, _("Stop Playback")),
 				"keyMenu": (self.menu, _("Show menu options")),
 				"seekTotime": (self.seekTotime, _("switch to the next angle")),
@@ -224,7 +225,8 @@ class MC_MoviePlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, Inf
 		self.exit()
 
 	def keyOk(self):
-		 self.toggleShow()
+		print "pressed ok"
+		self.toggleShow()
  
 	def keyCancel(self):
 		self.exit()
