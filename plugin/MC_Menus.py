@@ -20,11 +20,11 @@ class IniciaSelListMC(MenuList):
 def IniciaSelListEntryMC(texto,imagen="na"):
 	res = [texto]
 	res.append(MultiContentEntryText(pos=(42, 4), size=(1000, 30), font=0, text=texto))
-	carpetaimg="/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/images/"
-	png = "" + carpetaimg+"MC_vo"+imagen+"-fs8.png"
+	carpetaimg = "/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/images/"
+	png = "" + carpetaimg + "MC_vo" + imagen + "-fs8.png"
 
 	if fileExists(png):
-		fpng =LoadPixmap(png)
+		fpng = LoadPixmap(png)
 		res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 2, 2, 35, 25, fpng))
 	return res
 
@@ -77,7 +77,7 @@ class Scalingmode_Menu(Screen):
 		print self.activemode
 		print "end active mode print"
 		for i in range(0,len(self.list)):
-			text=""+self.list[i]
+			text = "" + self.list[i]
 			active = 'no'
 			if str(i) == str(self.activemode):
 				active = 'yes'

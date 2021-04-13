@@ -214,7 +214,7 @@ class MC_MoviePlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, Inf
 
 	def seekProcess(self, pts):
 		if pts is not -1:
-			service =  self.session.nav.getCurrentService()
+			service = self.session.nav.getCurrentService()
 			if service:
 				seekable = self.getSeek()
 				if seekable:
@@ -288,7 +288,7 @@ class MC_MoviePlayer_Menu(Screen):
 	def buildList(self):
 		list = []
 		for i in range(0,len(self.list)):
-			text=""+self.list[i]
+			text = "" + self.list[i]
 			list.append(text)
 		self["list"].setList(list)
 

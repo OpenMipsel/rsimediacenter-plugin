@@ -117,11 +117,11 @@ class MC_VideoPlayer(Screen, HelpableScreen):
 		if self.pathname != "":
 			dvdFilelist = []
 			dvdDevice = None
-			if fileExists(self.pathname+"VIDEO_TS.IFO"):
+			if fileExists(self.pathname + "VIDEO_TS.IFO"):
 				dvdFilelist.append(str(self.pathname[0:-1]))
 				self.isDVD = True
-			elif fileExists(self.pathname+"VIDEO_TS/VIDEO_TS.IFO"):
-				dvdFilelist.append(str(self.pathname+"VIDEO_TS"))
+			elif fileExists(self.pathname + "VIDEO_TS/VIDEO_TS.IFO"):
+				dvdFilelist.append(str(self.pathname + "VIDEO_TS"))
 				self.isDVD = True
 			elif self.isIso:
 				self["filelist"].setIsoDir(filename, self["filelist"].getCurrentDirectory())

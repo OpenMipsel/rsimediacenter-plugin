@@ -128,11 +128,11 @@ class MRUAPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBar
 		self.__event_tracker = ServiceEventTracker(screen=self, eventmap={
 				iPlayableService.evStopped: self.__serviceStopped,
 				iPlayableService.evStart: self.__serviceStarted,
-				iPlayableService.evUser+1: self.__statePlay,
-				iPlayableService.evUser+2: self.__statePause,
-				iPlayableService.evUser+3: self.__osdStringAvail,
-				iPlayableService.evUser+4: self.__osdAudioInfoAvail,
-				iPlayableService.evUser+5: self.__osdSubtitleInfoAvail
+				iPlayableService.evUser + 1: self.__statePlay,
+				iPlayableService.evUser + 2: self.__statePause,
+				iPlayableService.evUser + 3: self.__osdStringAvail,
+				iPlayableService.evUser + 4: self.__osdAudioInfoAvail,
+				iPlayableService.evUser + 5: self.__osdSubtitleInfoAvail
 			})
 
 		self["MRUAPlayerDirectionActions"] = ActionMap(["DirectionActions"],
@@ -227,7 +227,7 @@ class MRUAPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBar
 
 	def __osdAudioInfoAvail(self):
 		info = self.getServiceInterface("info")
-		audioTuple = info and info.getInfoObject(iServiceInformation.sUser+6)
+		audioTuple = info and info.getInfoObject(iServiceInformation.sUser + 6)
 		print "AudioInfoAvail ", repr(audioTuple)
 		if audioTuple:
 			audioString = "%d: %s (%s)" % (audioTuple[0],audioTuple[1],audioTuple[2])
@@ -238,7 +238,7 @@ class MRUAPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBar
 
 	def __osdSubtitleInfoAvail(self):
 		info = self.getServiceInterface("info")
-		subtitleTuple = info and info.getInfoObject(iServiceInformation.sUser+7)
+		subtitleTuple = info and info.getInfoObject(iServiceInformation.sUser + 7)
 		print "SubtitleInfoAvail ", repr(subtitleTuple)
 		if subtitleTuple:
 			subtitleString = ""
@@ -471,7 +471,7 @@ class MRUAPlayer_Menu(Screen):
 	def buildList(self):
 		list = []
 		for i in range(0,len(self.list)):
-			texto=""+self.list[i]
+			texto = "" + self.list[i]
 			list.append(IniciaSelListEntryMC(texto, str(i)))
 		self["list"].setList(list)
 
@@ -555,7 +555,7 @@ class MRUAPlayer_Suboptions2(Screen):
 		
 	def getInfo(self):
 		info = self.getServiceInterface("info")
-		infoTuple = info and info.getInfoObject(iServiceInformation.sUser+9)
+		infoTuple = info and info.getInfoObject(iServiceInformation.sUser + 9)
 		print "Getting Subtitle Info ", repr(infoTuple)
 		if infoTuple:
 			self.size = infoTuple[0]
@@ -579,7 +579,7 @@ class MRUAPlayer_Suboptions2(Screen):
 			self["colorval"].setText(("%s") % (config.plugins.mc_mrua.subcolorname.value))
 			for entry in self.colors:
 				self.colorcount = self.colorcount + 1
-				color=entry.getElementsByTagName('Name')[0].childNodes[0].nodeValue
+				color = entry.getElementsByTagName('Name')[0].childNodes[0].nodeValue
 				if color == config.plugins.mc_mrua.subcolorname.value:
 					self.colorindex = self.colorcount
 		else:
@@ -608,7 +608,7 @@ class MRUAPlayer_Suboptions2(Screen):
 	def buildList(self):
 		list = []
 		for i in range(0,len(self.list)):
-			text=""+self.list[i]
+			text = "" + self.list[i]
 			list.append(SubOptionsEntryComponent(text))
 		self["list"].setList(list)
 		self.getInfo()
@@ -630,7 +630,7 @@ class MRUAPlayer_Suboptions2(Screen):
 			if val <= 100:
 				config.plugins.mc_mrua.subpos.setValue(val)
 				self["posval"].setText(("%02d") % (config.plugins.mc_mrua.subpos.value))
-			keys.keyPressed(iServiceKeys.keyUser+1)
+			keys.keyPressed(iServiceKeys.keyUser + 1)
 		#Color
 		if selection == 2 and self.color == 1:
 			if self.colorindex < self.colorcount:
@@ -643,7 +643,7 @@ class MRUAPlayer_Suboptions2(Screen):
 			config.plugins.mc_mrua.subcolorinside.value = self.colors[self.colorindex].getElementsByTagName('inside')[0].childNodes[0].nodeValue 
 			config.plugins.mc_mrua.subcoloroutside.value = self.colors[self.colorindex].getElementsByTagName('outside')[0].childNodes[0].nodeValue
 			self["colorval"].setText(("%s") % (config.plugins.mc_mrua.subcolorname.value))
-			keys.keyPressed(iServiceKeys.keyUser+5)
+			keys.keyPressed(iServiceKeys.keyUser + 5)
 		#Encoding
 		if selection == 3 and self.enc == 1:
 			config.plugins.mc_mrua.subenc.handleKey(KEY_RIGHT)
@@ -652,14 +652,14 @@ class MRUAPlayer_Suboptions2(Screen):
 				self["encval"].setText(_("Latin-1"))
 			else:
 				self["encval"].setText(_("UTF-8"))
-			keys.keyPressed(iServiceKeys.keyUser+3)
+			keys.keyPressed(iServiceKeys.keyUser + 3)
 		#Delay
 		if selection == 4 and self.delay == 1:
 			val = config.plugins.mc_mrua.subdelay.value + 1
 			if val <= 90:
 				config.plugins.mc_mrua.subdelay.setValue(val)
 				self["delayval"].setText(("%.1f") % (config.plugins.mc_mrua.subdelay.value))
-			keys.keyPressed(iServiceKeys.keyUser+4)
+			keys.keyPressed(iServiceKeys.keyUser + 4)
 
 	def left(self):
 		selection = self["list"].getSelectionIndex()
@@ -677,7 +677,7 @@ class MRUAPlayer_Suboptions2(Screen):
 			if val >= 0:
 				config.plugins.mc_mrua.subpos.setValue(val)
 				self["posval"].setText(("%02d") % (config.plugins.mc_mrua.subpos.value))
-			keys.keyPressed(iServiceKeys.keyUser+1)
+			keys.keyPressed(iServiceKeys.keyUser + 1)
 		#Color
 		if selection == 2 and self.color == 1:
 			if self.colorindex > 0:
@@ -690,7 +690,7 @@ class MRUAPlayer_Suboptions2(Screen):
 			config.plugins.mc_mrua.subcolorinside.value = self.colors[self.colorindex].getElementsByTagName('inside')[0].childNodes[0].nodeValue 
 			config.plugins.mc_mrua.subcoloroutside.value = self.colors[self.colorindex].getElementsByTagName('outside')[0].childNodes[0].nodeValue
 			self["colorval"].setText(("%s") % (config.plugins.mc_mrua.subcolorname.value))
-			keys.keyPressed(iServiceKeys.keyUser+5)
+			keys.keyPressed(iServiceKeys.keyUser + 5)
 		#Encoding
 		if selection == 3 and self.enc == 1:
 			config.plugins.mc_mrua.subenc.handleKey(KEY_LEFT)
@@ -699,14 +699,14 @@ class MRUAPlayer_Suboptions2(Screen):
 				self["encval"].setText(_("Latin-1"))
 			else:
 				self["encval"].setText(_("UTF-8"))
-			keys.keyPressed(iServiceKeys.keyUser+3)
+			keys.keyPressed(iServiceKeys.keyUser + 3)
 		#Delay
 		if selection == 4 and self.delay == 1:
 			val = config.plugins.mc_mrua.subdelay.value - 1
 			if val >= -90:
 				config.plugins.mc_mrua.subdelay.setValue(val)
 				self["delayval"].setText(("%.1f") % (config.plugins.mc_mrua.subdelay.value))
-			keys.keyPressed(iServiceKeys.keyUser+4)
+			keys.keyPressed(iServiceKeys.keyUser + 4)
 
 	def Dosave(self):
 		print "Saving settings as default"
@@ -715,7 +715,7 @@ class MRUAPlayer_Suboptions2(Screen):
 
 	def setcolor(self):
 		keys = self.getServiceInterface("keys")
-		keys.keyPressed(iServiceKeys.keyUser+5)
+		keys.keyPressed(iServiceKeys.keyUser + 5)
 
 	def okbuttonClick(self):
 		self.Exit()
@@ -797,16 +797,16 @@ class MRUAPlayer_SubOptions(Screen):
 
 	def decrease(self):
 		keys = self.getServiceInterface("keys")
-		keys.keyPressed(iServiceKeys.keyUser+1)
+		keys.keyPressed(iServiceKeys.keyUser + 1)
 
 	def reset(self):
 		keys = self.getServiceInterface("keys")
-		keys.keyPressed(iServiceKeys.keyUser+4)
+		keys.keyPressed(iServiceKeys.keyUser + 4)
 
 	def encoding(self):
 		keys = self.getServiceInterface("keys")
-		keys.keyPressed(iServiceKeys.keyUser+2)
+		keys.keyPressed(iServiceKeys.keyUser + 2)
 
 	def color(self):
 		keys = self.getServiceInterface("keys")
-		keys.keyPressed(iServiceKeys.keyUser+3)
+		keys.keyPressed(iServiceKeys.keyUser + 3)

@@ -34,7 +34,7 @@ class DVDSummary(Screen):
 class DVDOverlay(Screen):
 	def __init__(self, session, args=None):
 		desktop_size = getDesktop(0).size()
-		DVDOverlay.skin = """<screen name="DVDOverlay" position="0,0" size="%d,%d" flags="wfNoBorder" zPosition="-1" backgroundColor="transparent" />""" %(desktop_size.width(), desktop_size.height())
+		DVDOverlay.skin = """<screen name="DVDOverlay" position="0,0" size="%d,%d" flags="wfNoBorder" zPosition="-1" backgroundColor="transparent" />""" % (desktop_size.width(), desktop_size.height())
 		Screen.__init__(self, session)
 
 class ChapterZap(Screen):
@@ -153,15 +153,15 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 		self.__event_tracker = ServiceEventTracker(screen=self, eventmap={
 				iPlayableService.evStopped: self.__serviceStopped,
 				iPlayableService.evStart: self.__serviceStarted,
-				iPlayableService.evUser+3: self.__osdFFwdInfoAvail,
-				iPlayableService.evUser+4: self.__osdFBwdInfoAvail,
-				iPlayableService.evUser+6: self.__osdAudioInfoAvail,
-				iPlayableService.evUser+7: self.__osdSubtitleInfoAvail,
-				iPlayableService.evUser+8: self.__chapterUpdated,
-				iPlayableService.evUser+9: self.__titleUpdated,
-				iPlayableService.evUser+11: self.__menuOpened,
-				iPlayableService.evUser+12: self.__menuClosed,
-				iPlayableService.evUser+13: self.__osdAngleInfoAvail
+				iPlayableService.evUser + 3: self.__osdFFwdInfoAvail,
+				iPlayableService.evUser + 4: self.__osdFBwdInfoAvail,
+				iPlayableService.evUser + 6: self.__osdAudioInfoAvail,
+				iPlayableService.evUser + 7: self.__osdSubtitleInfoAvail,
+				iPlayableService.evUser + 8: self.__chapterUpdated,
+				iPlayableService.evUser + 9: self.__titleUpdated,
+				iPlayableService.evUser + 11: self.__menuOpened,
+				iPlayableService.evUser + 12: self.__menuClosed,
+				iPlayableService.evUser + 13: self.__osdAngleInfoAvail
 			})
 
 		self["DVDPlayerDirectionActions"] = ActionMap(["DirectionActions"],
@@ -277,7 +277,7 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 
 	def __osdAudioInfoAvail(self):
 		info = self.getServiceInterface("info")
-		audioTuple = info and info.getInfoObject(iServiceInformation.sUser+6)
+		audioTuple = info and info.getInfoObject(iServiceInformation.sUser + 6)
 		print "AudioInfoAvail ", repr(audioTuple)
 		if audioTuple:
 			audioString = "%d: %s (%s)" % (audioTuple[0],audioTuple[1],audioTuple[2])
@@ -288,7 +288,7 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 
 	def __osdSubtitleInfoAvail(self):
 		info = self.getServiceInterface("info")
-		subtitleTuple = info and info.getInfoObject(iServiceInformation.sUser+7)
+		subtitleTuple = info and info.getInfoObject(iServiceInformation.sUser + 7)
 		print "SubtitleInfoAvail ", repr(subtitleTuple)
 		if subtitleTuple:
 			subtitleString = ""
@@ -301,7 +301,7 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 	
 	def __osdAngleInfoAvail(self):
 		info = self.getServiceInterface("info")
-		angleTuple = info and info.getInfoObject(iServiceInformation.sUser+8)
+		angleTuple = info and info.getInfoObject(iServiceInformation.sUser + 8)
 		print "AngleInfoAvail ", repr(angleTuple)
 		if angleTuple:
 			angleString = ""
@@ -469,31 +469,31 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 		self.session.open(SubtitleSelection, self)
 		
 	def nextSubtitleTrack(self):
-		self.sendKey(iServiceKeys.keyUser+1)
+		self.sendKey(iServiceKeys.keyUser + 1)
 
 	def enterDVDAudioMenu(self):
-		self.sendKey(iServiceKeys.keyUser+2)
+		self.sendKey(iServiceKeys.keyUser + 2)
 
 	def nextChapter(self):
-		self.sendKey(iServiceKeys.keyUser+3)
+		self.sendKey(iServiceKeys.keyUser + 3)
 
 	def prevChapter(self):
-		self.sendKey(iServiceKeys.keyUser+4)
+		self.sendKey(iServiceKeys.keyUser + 4)
 
 	def nextTitle(self):
-		self.sendKey(iServiceKeys.keyUser+5)
+		self.sendKey(iServiceKeys.keyUser + 5)
 
 	def prevTitle(self):
-		self.sendKey(iServiceKeys.keyUser+6)
+		self.sendKey(iServiceKeys.keyUser + 6)
 
 	def enterRootMenu(self):
-		self.sendKey(iServiceKeys.keyUser+7)
+		self.sendKey(iServiceKeys.keyUser + 7)
 
 	def enterTitleMenu(self):
-		self.sendKey(iServiceKeys.keyUser+8)
+		self.sendKey(iServiceKeys.keyUser + 8)
 
 	def nextAngle(self):
-		self.sendKey(iServiceKeys.keyUser+9)
+		self.sendKey(iServiceKeys.keyUser + 9)
 
 #	MENU ACTIONS
 	def keyRight(self):
@@ -597,7 +597,7 @@ class AZDVDPlayer_Menu(Screen):
 	def buildList(self):
 		list = []
 		for i in range(0,len(self.list)):
-			texto=""+self.list[i]
+			texto = "" + self.list[i]
 			list.append(IniciaSelListEntryMC(texto, str(i)))
 		self["list"].setList(list)
 

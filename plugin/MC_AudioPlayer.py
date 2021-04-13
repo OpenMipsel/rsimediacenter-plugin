@@ -49,7 +49,7 @@ playlist = []
 
 def getAspect():
 	val = AVSwitch().getAspectRatioSetting()
-	return val/2
+	return val / 2
 	
 #------------------------------------------------------------------------------------------
 
@@ -179,9 +179,9 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 				iPlayableService.evStopped: self.doEOF,
 				iPlayableService.evEOF: self.doEOF,
 				iPlayableService.evUpdatedInfo: self.__evUpdatedInfo,
-				iPlayableService.evUser+11: self.__evDecodeError,
-				iPlayableService.evUser+12: self.__evPluginError,
-				iPlayableService.evUser+13: self["coverArt"].embeddedCoverArt
+				iPlayableService.evUser + 11: self.__evDecodeError,
+				iPlayableService.evUser + 12: self.__evPluginError,
+				iPlayableService.evUser + 13: self["coverArt"].embeddedCoverArt
 			})
 			
 		self["actions"] = HelpableActionMap(self, "MC_AudioPlayerActions", 
@@ -397,7 +397,7 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 			if sTitle == "":
 				sTitle = currPlay.info().getName().split('/')[-1]
 					
-			self["fileinfo"].setText(_("Title:") + " " + sTitle + "\n" + _("Artist:") + " " +  sArtist + "\n" + _("Album:") + " " + sAlbum + "\n" + _("Genre:") + " " + sGenre + "\n" + _("Comment:") + " " + sComment)
+			self["fileinfo"].setText(_("Title:") + " " + sTitle + "\n" + _("Artist:") + " " + sArtist + "\n" + _("Album:") + " " + sAlbum + "\n" + _("Genre:") + " " + sGenre + "\n" + _("Comment:") + " " + sComment)
 			self["curplayingtitle"].setText(_("Now Playing:") + " " + sArtist + " - " + sTitle)
 
 	def addFiletoPls(self):
@@ -537,7 +537,7 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 
 	def __evPluginError(self):
 		currPlay = self.session.nav.getCurrentService()
-		message = currPlay.info().getInfoString(iServiceInformation.sUser+12)
+		message = currPlay.info().getInfoString(iServiceInformation.sUser + 12)
 		print "[__evPluginError]", message
 		self.session.open(MessageBox, message, type=MessageBox.TYPE_INFO,timeout=20)		
 
@@ -583,7 +583,7 @@ class MC_AudioPlaylist(Screen):
 				#iPlayableService.evStopped: self.StopPlayback,
 				#iPlayableService.evUser+11: self.__evDecodeError,
 				#iPlayableService.evUser+12: self.__evPluginError,
-				iPlayableService.evUser+13: self["coverArt"].embeddedCoverArt
+				iPlayableService.evUser + 13: self["coverArt"].embeddedCoverArt
 			})
 		
 		self["actions"] = HelpableActionMap(self, "MC_AudioPlayerActions", 
@@ -737,7 +737,7 @@ class MC_AudioPlaylist(Screen):
 			if sTitle == "":
 				sTitle = currPlay.info().getName().split('/')[-1]
 					
-			self["fileinfo"].setText(_("Title:") + " " + sTitle + "\n" + _("Artist:") + " " +  sArtist + "\n" + _("Album:") + " " + sAlbum + "\n" + _("Genre:") + " " + sGenre + "\n" + _("Comment:") + " " + sComment)
+			self["fileinfo"].setText(_("Title:") + " " + sTitle + "\n" + _("Artist:") + " " + sArtist + "\n" + _("Album:") + " " + sAlbum + "\n" + _("Genre:") + " " + sGenre + "\n" + _("Comment:") + " " + sComment)
 			self["curplayingtitle"].setText(_("Now Playing:") + " " + sArtist + " - " + sTitle)
 
 	def save_playlist(self):

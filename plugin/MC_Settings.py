@@ -181,9 +181,9 @@ class MCS_SkinSelector(Screen):
 		if self["SkinList"].getCurrent() == "Default Skin":
 			skinfile = "default/skin.xml"
 		else:
-			skinfile = self["SkinList"].getCurrent()+"/skin.xml"
+			skinfile = self["SkinList"].getCurrent() + "/skin.xml"
 
-		print "Skinselector: Selected Skin: "+self.root+skinfile
+		print "Skinselector: Selected Skin: " + self.root + skinfile
 		config.plugins.mc_globalsettings.currentskin.path.value = skinfile
 		config.plugins.mc_globalsettings.currentskin.path.save()
 		restartbox = self.session.openWithCallback(self.restartGUI,MessageBox,_("GUI needs a restart to apply a new skin\nDo you want to Restart the GUI now?"), MessageBox.TYPE_YESNO)
@@ -191,9 +191,9 @@ class MCS_SkinSelector(Screen):
 
 	def loadPreview(self):
 		if self["SkinList"].getCurrent() == "Default Skin":
-			pngpath = self.root+"/preview.png"
+			pngpath = self.root + "/preview.png"
 		else:
-			pngpath = self.root+self["SkinList"].getCurrent()+"/preview.png"
+			pngpath = self.root + self["SkinList"].getCurrent() + "/preview.png"
 
 		if not path.exists(pngpath):
 			# FIXME: don't use hardcoded path
@@ -275,6 +275,6 @@ class MCS_Update(Screen):
 		if retval == 0:
 			self.working = True
 			self["text"].setText(result)
-			self.session.open(MessageBox,_("Your MediaCenter was hopefully updated now ...\n\nYou have to restart Enigma now!"),  MessageBox.TYPE_INFO)
+			self.session.open(MessageBox,_("Your MediaCenter was hopefully updated now ...\n\nYou have to restart Enigma now!"), MessageBox.TYPE_INFO)
 		else:
 			self.working = False

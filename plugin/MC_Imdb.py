@@ -423,7 +423,7 @@ class IMDB(Screen):
 			else:
 				splitpos = self.eventName.find('(')
 				if splitpos > 0 and self.eventName.endswith(')'):
-					self.eventName = self.eventName[splitpos+1:-1]
+					self.eventName = self.eventName[splitpos + 1:-1]
 					self["statusbar"].setText(_("Re-Query IMDb: %s...") % (self.eventName))
 					localfile = "/tmp/imdbquery.html"
 					fetchurl = "http://imdb.com/find?q=" + self.event_quoted + "&s=tt&site=aka"
@@ -470,11 +470,11 @@ class IMDB(Screen):
 
 			for category in ("director", "creator", "writer", "seasons"):
 				if self.generalinfos.group(category):
-					Detailstext += "\n" + self.generalinfos.group('g_'+category) + ": " + self.generalinfos.group(category)
+					Detailstext += "\n" + self.generalinfos.group('g_' + category) + ": " + self.generalinfos.group(category)
 
 			for category in ("premiere", "country", "alternativ"):
 				if self.generalinfos.group(category):
-					Detailstext += "\n" + self.generalinfos.group('g_'+category) + ": " + self.htmltags.sub('', self.generalinfos.group(category).replace('\n',' ').replace("<br>", '\n').replace("<br />",'\n').replace("  ",' '))
+					Detailstext += "\n" + self.generalinfos.group('g_' + category) + ": " + self.htmltags.sub('', self.generalinfos.group(category).replace('\n',' ').replace("<br>", '\n').replace("<br />",'\n').replace("  ",' '))
 
 			rating = self.ratingmask.search(self.inhtml)
 			Ratingtext = _("no user rating yet")
@@ -483,7 +483,7 @@ class IMDB(Screen):
 				if rating != '<span id="voteuser"></span>':
 					Ratingtext = _("User Rating") + ": " + rating + " / 10"
 					try:
-						self.ratingstars = int(10*round(float(rating.replace(',','.')),1))
+						self.ratingstars = int(10 * round(float(rating.replace(',','.')),1))
 					except ValueError:
 						self.ratingstars = 0
 					self["stars"].show()
@@ -522,8 +522,8 @@ class IMDB(Screen):
 				Extratext = "Extra Info\n"
 
 				for category in ("tagline","outline","synopsis","keywords","awards","runtime","language","color","aspect","sound","cert","locations","company","trivia","goofs","quotes","connections"):
-					if extrainfos.group('g_'+category):
-						Extratext += extrainfos.group('g_'+category) + ": " + self.htmltags.sub('',extrainfos.group(category).replace("\n",'').replace("<br>", '\n').replace("<br />",'\n')) + "\n"
+					if extrainfos.group('g_' + category):
+						Extratext += extrainfos.group('g_' + category) + ": " + self.htmltags.sub('',extrainfos.group(category).replace("\n",'').replace("<br>", '\n').replace("<br />",'\n')) + "\n"
 				if extrainfos.group("g_comments"):
 					stripmask = re.compile('\s{2,}', re.DOTALL)
 					Extratext += extrainfos.group("g_comments") + " [" + stripmask.sub(' ', self.htmltags.sub('',extrainfos.group("commenter"))) + "]: " + self.htmltags.sub('',extrainfos.group("comment").replace("\n",' ')) + "\n"

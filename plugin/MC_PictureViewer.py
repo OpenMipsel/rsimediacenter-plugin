@@ -37,7 +37,7 @@ config.plugins.mc_pp.loop = ConfigEnableDisable(default=True)
 
 def getAspect():
 	val = AVSwitch().getAspectRatioSetting()
-	return val/2
+	return val / 2
 
 def getScale():
 	return AVSwitch().getFramebufferScale()
@@ -253,8 +253,8 @@ class MC_PicThumbViewer(Screen, HelpableScreen):
 		self.thumbsX = 4
 		
 		for x in range(self.thumbsC):
-			self["label"+str(x)] = Button("")
-			self["thumb"+str(x)] = Pixmap()
+			self["label" + str(x)] = Button("")
+			self["thumb" + str(x)] = Pixmap()
 		
 		self.positionlist = []
 		#Need to make this read from skin?
@@ -278,16 +278,16 @@ class MC_PicThumbViewer(Screen, HelpableScreen):
 		Page = 0
 		for x in piclist:
 			if x[0][1] == False:
-				self.filelist.append((index, framePos, Page, x[0][0],  path + x[0][0]))
+				self.filelist.append((index, framePos, Page, x[0][0], path + x[0][0]))
 				index += 1
 				framePos += 1
-				if framePos > (self.thumbsC -1):
+				if framePos > (self.thumbsC - 1):
 					framePos = 0
 					Page += 1
 			else:
 				self.dirlistcount += 1
 		
-		self.maxentry = len(self.filelist)-1
+		self.maxentry = len(self.filelist) - 1
 		self.index = lastindex - self.dirlistcount
 		if self.index < 0:
 			self.index = 0
@@ -322,12 +322,12 @@ class MC_PicThumbViewer(Screen, HelpableScreen):
 		self.Thumbnaillist = []
 		#clear Labels and Thumbnail
 		for x in range(self.thumbsC):
-			self["label"+str(x)].setText("")
-			self["thumb"+str(x)].hide()
+			self["label" + str(x)].setText("")
+			self["thumb" + str(x)].hide()
 		#paint Labels and fill Thumbnail-List
 		for x in self.filelist:
 			if x[T_PAGE] == self.currPage:
-				self["label"+str(x[T_FRAME_POS])].setText(x[T_NAME])
+				self["label" + str(x[T_FRAME_POS])].setText(x[T_NAME])
 				self.Thumbnaillist.append([0, x[T_FRAME_POS], x[T_FULL]])
 				
 		#paint Thumbnail start
@@ -363,7 +363,7 @@ class MC_PicThumbViewer(Screen, HelpableScreen):
 	def key_up(self):
 		self.index -= self.thumbsX
 		if self.index < 0:
-			self.index =self.maxentry
+			self.index = self.maxentry
 		self.paintFrame()
 		
 	def key_down(self):
@@ -415,9 +415,9 @@ class MC_PicView(Screen):
 		size_h = getDesktop(0).size().height()
 		
 		self.skin = "<screen position=\"0,0\" size=\"" + str(size_w) + "," + str(size_h) + "\" flags=\"wfNoBorder\" > \
-			<eLabel position=\"0,0\" zPosition=\"0\" size=\""+ str(size_w) + "," + str(size_h) + "\" backgroundColor=\"black\" /><widget name=\"pic\" position=\"" + str(space) + "," + str(space) + "\" size=\"" + str(size_w-(space*2)) + "," + str(size_h-(space*2)) + "\" zPosition=\"1\" alphatest=\"on\" /> \
-			<widget name=\"point\" position=\""+ str(space+5) + "," + str(space+2) + "\" size=\"20,20\" zPosition=\"2\" pixmap=\"skin_default/icons/record.png\" alphatest=\"on\" /> \
-			<widget name=\"play_icon\" position=\""+ str(space+25) + "," + str(space+2) + "\" size=\"20,20\" zPosition=\"2\" pixmap=\"skin_default/icons/ico_mp_play.png\"  alphatest=\"on\" /> \
+			<eLabel position=\"0,0\" zPosition=\"0\" size=\"" + str(size_w) + "," + str(size_h) + "\" backgroundColor=\"black\" /><widget name=\"pic\" position=\"" + str(space) + "," + str(space) + "\" size=\"" + str(size_w - (space * 2)) + "," + str(size_h - (space * 2)) + "\" zPosition=\"1\" alphatest=\"on\" /> \
+			<widget name=\"point\" position=\"" + str(space + 5) + "," + str(space + 2) + "\" size=\"20,20\" zPosition=\"2\" pixmap=\"skin_default/icons/record.png\" alphatest=\"on\" /> \
+			<widget name=\"play_icon\" position=\"" + str(space + 25) + "," + str(space + 2) + "\" size=\"20,20\" zPosition=\"2\" pixmap=\"skin_default/icons/ico_mp_play.png\"  alphatest=\"on\" /> \
 			</screen> \
 			"
 
@@ -455,7 +455,7 @@ class MC_PicView(Screen):
 			else: # thumbnaillist
 				self.filelist.append(x[T_FULL])
 
-		self.maxentry = len(self.filelist)-1
+		self.maxentry = len(self.filelist) - 1
 		self.index = index - self.dirlistcount
 		if self.index < 0:
 			self.index = 0
@@ -496,7 +496,7 @@ class MC_PicView(Screen):
 			text = ""
 			try:
 				text = picInfo.split('\n',1)
-				text = "(" + str(self.index+1) + "/" + str(self.maxentry+1) + ") " + text[0].split('/')[-1]
+				text = "(" + str(self.index + 1) + "/" + str(self.maxentry + 1) + ") " + text[0].split('/')[-1]
 			except:
 				pass
 			self.currPic = []
@@ -521,7 +521,7 @@ class MC_PicView(Screen):
 
 	def slidePic(self):
 		print "slide to next Picture index=" + str(self.lastindex)
-		if config.plugins.mc_pp.loop.value==False and self.lastindex == self.maxentry:
+		if config.plugins.mc_pp.loop.value == False and self.lastindex == self.maxentry:
 			self.PlayPause()
 		self.shownow = True
 		self.ShowPicture()
@@ -531,7 +531,7 @@ class MC_PicView(Screen):
 			self.slideTimer.stop()
 			self["play_icon"].hide()
 		else:
-			self.slideTimer.start(config.plugins.mc_pp.slidetime.value*1000)
+			self.slideTimer.start(config.plugins.mc_pp.slidetime.value * 1000)
 			self["play_icon"].show()
 			self.nextPic()
 
@@ -584,11 +584,11 @@ class Pic_Exif(Screen):
 
 		self["key_red"] = StaticText(_("Close"))
 
-		exifdesc = [_("filename")+':', "EXIF-Version:", "Make:", "Camera:", "Date/Time:", "Width / Height:", "Flash used:", "Orientation:", "User Comments:", "Metering Mode:", "Exposure Program:", "Light Source:", "CompressedBitsPerPixel:", "ISO Speed Rating:", "X-Resolution:", "Y-Resolution:", "Resolution Unit:", "Brightness:", "Exposure Time:", "Exposure Bias:", "Distance:", "CCD-Width:", "ApertureFNumber:"]
+		exifdesc = [_("filename") + ':', "EXIF-Version:", "Make:", "Camera:", "Date/Time:", "Width / Height:", "Flash used:", "Orientation:", "User Comments:", "Metering Mode:", "Exposure Program:", "Light Source:", "CompressedBitsPerPixel:", "ISO Speed Rating:", "X-Resolution:", "Y-Resolution:", "Resolution Unit:", "Brightness:", "Exposure Time:", "Exposure Bias:", "Distance:", "CCD-Width:", "ApertureFNumber:"]
 		list = []
 
 		for x in range(len(exiflist)):
-			if x>0:
+			if x > 0:
 				list.append((exifdesc[x], exiflist[x]))
 			else:
 				name = exiflist[x].split('/')[-1]
@@ -691,7 +691,7 @@ class MC_FolderOptions(Screen):
 			try:
 				os.rmdir(self.directory)
 			except os.error:
-				self.session.open(MessageBox,_("Error: Cannot remove file / folder\n"),  MessageBox.TYPE_INFO)
+				self.session.open(MessageBox,_("Error: Cannot remove file / folder\n"), MessageBox.TYPE_INFO)
 			self.close()
 			
 		
