@@ -37,7 +37,7 @@ def ScalingmodeEntryComponent(text, active="no"):
 	if active == 'yes':
 		text = text + ' (Active)'
 	res.append(MultiContentEntryText(pos=(42, 0), size=(1000, 30), font=0, text=text))
-	
+
 	return res
 
 
@@ -60,21 +60,21 @@ class Scalingmode_Menu(Screen):
 		Screen.__init__(self, session)
 		self["list"] = IniciaSelListMC([])
 		self.list = []
-		
+
 		self.list.append(_("Full Screen"))
 		self.list.append(_("Pan & Scan"))
 		self.list.append(_("Letterbox"))
 		self.list.append(_("Pillarbox"))
 		self.list.append(_("Vertical Center"))
-		
+
 		self["pathlabel"] = Label(_("Select Scaling Mode"))
-		
+
 		self["actions"] = ActionMap(["OkCancelActions"],
 		{
 			"cancel": self.Exit,
 			"ok": self.okbuttonClick
 		}, -1)
-		
+
 		self.activemode = config.plugins.mc_scal.scalingmode.value
 		self.onLayoutFinish.append(self.buildList)
 

@@ -23,31 +23,31 @@ class MC_VideoPlayer(Screen, HelpableScreen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		HelpableScreen.__init__(self)
-		
+
 		self["key_red"] = Button(_("Exit"))
 		self["key_green"] = Button(_("Info"))
 		self["key_yellow"] = Button(_("IMDb"))
 		self["key_blue"] = Button(_("Menu"))
 		self["currentfolder"] = Label("")
-		
+
 		#Check if AzBox because of using MRUA
 		if os.path.exists("/proc/player"):
 			self.azbox = True
 		else:
 			self.azbox = False
-		
+
 		#Check if we have a saved last dir
 		currDir = config.plugins.mc_vp.lastDir.value
 		if not pathExists(currDir):
 			currDir = None
-		
+
 		self["currentfolder"].setText(str(currDir))
-		
+
 		self.filelist = FileList(currDir, showMountpoints=True, useServiceRef=True, showDirectories=True, showFiles=True, matchingPattern="(?i)^.*\.(vob|mpg|mpeg|avi|mkv|dat|iso|img|mp4|divx|m2ts|wmv|flv|mov)")
 		self["filelist"] = self.filelist
 		self["filelist"].onSelectionChanged.append(self.selectionChanged)
-		
-		self["actions"] = HelpableActionMap(self, "MC_VideoPlayerActions", 
+
+		self["actions"] = HelpableActionMap(self, "MC_VideoPlayerActions",
 			{
 				"ok": (self.KeyOk, _("Play selected file")),
 				"cancel": (self.Exit, _("Exit Video Player")),
@@ -91,9 +91,9 @@ class MC_VideoPlayer(Screen, HelpableScreen):
 		self.isIso = False
 		self.isFile = False
 		self.pathname = ""
-		
+
 		filename = self["filelist"].getFilename()
-		if filename is not None: 
+		if filename is not None:
 			if filename.lower().endswith("iso") or filename.lower().endswith("img"):
 				os.system("mkdir /tmp/discmount")
 				os.system("umount -f /tmp/discmount")
@@ -102,19 +102,19 @@ class MC_VideoPlayer(Screen, HelpableScreen):
 				os.system("mount -t udf /dev/loop0 /tmp/discmount")
 				self.pathname = "/tmp/discmount/"
 				self.isIso = True
-			
+
 			elif self.filelist.canDescent():
 				self.filelist.descent()
 				self["filelist"].refresh()
 				self.pathname = self["filelist"].getCurrentDirectory() or ""
-			
+
 			else:
 				self.isFile = True
-		
+
 		elif self.filelist.canDescent():
 				self.filelist.descent()
 				self["filelist"].refresh()
-		
+
 		if self.pathname != "":
 			dvdFilelist = []
 			dvdDevice = None
@@ -128,7 +128,7 @@ class MC_VideoPlayer(Screen, HelpableScreen):
 				self["filelist"].setIsoDir(filename, self["filelist"].getCurrentDirectory())
 				self.JumpToFolder("/tmp/discmount/")
 				self["filelist"].up()
-		
+
 		if self.isDVD:
 			self.filelist.gotoParent()
 			if self.azbox == True:
@@ -223,24 +223,24 @@ class MC_VideoInfoView(Screen):
 		<screen position="80,130" size="560,320" title="View Video Info" >
 			<widget name="infolist" position="5,5" size="550,310" selectionDisabled="1" />
 		</screen>"""
-	
+
 	def __init__(self, session, fullname, name, ref):
 		self.skin = MC_VideoInfoView.skin
 		Screen.__init__(self, session)
-		
+
 		self["actions"] = ActionMap(["OkCancelActions"],
 		{
 			"cancel": self.close,
 			"ok": self.close
 		}, -1)
-		
+
 		tlist = []
 		self["infolist"] = ServiceInfoList(tlist)
-		
+
 		currPlay = self.session.nav.getCurrentService()
 		if currPlay is not None:
 			stitle = currPlay.info().getInfoString(iServiceInformation.sTitle)
-			
+
 			if stitle == "":
 				stitle = currPlay.info().getName().split('/')[-1]
 

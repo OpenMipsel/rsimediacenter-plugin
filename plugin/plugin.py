@@ -28,12 +28,12 @@ class DMC_MainMenu(Screen):
 	def __init__(self, session, args=0):
 		self.session = session
 		Screen.__init__(self, session)
-		
+
 		self.skinName = ["DMC_MainMenu", "menu_mainmenu"]
 
 		self.oldService = self.session.nav.getCurrentlyPlayingServiceReference()
 		self.session.nav.stopService()
-		
+
 		self["HomeActions"] = ActionMap(["OkCancelActions", "ColorActions"],
 		{
 			"cancel": self.Exit,
@@ -42,7 +42,7 @@ class DMC_MainMenu(Screen):
 			"yellow": self.startMC_AudioPlayer,
 			"blue": self.startMC_PictureViewer,
 		}, -1)
-		
+
 		#Check if AzBox because of using MRUA
 		self.procstarted = False
 		if os.path.exists("/proc/player"):
@@ -61,7 +61,7 @@ class DMC_MainMenu(Screen):
 		list.append((_("My Music"), "music", "", "50"))
 		list.append((_("My Pictures"), "pictures", "", "50"))
 		self["menu"] = List(list)
-		
+
 # BUTTON MAINMENU MRUAPLAYER - VIDEOPLAYER
 	def startMC_VideoPlayer(self):
 		selection = self["menu"].getCurrent()
@@ -154,7 +154,7 @@ class DMC_MainMenu(Screen):
 	def Exit(self):
 		print "Playing old service"
 		self.session.nav.playService(self.oldService)
-		self.close() 
+		self.close()
 
 #------------------------------------------------------------------------------------------
 

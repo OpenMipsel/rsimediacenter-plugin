@@ -46,7 +46,7 @@ class ChapterZap(Screen):
 		<widget name="chapter" position="35,15" size="110,25" font="Regular;23" />
 		<widget name="number" position="145,15" size="80,25" halign="right" font="Regular;23" />
 	</screen>"""
-	
+
 	def quit(self):
 		self.Timer.stop()
 		self.close(0)
@@ -133,7 +133,7 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 		InfoBarSeek.__init__(self)
 		InfoBarPVRState.__init__(self)
 		self.dvdScreen = self.session.instantiateDialog(DVDOverlay)
-		
+
 		self.skinName = ["AZDVDPlayer", "DVDPlayer"]
 
 		self.oldService = self.session.nav.getCurrentlyPlayingServiceReference()
@@ -151,7 +151,7 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 		self.currentChapter = 0
 		self.totalTitles = 0
 		self.currentTitle = 0
-		
+
 		AZDVDPlayer.STATE = "NONE"
 
 		self.__event_tracker = ServiceEventTracker(screen=self, eventmap={
@@ -210,16 +210,16 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 				"nextSubtitleTrack": (self.nextSubtitleTrack, _("switch to the next subtitle language")),
 				"nextAngle": (self.nextAngle, _("switch to the next angle")),
 				"seekBeginning": self.seekBeginning,
-								
+
 				#Actions linked to inforbarseek
 				"pause": (self.playpauseService, _("Pause / Resume")),
 				"seekFwd": (self.seekFwd, _("Seek forward")),
 				"seekBwd": (self.seekBack, _("Seek backward")),
-				
+
 				#Actions from infobaraudioselection
-				"AudioSelection": (self.audioSelection, _("Select audio track")),				
+				"AudioSelection": (self.audioSelection, _("Select audio track")),
 			}, -2)
-			
+
 		self["NumberActions"] = NumberActionMap(["NumberActions"],
 			{
 				"1": self.keyNumberGlobal,
@@ -233,12 +233,12 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 				"9": self.keyNumberGlobal,
 				"0": self.keyNumberGlobal,
 			})
-			
+
 		self.onClose.append(self.__onClose)
 
 		from Plugins.SystemPlugins.Hotplug.plugin import hotplugNotifier
 		hotplugNotifier.append(self.hotplugCB)
-		
+
 		self.autoplay = dvd_device or dvd_filelist
 
 		if dvd_device:
@@ -301,7 +301,7 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 			if subtitleTuple != self.last_subtitleTuple and not self.in_menu:
 				self.doShow()
 		self.last_subtitleTuple = subtitleTuple
-	
+
 	def __osdAngleInfoAvail(self):
 		info = self.getServiceInterface("info")
 		angleTuple = info and info.getInfoObject(iServiceInformation.sUser + 8)
@@ -391,11 +391,11 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 			if callable(attr):
 				return attr()
 		return None
-		
+
 	def doEofInternal(self, playing):
 		if self.in_menu:
 			self.hide()
-			
+
 	def setChapterLabel(self):
 		chapterLCD = "Menu"
 		chapterOSD = "DVD Menu"
@@ -404,7 +404,7 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 			chapterOSD = "DVD %s %d/%d" % (_("Chapter"), self.currentChapter, self.totalChapters)
 			chapterOSD += " (%s %d/%d)" % (_("Title"), self.currentTitle, self.totalTitles)
 		self["chapterLabel"].setText(chapterOSD)
-			
+
 	def stop(self):
 		self.exit()
 
@@ -470,7 +470,7 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 	def subtitleSelection(self):
 		from Screens.AudioSelection import SubtitleSelection
 		self.session.open(SubtitleSelection, self)
-		
+
 	def nextSubtitleTrack(self):
 		self.sendKey(iServiceKeys.keyUser + 1)
 
@@ -533,7 +533,7 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 	def showAfterCuesheetOperation(self):
 		if not self.in_menu:
 			self.show()
-			
+
 	def doEof(self):
 		self.setSeekState(self.SEEK_STATE_PLAY)
 
@@ -575,20 +575,20 @@ class AZDVDPlayer_Menu(Screen):
 		</screen>""" % _("DVDPlayer - Menu")
 
 	def __init__(self, session):
-		
+
 		Screen.__init__(self, session)
 		self["list"] = IniciaSelListMC([])
 		self.list = []
-		
+
 		self.list.append(_("Go to Title Menu"))
 		self.list.append(_("Go to Root Menu"))
 		self.list.append(_("Go to Audio Menu"))
 		self.list.append(_("Go to Chapter"))
 		self.list.append(_("Subtitle Selection"))
 		self.list.append(_("Audio Selection"))
-		
+
 		self["pathlabel"] = Label(_("Select option"))
-		
+
 		self["actions"] = ActionMap(["OkCancelActions", "ColorActions"],
 		{
 			"yellow": self.setaudio,
@@ -597,7 +597,7 @@ class AZDVDPlayer_Menu(Screen):
 			"ok": self.okbuttonClick
 		}, -1)
 		self.onLayoutFinish.append(self.buildList)
-		
+
 	def buildList(self):
 		list = []
 		for i in range(0, len(self.list)):
@@ -614,6 +614,6 @@ class AZDVDPlayer_Menu(Screen):
 	def okbuttonClick(self):
 		selection = self["list"].getSelectionIndex()
 		self.close(selection)
-	
+
 	def Exit(self):
 		self.close(None)

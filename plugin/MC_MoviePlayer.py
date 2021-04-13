@@ -77,13 +77,13 @@ class MC_MoviePlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, Inf
 				#"right": self.keyRight,
 				#"up": self.keyUp,
 				#"down": self.keyDown,
-				
+
 				#MENU KEY REPEATED ACTIONS
 				"leftRepeated": self.doNothing,
 				"rightRepeated": self.doNothing,
 				"upRepeated": self.doNothing,
 				"downRepeated": self.doNothing,
-				
+
 				#MENU KEY UP ACTIONS
 				"leftUp": self.doNothing,
 				"rightUp": self.doNothing,
@@ -107,13 +107,13 @@ class MC_MoviePlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, Inf
 				"seekFwdinput": (self.seekFwdInput, _("Seek forward with input box")),
 				"seekBwdinput": (self.seekBwdInput, _("Seek backward with input box")),
 				"subtitles": (self.subtitleSelection, _("Subtitle selection")),
-				
+
 				#Actions linked to inforbarseek
 				"playpause": (self.playpauseService, _("Pause / Resume")),
 				"toggleInfo": (self.toggleShow, _("toggle time, chapter, audio, subtitle info")),
 				"seekFwd": (self.seekFwd, _("Seek forward")),
 				"seekBwd": (self.seekBack, _("Seek backward")),
-				
+
 				#Actions from Inforbaraudioselection
 				"AudioSelection": (self.audioSelection, _("Select audio track")),
 			}, -2)
@@ -228,7 +228,7 @@ class MC_MoviePlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, Inf
 	def keyOk(self):
 		print "pressed ok"
 		self.toggleShow()
- 
+
 	def keyCancel(self):
 		self.exit()
 

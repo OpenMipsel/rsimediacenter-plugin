@@ -89,10 +89,10 @@ class MRUAPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBar
 		config.seek.enter_backward.value = self.saved_config_enter_backward
 		config.seek.on_pause.value = self.saved_config_seek_on_pause
 		config.plugins.mc_mrua.subenc.value = self.saved_config_subenc
-		config.plugins.mc_mrua.subpos.value = self.saved_config_subpos 
+		config.plugins.mc_mrua.subpos.value = self.saved_config_subpos
 		config.plugins.mc_mrua.subcolorname.value = self.saved_config_subcolorname
-		config.plugins.mc_mrua.subsize.value = self.saved_config_subsize 
-		config.plugins.mc_mrua.subdelay.value = self.saved_config_subdelay 
+		config.plugins.mc_mrua.subsize.value = self.saved_config_subsize
+		config.plugins.mc_mrua.subdelay.value = self.saved_config_subdelay
 
 	def __init__(self, session, ref="", args=None):
 
@@ -144,13 +144,13 @@ class MRUAPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBar
 				"right": self.keyRight,
 				#"up": self.keyUp,
 				#"down": self.keyDown,
-				
+
 				#MENU KEY REPEATED ACTIONS
 				"leftRepeated": self.doNothing,
 				"rightRepeated": self.doNothing,
 				"upRepeated": self.doNothing,
 				"downRepeated": self.doNothing,
-				
+
 				#MENU KEY UP ACTIONS
 				"leftUp": self.doNothing,
 				"rightUp": self.doNothing,
@@ -173,13 +173,13 @@ class MRUAPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBar
 				"seekFwdinput": (self.seekFwdInput, _("Seek forward with input box")),
 				"seekBwdinput": (self.seekBwdInput, _("Seek backward with input box")),
 				"subtitles": (self.subtitleSelection, _("Subtitle selection")),
-				
+
 				#Actions linked to inforbarseek
 				"playpause": (self.playpauseService, _("Pause / Resume")),
 				"toggleInfo": (self.toggleShow, _("toggle time, chapter, audio, subtitle info")),
 				#"seekFwd": (self.seekFwd, _("Seek forward")),
 				#"seekBwd": (self.seekBack, _("Seek backward")),
-				
+
 				#Actions from Inforbaraudioselection
 				"AudioSelection": (self.audioSelection, _("Select audio track")),
 			}, -2)
@@ -301,13 +301,13 @@ class MRUAPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBar
 		self.session.open(SubtitleSelection, self)
 
 	def seekFwdInput(self):
-		self.session.openWithCallback(self.seekProcess, SeekInput, "fwd")				
+		self.session.openWithCallback(self.seekProcess, SeekInput, "fwd")
 
 	def seekBwdInput(self):
 		self.session.openWithCallback(self.seekProcess, SeekInput, "bwd")
 
 	def seekTotime(self):
-		self.session.openWithCallback(self.seekProcess, SeekInput, "totime")				
+		self.session.openWithCallback(self.seekProcess, SeekInput, "totime")
 
 	def seekProcess(self, pts):
 		print "test seek to time"
@@ -328,7 +328,7 @@ class MRUAPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBar
 
 	def keyOk(self):
 		 self.toggleShow()
- 
+
 	def keyCancel(self):
 		self.exit()
 
@@ -346,7 +346,7 @@ class MRUAPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBar
 			self.audioSelection()
 		elif value == 4:
 			self.seekTotime()
-	
+
 	def subOptionsCallback(self, value):
 		if value == 1:
 			self.saved_config_subenc = config.plugins.mc_mrua.subenc.value
@@ -373,7 +373,7 @@ class MRUAPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBar
 					name = name.decode("windows-1252").encode("utf-8")
 				except:
 					pass
-			############################################################# 
+			#############################################################
 			self["chapterLabel"].setText(self.ref)
 			self.session.nav.playService(newref)
 			self.service = self.session.nav.getCurrentService()
@@ -449,19 +449,19 @@ class MRUAPlayer_Menu(Screen):
 	</screen>""" % _("VideoPlayer - Menu")
 
 	def __init__(self, session):
-		
+
 		Screen.__init__(self, session)
 		self["list"] = IniciaSelListMC([])
 		self.list = []
-		
+
 		self.list.append(_("Subtitle Options"))
 		self.list.append(_("Scaling Mode"))
 		self.list.append(_("Subtitle Selection"))
 		self.list.append(_("Audio Selection"))
 		self.list.append(_("Go to Position"))
-		
+
 		self["pathlabel"] = Label(_("Select option"))
-		
+
 		self["actions"] = ActionMap(["OkCancelActions", "ColorActions"],
 		{
 			"yellow": self.setaudio,
@@ -509,7 +509,7 @@ class MRUAPlayer_Suboptions2(Screen):
 	</screen>""" % _("VideoPlayer - Menu")
 
 	def __init__(self, session):
-		
+
 		Screen.__init__(self, session)
 		self.save = False
 		self["sizeval"] = Label()
@@ -526,14 +526,14 @@ class MRUAPlayer_Suboptions2(Screen):
 		self.list.append(_("Subtitle Color"))
 		self.list.append(_("Subtitle Encoding"))
 		self.list.append(_("Subtitle Delay (in seconds)"))
-		
+
 		self.colorindex = -1
 		self.colorcount = -1
-		
+
 		from xml.dom.minidom import parse
 		self.dom = parse("/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/subcolors.xml")
 		self.colors = self.dom.getElementsByTagName('color')
-		
+
 		#self.colorlist = []
 		#list.append(("Titel", "nothing", "entryID", "weight"))
 		#self.colorlist.append(("12", "13", "44", "46"))
@@ -557,7 +557,7 @@ class MRUAPlayer_Suboptions2(Screen):
 			if callable(attr):
 				return attr()
 		return None
-		
+
 	def getInfo(self):
 		info = self.getServiceInterface("info")
 		infoTuple = info and info.getInfoObject(iServiceInformation.sUser + 9)
@@ -645,7 +645,7 @@ class MRUAPlayer_Suboptions2(Screen):
 			color = self.colors[self.colorindex].getElementsByTagName('Name')[0].childNodes[0].nodeValue
 			print color
 			config.plugins.mc_mrua.subcolorname.value = self.colors[self.colorindex].getElementsByTagName('Name')[0].childNodes[0].nodeValue
-			config.plugins.mc_mrua.subcolorinside.value = self.colors[self.colorindex].getElementsByTagName('inside')[0].childNodes[0].nodeValue 
+			config.plugins.mc_mrua.subcolorinside.value = self.colors[self.colorindex].getElementsByTagName('inside')[0].childNodes[0].nodeValue
 			config.plugins.mc_mrua.subcoloroutside.value = self.colors[self.colorindex].getElementsByTagName('outside')[0].childNodes[0].nodeValue
 			self["colorval"].setText(("%s") % (config.plugins.mc_mrua.subcolorname.value))
 			keys.keyPressed(iServiceKeys.keyUser + 5)
@@ -692,7 +692,7 @@ class MRUAPlayer_Suboptions2(Screen):
 			color = self.colors[self.colorindex].getElementsByTagName('Name')[0].childNodes[0].nodeValue
 			print color
 			config.plugins.mc_mrua.subcolorname.value = self.colors[self.colorindex].getElementsByTagName('Name')[0].childNodes[0].nodeValue
-			config.plugins.mc_mrua.subcolorinside.value = self.colors[self.colorindex].getElementsByTagName('inside')[0].childNodes[0].nodeValue 
+			config.plugins.mc_mrua.subcolorinside.value = self.colors[self.colorindex].getElementsByTagName('inside')[0].childNodes[0].nodeValue
 			config.plugins.mc_mrua.subcoloroutside.value = self.colors[self.colorindex].getElementsByTagName('outside')[0].childNodes[0].nodeValue
 			self["colorval"].setText(("%s") % (config.plugins.mc_mrua.subcolorname.value))
 			keys.keyPressed(iServiceKeys.keyUser + 5)
@@ -747,11 +747,11 @@ class MRUAPlayer_SubOptions(Screen):
 			<widget name="key_red" position="360,150" zPosition="3" size="150,30" font="Regular;20" valign="center" halign="center" transparent="1" />
 			<widget name="navigation" position="40,30" zPosition="3" size="200,200" font="Regular;20" valign="top" halign="left" transparent="1" />
 		</screen>"""
-		
+
 	def __init__(self, session):
 		self.skin = MRUAPlayer_SubOptions.skin
 		Screen.__init__(self, session)
-		
+
 		self["DVDPlayerPlaybackActions"] = HelpableActionMap(self, "MC_AudioPlayerActions",
 		{
 			"ok": (self.close, _("Play selected file")),
@@ -766,12 +766,12 @@ class MRUAPlayer_SubOptions(Screen):
 			"yellow": (self.encoding, _("Change Subtitle Encoding")),
 			"blue": (self.color, _("Change Subtitle Color")),
 		}, -2)
-		
+
 		self["key_red"] = Button(_("Reset"))
 		self["key_yellow"] = Button(_("Encoding"))
 		self["key_blue"] = Button(_("Color"))
 		self["navigation"] = Button(_("Use the navigation buttons on the remote to move the subtitles around"))
-		
+
 		self.service = self.session.nav.getCurrentService()
 
 	def getServiceInterface(self, iface):
@@ -780,7 +780,7 @@ class MRUAPlayer_SubOptions(Screen):
 			attr = getattr(service, iface, None)
 			if callable(attr):
 				return attr()
-			return None	
+			return None
 
 	def up(self):
 		keys = self.getServiceInterface("keys")

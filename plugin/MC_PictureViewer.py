@@ -51,13 +51,13 @@ class MC_PictureViewer(Screen, HelpableScreen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		HelpableScreen.__init__(self)
-		
+
 		self.oldService = self.session.nav.getCurrentlyPlayingServiceReference()
 		self.session.nav.stopService()
-		
+
 		# Show Background MVI
 		os.system("/usr/bin/showiframe /usr/share/enigma2/black.mvi &")
-		
+
 		self["key_red"] = Button(_(" "))
 		self["key_green"] = Button(_("Slide Show"))
 		self["key_yellow"] = Button(_("Thumb View"))
@@ -67,7 +67,7 @@ class MC_PictureViewer(Screen, HelpableScreen):
 		self["currentfavname"] = Label("")
 		self.curfavfolder = -1
 
-		self["actions"] = HelpableActionMap(self, "MC_PictureViewerActions", 
+		self["actions"] = HelpableActionMap(self, "MC_PictureViewerActions",
 			{
 				"ok": (self.KeyOk, _("Show Picture")),
 				"cancel": (self.Exit, _("Directory Up")),
@@ -82,7 +82,7 @@ class MC_PictureViewer(Screen, HelpableScreen):
 				"yellow": (self.StartThumb, _("Thumb View")),
 				"blue": (self.Settings, _("Settings")),
 			}, -2)
-		
+
 		currDir = config.plugins.mc_pp.lastDir.value
 		if not pathExists(currDir):
 			currDir = None
@@ -101,15 +101,15 @@ class MC_PictureViewer(Screen, HelpableScreen):
 		self["size"] = StaticText("")
 		list = []
 		self["fileinfo"] = List(list, enableWrapAround=False)
-		
+
 		self.ThumbTimer = eTimer()
 		self.ThumbTimer.callback.append(self.showThumb)
 
 		self.picload = ePicLoad()
 		self.picload.PictureData.get().append(self.showPic)
-		
+
 		self.onLayoutFinish.append(self.setConf)
-		
+
 	def startslideshow(self):
 		self.session.openWithCallback(self.returnVal, MC_PicView, self.filelist.getFileList(), self.filelist.getSelectionIndex(), self.filelist.getCurrentDirectory(), True)
 
@@ -118,10 +118,10 @@ class MC_PictureViewer(Screen, HelpableScreen):
 
 	def down(self):
 		self["filelist"].down()
-		
+
 	def leftUp(self):
 		self["filelist"].pageUp()
-		
+
 	def rightDown(self):
 		self["filelist"].pageDown()
 
@@ -146,7 +146,7 @@ class MC_PictureViewer(Screen, HelpableScreen):
 			self["size"].setText(exiflist[5])
 		except:
 			pass
-			
+
 	def showThumb(self):
 		if not self.filelist.canDescent():
 			if self.filelist.getCurrentDirectory() and self.filelist.getFilename():
@@ -164,7 +164,7 @@ class MC_PictureViewer(Screen, HelpableScreen):
 			self["date"].setText("")
 			self["camera"].setText("")
 			self["size"].setText("")
-					
+
 	def KeyOk(self):
 		if self.filelist.canDescent():
 			self.filelist.descent()
@@ -183,7 +183,7 @@ class MC_PictureViewer(Screen, HelpableScreen):
 					foldername = self.currentDirectory.split('/')
 					foldername = foldername[-2]
 					self.session.open(MC_FolderOptions, self.currentDirectory, foldername)
-	
+
 	def StartThumb(self):
 		self.session.openWithCallback(self.returnVal, MC_PicThumbViewer, self.filelist.getFileList(), self.filelist.getSelectionIndex(), self.filelist.getCurrentDirectory())
 
@@ -203,11 +203,11 @@ class MC_PictureViewer(Screen, HelpableScreen):
 
 	def Settings(self):
 		self.session.open(MC_PicSetup)
-	
+
 	def setConf(self):
 		sc = getScale()
 		self.picload.setPara((self["thumbnail"].instance.size().width(), self["thumbnail"].instance.size().height(), sc[0], sc[1], config.plugins.mc_pp.cache.value, int(config.plugins.mc_pp.resize.value), "#00000000"))
-	
+
 	def Exit(self):
 		try:
 			config.plugins.mc_pp.lastDir.value = self.filelist.getCurrentDirectory()
@@ -232,7 +232,7 @@ class MC_PicThumbViewer(Screen, HelpableScreen):
 
 		Screen.__init__(self, session)
 
-		self["actions"] = HelpableActionMap(self, "MC_PictureViewerActions", 
+		self["actions"] = HelpableActionMap(self, "MC_PictureViewerActions",
 		{
 			"ok": (self.KeyOk, _("Show Picture")),
 			"cancel": (self.Exit, _("Exit Picture Viewer")),
@@ -246,7 +246,7 @@ class MC_PicThumbViewer(Screen, HelpableScreen):
 			"blue": (self.Settings, _("Settings")),
 			#"red": (self.Home, _("Go to Home Screen")),
 		}, -2)
-		
+
 		self["key_red"] = Button(_(" "))
 		self["key_green"] = Button(_("Slide Show"))
 		self["key_yellow"] = Button(_("File View"))
@@ -255,11 +255,11 @@ class MC_PicThumbViewer(Screen, HelpableScreen):
 
 		self.thumbsC = 8
 		self.thumbsX = 4
-		
+
 		for x in range(self.thumbsC):
 			self["label" + str(x)] = Button("")
 			self["thumb" + str(x)] = Pixmap()
-		
+
 		self.positionlist = []
 		#Need to make this read from skin?
 		self.positionlist.append((170, 160))
@@ -290,7 +290,7 @@ class MC_PicThumbViewer(Screen, HelpableScreen):
 					Page += 1
 			else:
 				self.dirlistcount += 1
-		
+
 		self.maxentry = len(self.filelist) - 1
 		self.index = lastindex - self.dirlistcount
 		if self.index < 0:
@@ -298,9 +298,9 @@ class MC_PicThumbViewer(Screen, HelpableScreen):
 
 		self.picload = ePicLoad()
 		self.picload.PictureData.get().append(self.showPic)
-		
+
 		self.onLayoutFinish.append(self.setPicloadConf)
-		
+
 		self.ThumbTimer = eTimer()
 		self.ThumbTimer.callback.append(self.showPic)
 
@@ -317,7 +317,7 @@ class MC_PicThumbViewer(Screen, HelpableScreen):
 		pos = self.positionlist[self.filelist[self.index][T_FRAME_POS]]
 		self["frame"].moveTo(pos[0], pos[1], 1)
 		self["frame"].startMoving()
-		
+
 		if self.currPage != self.filelist[self.index][T_PAGE]:
 			self.currPage = self.filelist[self.index][T_PAGE]
 			self.newPage()
@@ -333,7 +333,7 @@ class MC_PicThumbViewer(Screen, HelpableScreen):
 			if x[T_PAGE] == self.currPage:
 				self["label" + str(x[T_FRAME_POS])].setText(x[T_NAME])
 				self.Thumbnaillist.append([0, x[T_FRAME_POS], x[T_FULL]])
-				
+
 		#paint Thumbnail start
 		self.showPic()
 
@@ -357,19 +357,19 @@ class MC_PicThumbViewer(Screen, HelpableScreen):
 		if self.index < 0:
 			self.index = self.maxentry
 		self.paintFrame()
-		
+
 	def key_right(self):
 		self.index += 1
 		if self.index > self.maxentry:
 			self.index = 0
 		self.paintFrame()
-		
+
 	def key_up(self):
 		self.index -= self.thumbsX
 		if self.index < 0:
 			self.index = self.maxentry
 		self.paintFrame()
-		
+
 	def key_down(self):
 		self.index += self.thumbsX
 		if self.index > self.maxentry:
@@ -384,28 +384,28 @@ class MC_PicThumbViewer(Screen, HelpableScreen):
 	def KeyOk(self):
 		if self.maxentry < 0:
 			return
-		
+
 		self.old_index = self.index
 		self.session.openWithCallback(self.callbackView, MC_PicView, self.filelist, self.index, self.path, False)
 
 	def startslideshow(self):
 		if self.maxentry < 0:
 			return
-		
+
 		self.session.openWithCallback(self.callbackView, MC_PicView, self.filelist, self.index, self.path, True)
 
 	def Settings(self):
 		self.session.open(MC_PicSetup)
-		
+
 	def callbackView(self, val=0):
 		self.index = val
 		if self.old_index != self.index:
 			self.paintFrame()
-			
+
 	def Exit(self):
 		del self.picload
 		self.close(self.index + self.dirlistcount)
-	
+
 	def Home(self):
 		del self.picload
 		self.close(self.index + self.dirlistcount, True)
@@ -418,7 +418,7 @@ class MC_PicView(Screen):
 		space = config.plugins.mc_pp.framesize.value
 		size_w = getDesktop(0).size().width()
 		size_h = getDesktop(0).size().height()
-		
+
 		self.skin = "<screen position=\"0,0\" size=\"" + str(size_w) + "," + str(size_h) + "\" flags=\"wfNoBorder\" > \
 			<eLabel position=\"0,0\" zPosition=\"0\" size=\"" + str(size_w) + "," + str(size_h) + "\" backgroundColor=\"black\" /><widget name=\"pic\" position=\"" + str(space) + "," + str(space) + "\" size=\"" + str(size_w - (space * 2)) + "," + str(size_h - (space * 2)) + "\" zPosition=\"1\" alphatest=\"on\" /> \
 			<widget name=\"point\" position=\"" + str(space + 5) + "," + str(space + 2) + "\" size=\"20,20\" zPosition=\"2\" pixmap=\"skin_default/icons/record.png\" alphatest=\"on\" /> \
@@ -427,7 +427,7 @@ class MC_PicView(Screen):
 			"
 
 		Screen.__init__(self, session)
-		
+
 		self["actions"] = ActionMap(["OkCancelActions", "ColorActions", "DirectionActions", "MovieSelectionActions"],
 		{
 			"cancel": self.Exit,
@@ -439,11 +439,11 @@ class MC_PicView(Screen):
 			"right": self.nextPic,
 			"showEventInfo": self.StartExif,
 		}, -1)
-		
+
 		self["point"] = Pixmap()
 		self["pic"] = Pixmap()
 		self["play_icon"] = Pixmap()
-		
+
 		self.old_index = 0
 		self.filelist = []
 		self.lastindex = index
@@ -464,10 +464,10 @@ class MC_PicView(Screen):
 		self.index = index - self.dirlistcount
 		if self.index < 0:
 			self.index = 0
-		
+
 		self.picload = ePicLoad()
 		self.picload.PictureData.get().append(self.finish_decode)
-		
+
 		self.slideTimer = eTimer()
 		self.slideTimer.callback.append(self.slidePic)
 
@@ -476,11 +476,11 @@ class MC_PicView(Screen):
 
 		if startslide == True:
 			self.PlayPause()
-		
+
 	def setPicloadConf(self):
 		sc = getScale()
 		self.picload.setPara([self["pic"].instance.size().width(), self["pic"].instance.size().height(), sc[0], sc[1], 0, int(config.plugins.mc_pp.resize.value), config.plugins.mc_pp.bgcolor.value])
-		
+
 		self["play_icon"].hide()
 		self.start_decode()
 
@@ -490,10 +490,10 @@ class MC_PicView(Screen):
 			self.lastindex = self.currPic[1]
 			self["pic"].instance.setPixmap(self.currPic[2].__deref__())
 			self.currPic = []
-			
+
 			self.next()
 			self.start_decode()
-	
+
 	def finish_decode(self, picInfo=""):
 		self["point"].hide()
 		ptr = self.picload.getData()
@@ -550,7 +550,7 @@ class MC_PicView(Screen):
 	def nextPic(self):
 		self.shownow = True
 		self.ShowPicture()
-		
+
 	def StartExif(self):
 		if self.maxentry < 0:
 			return
@@ -630,20 +630,20 @@ class MC_PicSetup(Screen):
 			"7": self.keyNumber,
 			"8": self.keyNumber,
 		}, -1)
-		
+
 		self.list = []
 		self["liste"] = ConfigList(self.list)
 		self.list.append(getConfigListEntry(_("Slideshow Interval (sec.)"), config.plugins.mc_pp.slidetime))
 		self.list.append(getConfigListEntry(_("Scaling Mode"), config.plugins.mc_pp.resize))
 		self.list.append(getConfigListEntry(_("Cache Thumbnails"), config.plugins.mc_pp.cache))
 		self.list.append(getConfigListEntry(_("Play slide show in loop"), config.plugins.mc_pp.loop))
-		
+
 	def keyLeft(self):
 		self["liste"].handleKey(KEY_LEFT)
 
 	def keyRight(self):
 		self["liste"].handleKey(KEY_RIGHT)
-		
+
 	def keyNumber(self, number):
 		self["liste"].handleKey(KEY_0 + number)
 
@@ -665,14 +665,14 @@ class MC_FolderOptions(Screen):
 
 		self.dirname = dirname
 		self.directory = directory
-		
+
 		self.list = []
 		#list.append(("Titel", "nothing", "entryID", "weight"))
 		self.list.append((_("Delete File / Folder"), "delete", "menu_delete", "50"))
-		
+
 		self["menu"] = List(self.list)
 		self["pathlabel"] = StaticText(_("Folder:") + " " + self.directory)
-		
+
 		self["actions"] = ActionMap(["OkCancelActions"],
 		{
 			"cancel": self.Exit,
@@ -700,6 +700,6 @@ class MC_FolderOptions(Screen):
 			except os.error:
 				self.session.open(MessageBox, _("Error: Cannot remove file / folder\n"), MessageBox.TYPE_INFO)
 			self.close()
-			
+
 	def Exit(self):
 		self.close()

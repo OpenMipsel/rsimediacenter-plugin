@@ -58,13 +58,13 @@ class MC_Settings(Screen):
 			"8": self.keyNumber,
 			"9": self.keyNumber
 		}, -1)
-		
+
 		self.conflist = []
 		self["configlist"] = ConfigList(self.conflist)
 		self.conflist.append(getConfigListEntry(_("Language"), config.plugins.mc_globalsettings.language))
 		self.conflist.append(getConfigListEntry(_("Show MC in Main-Menu"), config.plugins.mc_globalsettings.showinmainmenu))
 		#self.list.append(getConfigListEntry(_("Check for Updates on Startup"), config.plugins.mc_globalsettings.checkforupdate))
-		
+
 		#Non config list appends -> they open something
 		self.conflist.append((_("Skin Selector"), "MCS_SkinSelector", "menu_skinselector", "50"))
 		#self.conflist.append((_("Update MediaCenter"), "MCS_Update", "menu_update", "50"))
@@ -78,13 +78,13 @@ class MC_Settings(Screen):
 				self.session.open(MCS_Update)
 			else:
 				print "config option selected"
-		
+
 	def keyLeft(self):
 		self.processConfigKey(KEY_LEFT)
 
 	def keyRight(self):
 		self.processConfigKey(KEY_RIGHT)
-		
+
 	def keyNumber(self, number):
 		self.processConfigKey(KEY_0 + number)
 
@@ -93,12 +93,12 @@ class MC_Settings(Screen):
 		#Here we have to put all non config list appends!
 		if selection[1] != "MCS_SkinSelector" and selection[1] != "MCS_Update":
 			self["configlist"].handleKey(key)
-		
+
 	def save(self):
 		config.plugins.mc_globalsettings.save()
 		configfile.save()
 		self.close()
-			
+
 #------------------------------------------------------------------------------------------
 
 
@@ -136,7 +136,7 @@ class MCS_SkinSelector(Screen):
 			"left": self.left,
 			"right": self.right
 		}, -1)
-		
+
 		self.onLayoutFinish.append(self.layoutFinished)
 
 	def layoutFinished(self):
@@ -210,7 +210,7 @@ class MCS_SkinSelector(Screen):
 		if answer is True:
 			self.session.open(TryQuitMainloop, 3)
 
-	
+
 #------------------------------------------------------------------------------------------
 
 class MCS_Update(Screen):
@@ -218,7 +218,7 @@ class MCS_Update(Screen):
 		<screen position="110,110" size="500,380" title="Media Center - Software Update" >
 			<widget name="text" position="10,10" size="480,360" font="Regular;20" />
 		</screen>"""
-	
+
 	def __init__(self, session):
 		self.skin = MCS_Update.skin
 		Screen.__init__(self, session)
@@ -226,17 +226,17 @@ class MCS_Update(Screen):
 		self.working = False
 		self.Console = Console()
 		self["text"] = ScrollLabel(_("Checking for updates..."))
-		
+
 		self["actions"] = NumberActionMap(["WizardActions", "InputActions", "EPGSelectActions"],
 		{
 			"ok": self.close,
 			"back": self.close
 		}, -1)
-		
+
 		self.url = "http://www.homeys-bunker.de/dm800/projects/MediaCenter/"
-		
+
 		self.onFirstExecBegin.append(self.CheckForMCUpdate)
-		
+
 	def CheckForMCUpdate(self):
 		#Get Info from my webserver
 		try:
@@ -247,9 +247,9 @@ class MCS_Update(Screen):
 
 	def GotMCUpdateInfo(self, html):
 		tmp_infolines = html.splitlines()
-		
+
 		remoteversion = tmp_infolines[0]
-		
+
 		if config.plugins.mc_globalsettings.currentplatform.value == "mipsel":
 			self.installfilename = tmp_infolines[1]
 		elif config.plugins.mc_globalsettings.currentplatform.value == "powerpc":
@@ -257,22 +257,22 @@ class MCS_Update(Screen):
 		else:
 			self.installfilename = ""
 			return
-		
+
 		if config.plugins.mc_globalsettings.currentversion.value < remoteversion:
 			self["text"].setText(_("A new version of MediaCenter is available :-)\n\nInstall:") + " %s" % self.installfilename)
 			self.initupdate()
 		else:
 			self["text"].setText(_("Your MediaCenter is up to date! No update required ..."))
-	
+
 	def initupdate(self):
 		self.working = True
-		
+
 		if self.installfilename != "":
 			cmd = "ipkg install -force-overwrite " + str(self.url) + str(self.installfilename)
-			
+
 			self["text"].setText(_("Updating MediaCenter ...\n\n\nStay tuned :-)"))
 			self.Console.ePopen(cmd, self.startupdate)
-		
+
 	def startupdate(self, result, retval, extra_args):
 		if retval == 0:
 			self.working = True

@@ -51,7 +51,7 @@ playlist = []
 def getAspect():
 	val = AVSwitch().getAspectRatioSetting()
 	return val / 2
-	
+
 #------------------------------------------------------------------------------------------
 
 
@@ -123,7 +123,7 @@ class PlayList(MenuList):
                 self.updateState(STATE_FORWARD)
 
         GUI_WIDGET = eListbox
-		
+
         def updateList(self):
                 self.l.setList(self.list)
 
@@ -149,35 +149,35 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		HelpableScreen.__init__(self)
-		
+
 		self.isVisible = True
 
 		self.coverArtFileName = ""
-		
+
 		self["key_red"] = Button(_(" "))
 		self["key_green"] = Button(_(" "))
 		self["key_yellow"] = Button(_("Add to Playlist"))
 		self["key_blue"] = Button(_("Go to Playlist"))
-		
+
 		self["fileinfo"] = Label()
 		self["coverArt"] = MediaPixmap()
-		
+
 		self["currentfolder"] = Label()
 
 		self["play"] = Pixmap()
 		self["stop"] = Pixmap()
 
 		self["curplayingtitle"] = Label()
-		
+
 		self.PlaySingle = 0
-		
+
 		MC_AudioPlayer.STATE = "NONE"
-		
+
 		self.playlist = PlayList()
 		self["playlist"] = self.playlist
 		MC_AudioPlayer.playlistplay = 0
 		MC_AudioPlayer.currPlaying = -1
-		
+
 		self.__event_tracker = ServiceEventTracker(screen=self, eventmap={
 				iPlayableService.evStopped: self.doEOF,
 				iPlayableService.evEOF: self.doEOF,
@@ -186,8 +186,8 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 				iPlayableService.evUser + 12: self.__evPluginError,
 				iPlayableService.evUser + 13: self["coverArt"].embeddedCoverArt
 			})
-			
-		self["actions"] = HelpableActionMap(self, "MC_AudioPlayerActions", 
+
+		self["actions"] = HelpableActionMap(self, "MC_AudioPlayerActions",
 			{
 				"ok": (self.KeyOK, _("Play selected file")),
 				"cancel": (self.Exit, _("Exit Audio Player")),
@@ -215,26 +215,26 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 		self.addPlaylistParser(PlaylistIOM3U, "m3u")
 		self.addPlaylistParser(PlaylistIOPLS, "pls")
 		self.addPlaylistParser(PlaylistIOInternal, "e2pls")
-		
+
 		currDir = config.plugins.mc_ap.lastDir.value
 		if not pathExists(currDir):
 			currDir = None
 
 		self["currentfolder"].setText(str(currDir))
-		
+
 		self.filelist = FileList(currDir, showMountpoints=True, useServiceRef=True, showDirectories=True, showFiles=True, matchingPattern="(?i)^.*\.(mp3|ogg|wav|wave|flac|m4a|m3u|pls|e2pls)", additionalExtensions="4098:m3u 4098:e2pls 4098:pls")
 		self["filelist"] = self.filelist
 		self["thumbnail"] = Pixmap()
-		
+
 	def up(self):
 		self["filelist"].up()
 
 	def down(self):
 		self["filelist"].down()
-		
+
 	def leftUp(self):
 		self["filelist"].pageUp()
-		
+
 	def rightDown(self):
 		self["filelist"].pageDown()
 
@@ -272,7 +272,7 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 			MC_AudioPlayer.STATE = "PLAY"
 		else:
 			self.KeyOK()
-			
+
 	def seekFwd(self):
 		if MC_AudioPlayer.STATE == "PLAY" or MC_AudioPlayer.STATE == "SEEKBWD":
 			service = self.session.nav.getCurrentService()
@@ -296,12 +296,12 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 				else:
 					MC_AudioPlayer.currPlaying = 0
 				self.PlayServicepls()
-			
+
 			else:
 				print "Play Next File ..."
 				self.down()
 				self.PlayService()
-		
+
 	def KeyPrevious(self):
 		if MC_AudioPlayer.STATE != "NONE":
 			if MC_AudioPlayer.playlistplay == 1:
@@ -311,7 +311,7 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 				else:
 					MC_AudioPlayer.currPlaying = 0
 				self.PlayServicepls()
-			
+
 			else:
 				print "Play previous File ..."
 				self.up()
@@ -327,7 +327,7 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 
 	def KeyYellow(self):
 		print "yellow"
-			
+
 	def visibility(self, force=1):
 		if self.isVisible == True:
 			self.isVisible = False
@@ -335,22 +335,22 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 		else:
 			self.isVisible = True
 			self.show()
-	
+
 	def Playlists(self):
 		self.session.openWithCallback(self.updateFileInfo, MC_AudioPlaylist)
-		
+
 	def PlayService(self):
 		playlistplay = 0
 		self.session.nav.playService(self["filelist"].getServiceRef())
 		MC_AudioPlayer.STATE = "PLAY"
 		self.updateFileInfo()
-		
+
 		path = self["filelist"].getCurrentDirectory() + self["filelist"].getFilename()
 		self["coverArt"].updateCoverArt(path)
 
 	def PlayServicepls(self):
 		MC_AudioPlayer.playlistplay = 1
-		
+
 		x = self.playlist.getCurrentIndex()
 		print "x is %s" % (x)
 		x = len(self.playlist)
@@ -359,7 +359,7 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 		self.session.nav.playService(ref)
 		MC_AudioPlayer.STATE = "PLAY"
 		self.updateFileInfo()
-		
+
 		#path = self["filelist"].getCurrentDirectory() + self["filelist"].getFilename()
 		#self["coverArt"].updateCoverArt(path)
 
@@ -367,7 +367,7 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 		if self.isVisible == False:
 			self.show()
 			self.isVisible = True
-		
+
 		if self.session.nav.getCurrentService() is None:
 			return
 		else:
@@ -378,7 +378,7 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 		if self["filelist"].canDescent():
 			return
 		else:
-			self.session.open(MC_AudioInfoView, self["filelist"].getCurrentDirectory() + self["filelist"].getFilename(), self["filelist"].getFilename(), self["filelist"].getServiceRef())			
+			self.session.open(MC_AudioInfoView, self["filelist"].getCurrentDirectory() + self["filelist"].getFilename(), self["filelist"].getFilename(), self["filelist"].getServiceRef())
 
 	def JumpToFolder(self, jumpto=None):
 		if jumpto is None:
@@ -396,10 +396,10 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 			sGenre = currPlay.info().getInfoString(iServiceInformation.sTagGenre)
 			sComment = currPlay.info().getInfoString(iServiceInformation.sTagComment)
 			sYear = currPlay.info().getInfoString(iServiceInformation.sTagDate)
-			
+
 			if sTitle == "":
 				sTitle = currPlay.info().getName().split('/')[-1]
-					
+
 			self["fileinfo"].setText(_("Title:") + " " + sTitle + "\n" + _("Artist:") + " " + sArtist + "\n" + _("Album:") + " " + sAlbum + "\n" + _("Genre:") + " " + sGenre + "\n" + _("Comment:") + " " + sComment)
 			self["curplayingtitle"].setText(_("Now Playing:") + " " + sArtist + " - " + sTitle)
 
@@ -438,23 +438,23 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 		if self.service.type != 4098 and self.session.nav.getCurrentlyPlayingServiceReference() is not None:
 			if self.service == self.session.nav.getCurrentlyPlayingServiceReference():
 				self.StopPlayback()
-		
+
 		self.session.openWithCallback(self.deleteFileConfirmed, MessageBox, _("Do you really want to delete this file ?"))
 
 	def deleteFileConfirmed(self, confirmed):
 		if confirmed:
 			delfile = self["filelist"].getFilename()
 			os.remove(delfile)
-	
+
 	def deleteDir(self):
 		self.session.openWithCallback(self.deleteDirConfirmed, MessageBox, _("Do you really want to delete this directory and it's content ?"))
-		
+
 	def deleteDirConfirmed(self, confirmed):
 		if confirmed:
 			import shutil
 			deldir = self.filelist.getSelection()[0]
 			shutil.rmtree(deldir)
-	
+
 	def addPlaylistParser(self, parser, extension):
 		self.playlistparsers[extension] = parser
 
@@ -462,14 +462,14 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 		if self.isVisible == False:
 			self.visibility()
 			return
-		
+
 		try:
 			config.plugins.mc_ap.lastDir.value = self.filelist.getCurrentDirectory()
 		except:
 			config.plugins.mc_ap.lastDir.value = 'mountpoint'
 		config.plugins.mc_ap.save()
 		configfile.save()
-		
+
 		del self["coverArt"].picload
 		self.session.nav.stopService()
 		MC_AudioPlayer.STATE = "NONE"
@@ -509,7 +509,7 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 			self.addDirtoPls(os_path.dirname(self.filelist.getSelection()[0].getPath()) + "/", recursive=False)
 		elif choice[1] == "deletefile":
 			self.deleteFile()
-		
+
 	def doEOF(self):
 		print "MediaCenter: EOF Event AUDIO..."
 		if MC_AudioPlayer.playlistplay == 1:
@@ -517,7 +517,7 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 			if next < len(self.playlist):
 				MC_AudioPlayer.currPlaying = MC_AudioPlayer.currPlaying + 1
 				self.PlayServicepls()
-		
+
 		elif self.PlaySingle == 0:
 			print "Play Next File ..."
 			self.down()
@@ -542,7 +542,7 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 		currPlay = self.session.nav.getCurrentService()
 		message = currPlay.info().getInfoString(iServiceInformation.sUser + 12)
 		print "[__evPluginError]", message
-		self.session.open(MessageBox, message, type=MessageBox.TYPE_INFO, timeout=20)		
+		self.session.open(MessageBox, message, type=MessageBox.TYPE_INFO, timeout=20)
 
 
 class MC_AudioPlaylist(Screen):
@@ -550,15 +550,15 @@ class MC_AudioPlaylist(Screen):
 		Screen.__init__(self, session)
 
 		self["PositionGauge"] = ServicePositionGauge(self.session.nav)
-		
+
 		self["key_red"] = Button(_(" "))
 		self["key_green"] = Button(" ")
 		self["key_yellow"] = Button(" ")
 		self["key_blue"] = Button(_("File Browser"))
-		
+
 		self["fileinfo"] = Label()
 		self["coverArt"] = MediaPixmap()
-		
+
 		self["currentfolder"] = Label()
 		self["currentfavname"] = Label()
 		self.curfavfolder = -1
@@ -569,18 +569,18 @@ class MC_AudioPlaylist(Screen):
 		self["curplayingtitle"] = Label()
 		self.updateFileInfo()
 		self.PlaySingle = 0
-		
+
 		self.isVisible = True
-		
+
 		self.playlist = PlayList()
 		self["playlist"] = self.playlist
-		
+
 		self.playlistIOInternal = PlaylistIOInternal()
 		self.playlistparsers = {}
 		self.addPlaylistParser(PlaylistIOM3U, "m3u")
 		self.addPlaylistParser(PlaylistIOPLS, "pls")
 		self.addPlaylistParser(PlaylistIOInternal, "e2pls")
-		
+
 		self.__event_tracker = ServiceEventTracker(screen=self, eventmap={
 				iPlayableService.evEOF: self.updateFileInfo,
 				#iPlayableService.evStopped: self.StopPlayback,
@@ -588,8 +588,8 @@ class MC_AudioPlaylist(Screen):
 				#iPlayableService.evUser+12: self.__evPluginError,
 				iPlayableService.evUser + 13: self["coverArt"].embeddedCoverArt
 			})
-		
-		self["actions"] = HelpableActionMap(self, "MC_AudioPlayerActions", 
+
+		self["actions"] = HelpableActionMap(self, "MC_AudioPlayerActions",
 			{
 				"ok": (self.KeyOK, _("Play from selected file")),
 				"cancel": (self.Exit, _("Exit Audio Player")),
@@ -610,16 +610,16 @@ class MC_AudioPlaylist(Screen):
 				"playpause": (self.PlayPause, _("Play / Pause")),
 				"stop": (self.StopPlayback, _("Stop")),
 			}, -2)
-		
+
 	def up(self):
 		self["playlist"].up()
 
 	def down(self):
 		self["playlist"].down()
-		
+
 	def leftUp(self):
 		self["playlist"].pageUp()
-		
+
 	def rightDown(self):
 		self["playlist"].pageDown()
 
@@ -658,10 +658,10 @@ class MC_AudioPlaylist(Screen):
 				else:
 					MC_AudioPlayer.currPlaying = 0
 				self.PlayService()
-			
+
 			else:
 				self.session.open(MessageBox, _("You have to close playlist before you can go to the next song while playing from file browser."), MessageBox.TYPE_ERROR)
-		
+
 	def KeyPrevious(self):
 		if MC_AudioPlayer.playlistplay == 1:
 			next = self.playlist.getCurrentIndex() - 1
@@ -670,38 +670,38 @@ class MC_AudioPlaylist(Screen):
 			else:
 				MC_AudioPlayer.currPlaying = 0
 			self.PlayService()
-		
+
 		else:
 			self.session.open(MessageBox, _("You have to close playlist before you can go to the previous song while playing from file browser."), MessageBox.TYPE_ERROR)
-			
+
 	def PlayService(self):
 		MC_AudioPlayer.playlistplay = 1
-		
+
 		ref = self.playlist.getServiceRefList()[self.playlist.getCurrentIndex()]
 		#newref = eServiceReference(4370, 0, ref.getPath())
 		self.session.nav.playService(ref)
 		MC_AudioPlayer.STATE = "PLAY"
 		self.updateFileInfo()
-			
+
 		#self["play"].instance.setPixmapFromFile("/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/icons/play_enabled.png")
 		#self["stop"].instance.setPixmapFromFile("/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/icons/stop_disabled.png")
 
 		#path = self["filelist"].getCurrentDirectory() + self["filelist"].getFilename()
 		#self["coverArt"].updateCoverArt(path)
-				
+
 	def StopPlayback(self):
 
 		if self.isVisible == False:
 			self.show()
 			self.isVisible = True
-		
+
 		if self.session.nav.getCurrentService() is None:
 			return
-		
+
 		else:
 			self.session.nav.stopService()
 			MC_AudioPlayer.STATE = "NONE"
-			
+
 			#self["play"].instance.setPixmapFromFile("/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/icons/play_disabled.png")
 			#self["stop"].instance.setPixmapFromFile("/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/icons/stop_enabled.png")
 
@@ -719,7 +719,7 @@ class MC_AudioPlaylist(Screen):
 			return
 		else:
 			self.session.open(MC_AudioInfoView, self["filelist"].getCurrentDirectory() + self["filelist"].getFilename(), self["filelist"].getFilename(), self["filelist"].getServiceRef())
-	
+
 	def Settings(self):
 		self.session.open(AudioPlayerSettings)
 
@@ -736,10 +736,10 @@ class MC_AudioPlaylist(Screen):
 			sGenre = currPlay.info().getInfoString(iServiceInformation.sTagGenre)
 			sComment = currPlay.info().getInfoString(iServiceInformation.sTagComment)
 			sYear = currPlay.info().getInfoString(iServiceInformation.sTagDate)
-			
+
 			if sTitle == "":
 				sTitle = currPlay.info().getName().split('/')[-1]
-					
+
 			self["fileinfo"].setText(_("Title:") + " " + sTitle + "\n" + _("Artist:") + " " + sArtist + "\n" + _("Album:") + " " + sAlbum + "\n" + _("Genre:") + " " + sGenre + "\n" + _("Comment:") + " " + sComment)
 			self["curplayingtitle"].setText(_("Now Playing:") + " " + sArtist + " - " + sTitle)
 
@@ -828,7 +828,7 @@ class MC_AudioPlaylist(Screen):
 			self.save_playlist()
 		elif choice[1] == "deleteplaylist":
 			self.delete_saved_playlist()
-			
+
 #-----------------------------------------------------------------------------------------------------------------------------
 
 
@@ -894,7 +894,7 @@ class AudioPlayerSettings(Screen):
 		<screen position="160,220" size="400,120" title="Audioplayer Settings" >
 			<widget name="configlist" position="10,10" size="380,100" />
 		</screen>"""
-	
+
 	def __init__(self, session):
 		self.skin = AudioPlayerSettings.skin
 		Screen.__init__(self, session)
@@ -916,7 +916,7 @@ class AudioPlayerSettings(Screen):
 			"8": self.keyNumber,
 			"9": self.keyNumber
 		}, -1)
-				
+
 		self.list = []
 		self["configlist"] = ConfigList(self.list)
 		self.list.append(getConfigListEntry(_("Screensaver Enable"), config.plugins.mc_ap.showMvi))
@@ -927,13 +927,13 @@ class AudioPlayerSettings(Screen):
 
 	def keyRight(self):
 		self["configlist"].handleKey(KEY_RIGHT)
-		
+
 	def keyNumber(self, number):
 		self["configlist"].handleKey(KEY_0 + number)
 
 
 #-------------------------------------------------------------------------------------------------
-		
+
 #--------------------------------------------------------------------------------------------------
 
 class MC_AudioInfoView(Screen):
@@ -941,24 +941,24 @@ class MC_AudioInfoView(Screen):
 		<screen position="80,130" size="560,320" title="View Audio Info" >
 			<widget name="infolist" position="5,5" size="550,310" selectionDisabled="1" />
 		</screen>"""
-	
+
 	def __init__(self, session, fullname, name, ref):
 		self.skin = MC_AudioInfoView.skin
 		Screen.__init__(self, session)
-		
+
 		self["actions"] = ActionMap(["OkCancelActions"],
 		{
 			"cancel": self.close,
 			"ok": self.close
 		}, -1)
-		
+
 		tlist = []
 		self["infolist"] = ServiceInfoList(tlist)
 
 		currPlay = self.session.nav.getCurrentService()
 		if currPlay is not None:
 			stitle = currPlay.info().getInfoString(iServiceInformation.sTagTitle)
-			
+
 			if stitle == "":
 				stitle = currPlay.info().getName().split('/')[-1]
 

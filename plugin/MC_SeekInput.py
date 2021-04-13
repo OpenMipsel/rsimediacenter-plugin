@@ -19,18 +19,18 @@ class SeekInput(Screen):
 		def __init__(self, session, command):
 			self.skin = SeekInput.skin
 			Screen.__init__(self, session)
-						
+
 			self["hours"] = Label()
 			self["minutes"] = Label()
 			self["seconds"] = Label()
 			self["hourspixmap"] = Pixmap()
 			self["minutespixmap"] = Pixmap()
 			self["secondspixmap"] = Pixmap()
-			
+
 			self["hourspixmap"].hide()
 			self["minutespixmap"].hide()
 			self["secondspixmap"].show()
-			
+
 			self["actions"] = NumberActionMap(["MRUAPlayerActions", "NumberActions", "OkCancelActions", "DirectionActions"],
 			{
 				"1": self.keyNumberGlobal,
@@ -50,10 +50,10 @@ class SeekInput(Screen):
 				"ok": self.ok,
 				"cancel": self.cancel
 			})
-						
+
 			self.sel = "seconds"
 			self.prevsel = None
-			
+
 			service = session.nav.getCurrentService()
 			if service:
 				self.seek = service.seek()
@@ -79,19 +79,19 @@ class SeekInput(Screen):
 					self.close(-1)
 			else:
 				self.close(-1)
-		
+
 		def convert(self, inseconds):
 			self.seconds = inseconds
 			self.minutes, self.seconds = divmod(self.seconds, 60)
 			self.hours, self.minutes = divmod(self.minutes, 60)
-					
+
 		def validate(self, hours, minutes, seconds):
 			newlength = hours * 3600 + minutes * 60 + seconds
 			if newlength < self.length:
 				return 1
 			else:
 				return 0
-		
+
 		def update(self):
 			self["hours"].setText(("%02d") % (self.hours))
 			self["minutes"].setText(("%02d") % (self.minutes))
@@ -109,7 +109,7 @@ class SeekInput(Screen):
 					self.hours = number
 					self.update()
 					self.prevsel = "hours"
-			
+
 			elif self.sel == "minutes":
 				if self.prevsel == "minutes" and self.minutes < 6:
 					newvalue = self.minutes * 10 + number
@@ -121,7 +121,7 @@ class SeekInput(Screen):
 					self.minutes = number
 					self.update()
 					self.prevsel = "minutes"
-					
+
 			elif self.sel == "seconds":
 				if self.prevsel == "seconds" and self.hours < 6:
 					newvalue = self.seconds * 10 + number
@@ -133,14 +133,14 @@ class SeekInput(Screen):
 					self.seconds = number
 					self.update()
 					self.prevsel = "seconds"
-		
+
 		def seekField(self, field):
 			self["hourspixmap"].hide()
 			self["minutespixmap"].hide()
 			self["secondspixmap"].hide()
 			self[field + "pixmap"].show()
 			self.sel = field
-		
+
 		def left(self):
 			if self.sel == "hours":
 				self.seekField("seconds")
@@ -148,7 +148,7 @@ class SeekInput(Screen):
 				self.seekField("hours")
 			elif self.sel == "seconds":
 				self.seekField("minutes")
-		
+
 		def right(self):
 			if self.sel == "hours":
 				self.seekField("minutes")
@@ -156,13 +156,13 @@ class SeekInput(Screen):
 				self.seekField("seconds")
 			elif self.sel == "seconds":
 				self.seekField("hours")
-		
+
 		def ok(self):
 			self.close((self.hours * 3600 + self.minutes * 60 + self.seconds) * 90000)
-			
+
 		def cancel(self):
 			self.close(-1)
-		
+
 		def increase(self):
 			self.position += 15
 			if self.position < self.length:
@@ -172,7 +172,7 @@ class SeekInput(Screen):
 				self.position = self.length - 15
 				self.convert(self.position)
 				self.update()
-		
+
 		def decrease(self):
 			self.position -= 15
 			if self.position >= 0:
@@ -181,4 +181,3 @@ class SeekInput(Screen):
 			elif self.position < 0:
 				self.convert(0)
 				self.update()
-		
