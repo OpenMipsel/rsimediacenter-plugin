@@ -484,8 +484,10 @@ class IMDB(Screen):
 				rating = rating.group("rating")
 				if rating != '<span id="voteuser"></span>':
 					Ratingtext = _("User Rating") + ": " + rating + " / 10"
-					try: self.ratingstars = int(10*round(float(rating.replace(',','.')),1))
-					except ValueError: self.ratingstars = 0
+					try:
+						self.ratingstars = int(10*round(float(rating.replace(',','.')),1))
+					except ValueError:
+						self.ratingstars = 0
 					self["stars"].show()
 					self["stars"].setValue(self.ratingstars)
 					self["starsbg"].show()

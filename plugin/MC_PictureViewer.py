@@ -470,7 +470,7 @@ class MC_PicView(Screen):
 			self.onLayoutFinish.append(self.setPicloadConf)
 
 		if startslide == True:
-			self.PlayPause();
+			self.PlayPause()
 		
 	def setPicloadConf(self):
 		sc = getScale()

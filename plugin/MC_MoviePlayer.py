@@ -167,7 +167,7 @@ class MC_MoviePlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, Inf
 			currentTrack = audio.getCurrentTrack()
 			if currentTrack > -1:
 				i = audio.getTrackInfo(currentTrack)
-				description = i.getDescription();
+				description = i.getDescription()
 				language = i.getLanguage()
 				self["audioLabel"].setText(language + "  ( " + description + " )")
 		subtitle = service.subtitle()
