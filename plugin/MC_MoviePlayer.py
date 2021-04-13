@@ -278,7 +278,7 @@ class MC_MoviePlayer_Menu(Screen):
 
 		self["pathlabel"] = Label(_("Select option"))
 
-		self["actions"] = ActionMap(["OkCancelActions","ColorActions"],
+		self["actions"] = ActionMap(["OkCancelActions", "ColorActions"],
 		{
 			"cancel": self.Exit,
 			"ok": self.okbuttonClick
@@ -287,7 +287,7 @@ class MC_MoviePlayer_Menu(Screen):
 
 	def buildList(self):
 		list = []
-		for i in range(0,len(self.list)):
+		for i in range(0, len(self.list)):
 			text = "" + self.list[i]
 			list.append(text)
 		self["list"].setList(list)

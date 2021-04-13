@@ -31,8 +31,8 @@ config.plugins.mc_pp.lastDir = ConfigText(default='mountpoint')
 config.plugins.mc_pp.rotate = ConfigSelection(default="0", choices=[("0", _("none")), ("1", _("manual")), ("2", _("by Exif"))])
 config.plugins.mc_pp.ThumbWidth = ConfigInteger(default=145, limits=(1, 999))
 config.plugins.mc_pp.ThumbHeight = ConfigInteger(default=120, limits=(1, 999))
-config.plugins.mc_pp.bgcolor = ConfigSelection(default="#00000000", choices=[("#00000000", _("black")),("#009eb9ff", _("blue")),("#00ff5a51", _("red")), ("#00ffe875", _("yellow")), ("#0038FF48", _("green"))])
-config.plugins.mc_pp.framesize = ConfigSlider(default=30,increment=5, limits=(5, 99))
+config.plugins.mc_pp.bgcolor = ConfigSelection(default="#00000000", choices=[("#00000000", _("black")), ("#009eb9ff", _("blue")), ("#00ff5a51", _("red")), ("#00ffe875", _("yellow")), ("#0038FF48", _("green"))])
+config.plugins.mc_pp.framesize = ConfigSlider(default=30, increment=5, limits=(5, 99))
 config.plugins.mc_pp.loop = ConfigEnableDisable(default=True)
 
 def getAspect():
@@ -180,7 +180,7 @@ class MC_PictureViewer(Screen, HelpableScreen):
 				if self.currentDirectory is not None:
 					foldername = self.currentDirectory.split('/')
 					foldername = foldername[-2]
-					self.session.open(MC_FolderOptions,self.currentDirectory, foldername)
+					self.session.open(MC_FolderOptions, self.currentDirectory, foldername)
 	
 	def StartThumb(self):
 		self.session.openWithCallback(self.returnVal, MC_PicThumbViewer, self.filelist.getFileList(), self.filelist.getSelectionIndex(), self.filelist.getCurrentDirectory())
@@ -495,7 +495,7 @@ class MC_PicView(Screen):
 		if ptr != None:
 			text = ""
 			try:
-				text = picInfo.split('\n',1)
+				text = picInfo.split('\n', 1)
 				text = "(" + str(self.index + 1) + "/" + str(self.maxentry + 1) + ") " + text[0].split('/')[-1]
 			except:
 				pass
@@ -691,7 +691,7 @@ class MC_FolderOptions(Screen):
 			try:
 				os.rmdir(self.directory)
 			except os.error:
-				self.session.open(MessageBox,_("Error: Cannot remove file / folder\n"), MessageBox.TYPE_INFO)
+				self.session.open(MessageBox, _("Error: Cannot remove file / folder\n"), MessageBox.TYPE_INFO)
 			self.close()
 			
 		

@@ -1,5 +1,5 @@
 from enigma import eTimer, eWidget, eRect, eServiceReference, iServiceInformation, iPlayableService, ePicLoad
-from enigma import RT_VALIGN_CENTER, RT_HALIGN_LEFT, RT_HALIGN_RIGHT, RT_HALIGN_CENTER, gFont, eListbox,ePoint, eListboxPythonMultiContent, eServiceCenter
+from enigma import RT_VALIGN_CENTER, RT_HALIGN_LEFT, RT_HALIGN_RIGHT, RT_HALIGN_CENTER, gFont, eListbox, ePoint, eListboxPythonMultiContent, eServiceCenter
 from Components.MenuList import MenuList
 
 from Components.GUIComponent import GUIComponent
@@ -58,7 +58,7 @@ def PlaylistEntryComponent(serviceref):
         text = serviceref.getName()
         if text is "":
                 text = os_path.split(serviceref.getPath().split('/')[-1])[1]
-        res.append((eListboxPythonMultiContent.TYPE_TEXT,25, 1, 470, 22, 0, RT_VALIGN_CENTER, text))
+        res.append((eListboxPythonMultiContent.TYPE_TEXT, 25, 1, 470, 22, 0, RT_VALIGN_CENTER, text))
 
         return res
 
@@ -533,13 +533,13 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 		currPlay = self.session.nav.getCurrentService()
 		sVideoType = currPlay.info().getInfoString(iServiceInformation.sVideoType)
 		print "[__evDecodeError] video-codec %s can't be decoded by hardware" % (sVideoType)
-		self.session.open(MessageBox, _("This Dreambox can't decode %s video streams!") % sVideoType, type=MessageBox.TYPE_INFO,timeout=20)
+		self.session.open(MessageBox, _("This Dreambox can't decode %s video streams!") % sVideoType, type=MessageBox.TYPE_INFO, timeout=20)
 
 	def __evPluginError(self):
 		currPlay = self.session.nav.getCurrentService()
 		message = currPlay.info().getInfoString(iServiceInformation.sUser + 12)
 		print "[__evPluginError]", message
-		self.session.open(MessageBox, message, type=MessageBox.TYPE_INFO,timeout=20)		
+		self.session.open(MessageBox, message, type=MessageBox.TYPE_INFO, timeout=20)		
 
 
 class MC_AudioPlaylist(Screen):
@@ -741,7 +741,7 @@ class MC_AudioPlaylist(Screen):
 			self["curplayingtitle"].setText(_("Now Playing:") + " " + sArtist + " - " + sTitle)
 
 	def save_playlist(self):
-		self.session.openWithCallback(self.save_pls,InputBox, title=_("Please enter filename (empty = use current date)"),windowTitle=_("Save Playlist"))
+		self.session.openWithCallback(self.save_pls, InputBox, title=_("Please enter filename (empty = use current date)"), windowTitle=_("Save Playlist"))
 
 	def save_pls(self, name):
 		if name is not None:
@@ -759,15 +759,15 @@ class MC_AudioPlaylist(Screen):
 		playlistdir = resolveFilename(SCOPE_PLAYLIST)
 		try:
 			for i in os_listdir(playlistdir):
-				listpath.append((i,playlistdir + i))
-		except IOError,e:
-			print "Error while scanning subdirs ",e
+				listpath.append((i, playlistdir + i))
+		except IOError, e:
+			print "Error while scanning subdirs ", e
 		self.session.openWithCallback(self.load_pls, ChoiceBox, title=_("Please select a playlist..."), list=listpath)
 
-	def load_pls(self,path):
+	def load_pls(self, path):
 		if path is not None:
 			self.playlist.clear()
-			extension = path[0].rsplit('.',1)[-1]
+			extension = path[0].rsplit('.', 1)[-1]
 			if self.playlistparsers.has_key(extension):
 				playlist = self.playlistparsers[extension]()
 				list = playlist.open(path[1])
@@ -780,12 +780,12 @@ class MC_AudioPlaylist(Screen):
 		playlistdir = resolveFilename(SCOPE_PLAYLIST)
 		try:
 			for i in os_listdir(playlistdir):
-				listpath.append((i,playlistdir + i))
-		except IOError,e:
-			print "Error while scanning subdirs ",e
+				listpath.append((i, playlistdir + i))
+		except IOError, e:
+			print "Error while scanning subdirs ", e
 		self.session.openWithCallback(self.delete_saved_pls, ChoiceBox, title=_("Please select a playlist to delete..."), list=listpath)
 
-	def delete_saved_pls(self,path):
+	def delete_saved_pls(self, path):
 		if path is not None:
 			self.delname = path[1]
 			self.session.openWithCallback(self.delete_saved_pls_conf, MessageBox, _("Do you really want to delete %s?") % (path[1]))
@@ -794,7 +794,7 @@ class MC_AudioPlaylist(Screen):
 		if confirmed:
 			try:
 				os_remove(self.delname)
-			except OSError,e:
+			except OSError, e:
 				print "delete failed:", e
 				self.session.open(MessageBox, _("Delete failed!"), MessageBox.TYPE_ERROR)
 

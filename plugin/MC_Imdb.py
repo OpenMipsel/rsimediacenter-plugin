@@ -144,7 +144,7 @@ class IMDB(Screen):
 		else:
 			self.close()
 
-	event_quoted = property(lambda self: quote_plus(self.eventName,"äöüÄÖÜß()"))
+	event_quoted = property(lambda self: quote_plus(self.eventName, "äöüÄÖÜß()"))
 
 	def dictionary_init(self):
 		syslang = language.getLanguage()
@@ -157,7 +157,7 @@ class IMDB(Screen):
 			'(?:.*?<h4 class="inline">\s*(?P<g_writer>Drehbuch|Writer).*?</h4>.*?<a.*?><span class="itemprop" itemprop="name">(?P<writer>.*?)</span></a>)*'
 			'(?:.*?<h4 class="inline">\s*(?P<g_country>Land|Country):\s*</h4>.*?<a.*?><span class="itemprop" itemprop="name">(?P<country>.*?)</a>)*'
 			'(?:.*?<h4 class="inline">\s*(?P<g_premiere>Premiere|Release Date).*?</h4>\s+<span class="itemprop" itemprop="name">(?P<premiere>.*?)\s*<span)*'
-			'(?:.*?<h4 class="inline">\s*(?P<g_alternativ>Auch bekannt als|Also Known As):\s*</h4>\s*<span class="itemprop" itemprop="name">(?P<alternativ>.*?)\s*<span)*'			, re.DOTALL)
+			'(?:.*?<h4 class="inline">\s*(?P<g_alternativ>Auch bekannt als|Also Known As):\s*</h4>\s*<span class="itemprop" itemprop="name">(?P<alternativ>.*?)\s*<span)*', re.DOTALL)
 
 			self.extrainfomask = re.compile(
 			'(?:.*?<h4 class="inline">(?P<g_outline>Kurzbeschreibung|Plot Outline):</h4>(?P<outline>.+?)<)*'
@@ -177,7 +177,7 @@ class IMDB(Screen):
 			'(?:.*?<h4>(?P<g_goofs>Pannen|Goofs)</h4>\s*(?P<goofs>.+?)(?:Mehr|See more</a>|</div>))*'
 			'(?:.*?<h4>(?P<g_quotes>Dialogzitate|Quotes)</h4>\s*(?P<quotes>.+?)(?:Mehr|See more</a>|</div>))*'
 			'(?:.*?<h4>(?P<g_connections>Bez\S*?ge zu anderen Titeln|Connections)</h4>\s*(?P<connections>.+?)(?:Mehr|See more</a>|</div>))*'
-			'(?:.*?<h2>(?P<g_comments>Nutzerkommentare|User Reviews)</h2>.*?<a href="/user/ur\d{7,7}/comments">(?P<commenter>.+?)</a>.*?<p>(?P<comment>.+?)</p>)*'			, re.DOTALL)
+			'(?:.*?<h2>(?P<g_comments>Nutzerkommentare|User Reviews)</h2>.*?<a href="/user/ur\d{7,7}/comments">(?P<commenter>.+?)</a>.*?<p>(?P<comment>.+?)</p>)*', re.DOTALL)
 
 			self.genreblockmask = re.compile('<h4 class="inline">Genre:</h4>\s<div class="info-content">\s+?(.*?)\s+?(?:Mehr|See more|</p|<a class|</div>)', re.DOTALL)
 			self.ratingmask = re.compile('="ratingValue">(?P<rating>\d.*?)</', re.DOTALL)
@@ -242,7 +242,7 @@ class IMDB(Screen):
 			localfile = "/tmp/imdbquery2.html"
 			fetchurl = "http://imdb.com/title/" + link
 			print("[IMDB] showDetails() downloading query " + fetchurl + " to " + localfile)
-			download = downloadWithProgress(fetchurl,localfile)
+			download = downloadWithProgress(fetchurl, localfile)
 			download.start().addCallback(self.IMDBquery2).addErrback(self.http_failed)
 			self["menu"].hide()
 			self.resetLabels()
@@ -351,12 +351,12 @@ class IMDB(Screen):
 			localfile = "/tmp/imdbquery.html"
 			fetchurl = "http://imdb.com/find?q=" + self.event_quoted + "&s=tt&site=aka"
 			print("[IMDB] getIMDB() Downloading Query " + fetchurl + " to " + localfile)
-			download = downloadWithProgress(fetchurl,localfile)
+			download = downloadWithProgress(fetchurl, localfile)
 			download.start().addCallback(self.IMDBquery).addErrback(self.http_failed)
 		else:
 			self["statusbar"].setText(_("Could't get Eventname"))
 
-	def html2utf8(self,in_html):
+	def html2utf8(self, in_html):
 		in_html = (re.subn(r'<(script).*?</\1>(?s)', '', in_html)[0])
 		in_html = (re.subn(r'<(style).*?</\1>(?s)', '', in_html)[0])
 		entitydict = {}
@@ -390,7 +390,7 @@ class IMDB(Screen):
 
 		self.inhtml = in_html.decode('latin-1').encode('utf8')
 
-	def IMDBquery(self,string):
+	def IMDBquery(self, string):
 		self["statusbar"].setText(_("IMDb Download completed"))
 		self.html2utf8(open("/tmp/imdbquery.html", "r").read())
 		self.generalinfos = self.generalinfomask.search(self.inhtml)
@@ -400,11 +400,11 @@ class IMDB(Screen):
 		else:
 			if re.search("<title>Find - IMDb</title>", self.inhtml):
 				pos = self.inhtml.find("<table class=\"findList\">")
-				pos2 = self.inhtml.find("</table>",pos)
+				pos2 = self.inhtml.find("</table>", pos)
 				findlist = self.inhtml[pos:pos2]
 				searchresultmask = re.compile('<tr class=\"findResult (?:odd|even)\">.*?<td class=\"result_text\"> <a href=\"/title/(tt\d{7,7})/.*?\"\s?>(.*?)</a>.*?</td>', re.DOTALL)
 				searchresults = searchresultmask.finditer(findlist)
-				self.resultlist = [(self.htmltags.sub('',x.group(2)), x.group(1)) for x in searchresults]
+				self.resultlist = [(self.htmltags.sub('', x.group(2)), x.group(1)) for x in searchresults]
 				Len = len(self.resultlist)
 				self["menu"].l.setList(self.resultlist)
 				if Len == 1:
@@ -412,7 +412,7 @@ class IMDB(Screen):
 					self.eventName = self.resultlist[0][1]
 					localfile = "/tmp/imdbquery.html"
 					fetchurl = "http://imdb.com/find?q=" + self.event_quoted + "&s=tt&site=aka"
-					download = downloadWithProgress(fetchurl,localfile)
+					download = downloadWithProgress(fetchurl, localfile)
 					download.start().addCallback(self.IMDBquery).addErrback(self.http_failed)
 				elif Len > 1:
 					self.Page = 1
@@ -427,7 +427,7 @@ class IMDB(Screen):
 					self["statusbar"].setText(_("Re-Query IMDb: %s...") % (self.eventName))
 					localfile = "/tmp/imdbquery.html"
 					fetchurl = "http://imdb.com/find?q=" + self.event_quoted + "&s=tt&site=aka"
-					download = downloadWithProgress(fetchurl,localfile)
+					download = downloadWithProgress(fetchurl, localfile)
 					download.start().addCallback(self.IMDBquery).addErrback(self.http_failed)
 				else:
 					self["detailslabel"].setText(_("IMDb query failed!"))
@@ -438,10 +438,10 @@ class IMDB(Screen):
 		if error_message == "" and failure_instance is not None:
 			error_message = failure_instance.getErrorMessage()
 			text += ": " + error_message
-		print("[IMDB] ",text)
+		print("[IMDB] ", text)
 		self["statusbar"].setText(text)
 
-	def IMDBquery2(self,string):
+	def IMDBquery2(self, string):
 		self["statusbar"].setText(_("IMDb Re-Download completed"))
 		self.html2utf8(open("/tmp/imdbquery2.html", "r").read())
 		self.generalinfos = self.generalinfomask.search(self.inhtml)
@@ -474,7 +474,7 @@ class IMDB(Screen):
 
 			for category in ("premiere", "country", "alternativ"):
 				if self.generalinfos.group(category):
-					Detailstext += "\n" + self.generalinfos.group('g_' + category) + ": " + self.htmltags.sub('', self.generalinfos.group(category).replace('\n',' ').replace("<br>", '\n').replace("<br />",'\n').replace("  ",' '))
+					Detailstext += "\n" + self.generalinfos.group('g_' + category) + ": " + self.htmltags.sub('', self.generalinfos.group(category).replace('\n', ' ').replace("<br>", '\n').replace("<br />", '\n').replace("  ", ' '))
 
 			rating = self.ratingmask.search(self.inhtml)
 			Ratingtext = _("no user rating yet")
@@ -483,7 +483,7 @@ class IMDB(Screen):
 				if rating != '<span id="voteuser"></span>':
 					Ratingtext = _("User Rating") + ": " + rating + " / 10"
 					try:
-						self.ratingstars = int(10 * round(float(rating.replace(',','.')),1))
+						self.ratingstars = int(10 * round(float(rating.replace(',', '.')), 1))
 					except ValueError:
 						self.ratingstars = 0
 					self["stars"].show()
@@ -497,7 +497,7 @@ class IMDB(Screen):
 				for x in castresult:
 					Casttext += "\n" + self.htmltags.sub('', x.group('actor'))
 					if x.group('character'):
-						Casttext += _(" as ") + self.htmltags.sub('', x.group('character').replace('/ ...','')).replace('\n', ' ')
+						Casttext += _(" as ") + self.htmltags.sub('', x.group('character').replace('/ ...', '')).replace('\n', ' ')
 						if x.group('additional'):
 							Casttext += ' ' + x.group('additional')
 				if Casttext:
@@ -512,7 +512,7 @@ class IMDB(Screen):
 				self["statusbar"].setText(_("Downloading Movie Poster: %s...") % (posterurl))
 				localfile = "/tmp/poster.jpg"
 				print("[IMDB] downloading poster " + posterurl + " to " + localfile)
-				download = downloadWithProgress(posterurl,localfile)
+				download = downloadWithProgress(posterurl, localfile)
 				download.start().addCallback(self.IMDBPoster).addErrback(self.http_failed)
 			else:
 				self.IMDBPoster("kein Poster")
@@ -521,12 +521,12 @@ class IMDB(Screen):
 			if extrainfos:
 				Extratext = "Extra Info\n"
 
-				for category in ("tagline","outline","synopsis","keywords","awards","runtime","language","color","aspect","sound","cert","locations","company","trivia","goofs","quotes","connections"):
+				for category in ("tagline", "outline", "synopsis", "keywords", "awards", "runtime", "language", "color", "aspect", "sound", "cert", "locations", "company", "trivia", "goofs", "quotes", "connections"):
 					if extrainfos.group('g_' + category):
-						Extratext += extrainfos.group('g_' + category) + ": " + self.htmltags.sub('',extrainfos.group(category).replace("\n",'').replace("<br>", '\n').replace("<br />",'\n')) + "\n"
+						Extratext += extrainfos.group('g_' + category) + ": " + self.htmltags.sub('', extrainfos.group(category).replace("\n", '').replace("<br>", '\n').replace("<br />", '\n')) + "\n"
 				if extrainfos.group("g_comments"):
 					stripmask = re.compile('\s{2,}', re.DOTALL)
-					Extratext += extrainfos.group("g_comments") + " [" + stripmask.sub(' ', self.htmltags.sub('',extrainfos.group("commenter"))) + "]: " + self.htmltags.sub('',extrainfos.group("comment").replace("\n",' ')) + "\n"
+					Extratext += extrainfos.group("g_comments") + " [" + stripmask.sub(' ', self.htmltags.sub('', extrainfos.group("commenter"))) + "]: " + self.htmltags.sub('', extrainfos.group("comment").replace("\n", ' ')) + "\n"
 
 				self["extralabel"].setText(Extratext)
 				self["extralabel"].hide()
@@ -535,7 +535,7 @@ class IMDB(Screen):
 		self["detailslabel"].setText(Detailstext)
 		self.callbackData = Detailstext
 
-	def IMDBPoster(self,string):
+	def IMDBPoster(self, string):
 		self["statusbar"].setText(_("IMDb Details parsed"))
 		if not string:
 			filename = "/tmp/poster.jpg"

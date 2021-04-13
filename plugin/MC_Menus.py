@@ -17,7 +17,7 @@ class IniciaSelListMC(MenuList):
 		self.l.setFont(0, gFont("Regular", 19))
 		self.l.setFont(1, gFont("Regular", 17))
 
-def IniciaSelListEntryMC(texto,imagen="na"):
+def IniciaSelListEntryMC(texto, imagen="na"):
 	res = [texto]
 	res.append(MultiContentEntryText(pos=(42, 4), size=(1000, 30), font=0, text=texto))
 	carpetaimg = "/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/images/"
@@ -28,7 +28,7 @@ def IniciaSelListEntryMC(texto,imagen="na"):
 		res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 2, 2, 35, 25, fpng))
 	return res
 
-def ScalingmodeEntryComponent(text,active="no"):
+def ScalingmodeEntryComponent(text, active="no"):
 	res = [text]
 	if active == 'yes':
 		text = text + ' (Active)'
@@ -76,7 +76,7 @@ class Scalingmode_Menu(Screen):
 		print "active mode "
 		print self.activemode
 		print "end active mode print"
-		for i in range(0,len(self.list)):
+		for i in range(0, len(self.list)):
 			text = "" + self.list[i]
 			active = 'no'
 			if str(i) == str(self.activemode):

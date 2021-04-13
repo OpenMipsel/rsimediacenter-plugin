@@ -71,7 +71,7 @@ class DMC_MainMenu(Screen):
 			#self.procservice();
 			#self.session.openWithCallback(self.tmpcallback, MC_VideoPlayer)
 		else:
-			self.session.open(MessageBox,_("Error: Something is wrong, cannot find") + " %s\n" % (selection[1]), MessageBox.TYPE_INFO)
+			self.session.open(MessageBox, _("Error: Something is wrong, cannot find") + " %s\n" % (selection[1]), MessageBox.TYPE_INFO)
 
 # BUTTON MAINMENU MRUAPLAYER - RECORDINGS
 	def startRecordings(self):
@@ -79,7 +79,7 @@ class DMC_MainMenu(Screen):
 		if selection is not None:
 			InfoBar.showMovies(InfoBar.instance)
 		else:
-			self.session.open(MessageBox,_("Error: Something is wrong, cannot find") + " %s\n" % (selection[1]), MessageBox.TYPE_INFO)
+			self.session.open(MessageBox, _("Error: Something is wrong, cannot find") + " %s\n" % (selection[1]), MessageBox.TYPE_INFO)
 
 
 # BUTTON MAINMENU MRUAPLAYER - AUDIOPLAYER
@@ -88,7 +88,7 @@ class DMC_MainMenu(Screen):
 		if selection is not None:
 			self.session.openWithCallback(self.tmpcallback, MC_AudioPlayer)
 		else:
-			self.session.open(MessageBox,_("Error: Something is wrong, cannot find") + " %s\n" % (selection[1]), MessageBox.TYPE_INFO)
+			self.session.open(MessageBox, _("Error: Something is wrong, cannot find") + " %s\n" % (selection[1]), MessageBox.TYPE_INFO)
 
 # BUTTON MAINMENU MRUAPLAYER - PICTUREVIEWER
 	def startMC_PictureViewer(self):
@@ -96,7 +96,7 @@ class DMC_MainMenu(Screen):
 		if selection is not None:
 			self.session.openWithCallback(self.tmpcallback, MC_PictureViewer)
 		else:
-			self.session.open(MessageBox,_("Error: Something is wrong, cannot find") + " %s\n" % (selection[1]), MessageBox.TYPE_INFO)
+			self.session.open(MessageBox, _("Error: Something is wrong, cannot find") + " %s\n" % (selection[1]), MessageBox.TYPE_INFO)
 
 	def procservice(self):
 		if self.azbox == True:
@@ -133,7 +133,7 @@ class DMC_MainMenu(Screen):
 			elif selection[1] == "pictures":
 				self.session.openWithCallback(self.tmpcallback, MC_PictureViewer)
 			else:
-				self.session.open(MessageBox,_("Error: Something is wrong, cannot find") + " %s\n" % (selection[1]), MessageBox.TYPE_INFO)
+				self.session.open(MessageBox, _("Error: Something is wrong, cannot find") + " %s\n" % (selection[1]), MessageBox.TYPE_INFO)
 
 	def tmpcallback(self):
 		if self.procstarted == True:

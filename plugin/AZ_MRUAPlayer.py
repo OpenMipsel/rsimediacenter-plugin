@@ -230,7 +230,7 @@ class MRUAPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBar
 		audioTuple = info and info.getInfoObject(iServiceInformation.sUser + 6)
 		print "AudioInfoAvail ", repr(audioTuple)
 		if audioTuple:
-			audioString = "%d: %s (%s)" % (audioTuple[0],audioTuple[1],audioTuple[2])
+			audioString = "%d: %s (%s)" % (audioTuple[0], audioTuple[1], audioTuple[2])
 			self["audioLabel"].setText(audioString)
 			if audioTuple != self.last_audioTuple and not self.in_menu:
 				self.doShow()
@@ -243,7 +243,7 @@ class MRUAPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBar
 		if subtitleTuple:
 			subtitleString = ""
 			if subtitleTuple[0] is not 0:
-				subtitleString = "%d: %s" % (subtitleTuple[0],subtitleTuple[1])
+				subtitleString = "%d: %s" % (subtitleTuple[0], subtitleTuple[1])
 			self["subtitleLabel"].setText(subtitleString)
 			if subtitleTuple != self.last_subtitleTuple and not self.in_menu:
 				self.doShow()
@@ -459,10 +459,10 @@ class MRUAPlayer_Menu(Screen):
 		
 		self["pathlabel"] = Label(_("Select option"))
 		
-		self["actions"] = ActionMap(["OkCancelActions","ColorActions"],
+		self["actions"] = ActionMap(["OkCancelActions", "ColorActions"],
 		{
-			"yellow":self.setaudio,
-			"red":self.setsubtitle,
+			"yellow": self.setaudio,
+			"red": self.setsubtitle,
 			"cancel": self.Exit,
 			"ok": self.okbuttonClick
 		}, -1)
@@ -470,7 +470,7 @@ class MRUAPlayer_Menu(Screen):
 
 	def buildList(self):
 		list = []
-		for i in range(0,len(self.list)):
+		for i in range(0, len(self.list)):
 			texto = "" + self.list[i]
 			list.append(IniciaSelListEntryMC(texto, str(i)))
 		self["list"].setList(list)
@@ -607,7 +607,7 @@ class MRUAPlayer_Suboptions2(Screen):
 
 	def buildList(self):
 		list = []
-		for i in range(0,len(self.list)):
+		for i in range(0, len(self.list)):
 			text = "" + self.list[i]
 			list.append(SubOptionsEntryComponent(text))
 		self["list"].setList(list)
