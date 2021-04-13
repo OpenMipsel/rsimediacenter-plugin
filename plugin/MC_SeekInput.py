@@ -3,6 +3,7 @@ from Components.ActionMap import NumberActionMap, ActionMap
 from Components.Label import Label
 from Components.Pixmap import Pixmap, MovingPixmap
 
+
 class SeekInput(Screen):
 		skin = """
 		<screen position="10,10" size="200,60" title="Seekinput" flags="wfNoBorder">

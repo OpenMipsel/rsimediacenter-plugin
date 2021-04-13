@@ -36,10 +36,12 @@ import gettext
 config.plugins.imdb = ConfigSubsection()
 config.plugins.imdb.force_english = ConfigYesNo(default=False)
 
+
 def localeInit():
 	lang = language.getLanguage()[:2] # getLanguage returns e.g. "fi_FI" for "language_country"
 	os_environ["LANGUAGE"] = lang # Enigma doesn't set this (or LC_ALL, LC_MESSAGES, LANG). gettext needs it!
 	gettext.bindtextdomain("IMDb", resolveFilename(SCOPE_PLUGINS, "Extensions/MediaCenter/locale"))
+
 
 def _(txt):
 	t = gettext.dgettext("IMDb", txt)
@@ -48,8 +50,10 @@ def _(txt):
 		t = gettext.gettext(txt)
 	return t
 
+
 localeInit()
 language.addCallback(localeInit)
+
 
 class IMDB(Screen):
 	skin = """
@@ -98,6 +102,7 @@ class IMDB(Screen):
 
 		self["title"] = StaticText(_("The Internet Movie Database"))
 		# map new source -> old component
+
 		def setText(txt):
 			StaticText.setText(self["title"], txt)
 			self["titellabel"].setText(txt)
@@ -432,7 +437,6 @@ class IMDB(Screen):
 				else:
 					self["detailslabel"].setText(_("IMDb query failed!"))
 
-
 	def http_failed(self, failure_instance=None, error_message=""):
 		text = _("IMDb Download failed")
 		if error_message == "" and failure_instance is not None:
@@ -554,6 +558,7 @@ class IMDB(Screen):
 	def createSummary(self):
 		return IMDbLCDScreen
 
+
 class IMDbLCDScreen(Screen):
 	skin = """
 	<screen position="0,0" size="132,64" title="IMDB Plugin">
@@ -565,12 +570,15 @@ class IMDbLCDScreen(Screen):
 		Screen.__init__(self, session, parent)
 		self["headline"] = Label(_("IMDb Plugin"))
 
+
 def eventinfo(session, eventName="", **kwargs):
 	session.open(IMDB, eventName)
+
 
 def main(session, eventName="", **kwargs):
 	ref = session.nav.getCurrentlyPlayingServiceReference()
 	session.open(IMDBEPGSelection, ref)
+
 
 def Plugins(**kwargs):
 	return [PluginDescriptor(name="IMDb Details",

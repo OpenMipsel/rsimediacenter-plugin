@@ -35,11 +35,13 @@ EXTENSIONS = {
 		"flv": "movie"
 	}
 
+
 def sizeof_fmt(num):
 	for x in ['B', 'KB', 'MB', 'GB', 'TB']:
 		if num < 1024.0:
 			return "%3.1f%s" % (num, x)
 		num /= 1024.0
+
 
 def FileEntryComponent(name, absolute=None, isDir=False):
 	res = [(absolute, isDir, name)]
@@ -87,6 +89,7 @@ def FileEntryComponent(name, absolute=None, isDir=False):
 		res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHATEST, 10, 8, 20, 20, png))
 	
 	return res
+
 
 class FileList(MenuList):
 	def __init__(self, directory, showDirectories=True, showFiles=True, showMountpoints=True, matchingPattern=None, useServiceRef=False, inhibitDirs=False, inhibitMounts=False, isTop=False, enableWrapAround=False, additionalExtensions=None):
@@ -321,6 +324,7 @@ class FileList(MenuList):
 	def setIsoDir(self, filename, filedir):
 		self.savedisodir = filedir
 		self.savedisoselec = filename
+
 
 def MultiFileSelectEntryComponent(name, absolute=None, isDir=False, selected=False):
 	res = [(absolute, isDir, selected, name)]

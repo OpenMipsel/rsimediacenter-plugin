@@ -20,6 +20,7 @@ from MC_Menus import IniciaSelListMC, IniciaSelListEntryMC
 
 import serviceazdvd
 
+
 class DVDSummary(Screen):
 		skin = """
 		<screen name="DVDSummary" position="0,0" size="50,64" id="3">
@@ -31,11 +32,13 @@ class DVDSummary(Screen):
 		def __init__(self, session, parent):
 				Screen.__init__(self, session)
 
+
 class DVDOverlay(Screen):
 	def __init__(self, session, args=None):
 		desktop_size = getDesktop(0).size()
 		DVDOverlay.skin = """<screen name="DVDOverlay" position="0,0" size="%d,%d" flags="wfNoBorder" zPosition="-1" backgroundColor="transparent" />""" % (desktop_size.width(), desktop_size.height())
 		Screen.__init__(self, session)
+
 
 class ChapterZap(Screen):
 	skin = """
@@ -86,6 +89,7 @@ class ChapterZap(Screen):
 		self.Timer = eTimer()
 		self.Timer.callback.append(self.keyOK)
 		self.Timer.start(3000, True)
+
 
 class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarPVRState, InfoBarShowHide, HelpableScreen, InfoBarCueSheetSupport, InfoBarAudioSelection, InfoBarSubtitleSupport):
 	ALLOW_SUSPEND = Screen.SUSPEND_PAUSES
@@ -230,7 +234,6 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 				"0": self.keyNumberGlobal,
 			})
 			
-
 		self.onClose.append(self.__onClose)
 
 		from Plugins.SystemPlugins.Hotplug.plugin import hotplugNotifier
@@ -562,6 +565,7 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 		self.physicalDVD = False
 
 #-----------------------------------------------------------------------------------------------------------------------
+
 
 class AZDVDPlayer_Menu(Screen):
 	skin = """

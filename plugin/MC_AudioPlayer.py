@@ -47,11 +47,13 @@ config.plugins.mc_ap.lastDir = ConfigText(default='mountpoint')
 
 playlist = []
 
+
 def getAspect():
 	val = AVSwitch().getAspectRatioSetting()
 	return val / 2
 	
 #------------------------------------------------------------------------------------------
+
 
 def PlaylistEntryComponent(serviceref):
         res = [serviceref]
@@ -61,6 +63,7 @@ def PlaylistEntryComponent(serviceref):
         res.append((eListboxPythonMultiContent.TYPE_TEXT, 25, 1, 470, 22, 0, RT_VALIGN_CENTER, text))
 
         return res
+
 
 class PlayList(MenuList):
         def __init__(self, enableWrapAround=False):
@@ -801,7 +804,6 @@ class MC_AudioPlaylist(Screen):
 	def addPlaylistParser(self, parser, extension):
 		self.playlistparsers[extension] = parser
 
-
 	def showMenu(self):
 		menu = []
 		menu.append((_("delete from playlist"), "deleteentry"))
@@ -828,6 +830,7 @@ class MC_AudioPlaylist(Screen):
 			self.delete_saved_playlist()
 			
 #-----------------------------------------------------------------------------------------------------------------------------
+
 
 class MediaPixmap(Pixmap):
 	def __init__(self):
@@ -882,7 +885,6 @@ class MediaPixmap(Pixmap):
 		print "[embeddedCoverArt] found"
 		self.coverArtFileName = "/tmp/.id3coverart"
 		self.picload.startDecode(self.coverArtFileName)
-
 
 
 #------------------------------------------------------------------------------------------

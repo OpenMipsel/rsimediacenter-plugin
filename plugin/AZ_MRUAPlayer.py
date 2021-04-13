@@ -43,6 +43,7 @@ config.plugins.mc_mrua.subsize = ConfigInteger(default=30, limits=(5, 100))
 config.plugins.mc_mrua.subdelay = ConfigInteger(default=0, limits=(-999999, 999999))
 config.plugins.mc_mrua.screenres = ConfigInteger(default=0, limits=(-999999, 999999))
 
+
 class MRUASummary(Screen):
 	skin = """
 	<screen name="MRUASummary" position="0,0" size="90,64" id="3">
@@ -53,6 +54,7 @@ class MRUASummary(Screen):
 
 	def __init__(self, session, parent):
 		Screen.__init__(self, session)
+
 
 class MRUAPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarPVRState, InfoBarShowHide, HelpableScreen, InfoBarCueSheetSupport, InfoBarAudioSelection, InfoBarSubtitleSupport):
 	ALLOW_SUSPEND = Screen.SUSPEND_PAUSES
@@ -438,6 +440,7 @@ class MRUAPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBar
 
 #--------------------------------------------------------------------------------------
 
+
 class MRUAPlayer_Menu(Screen):
 	skin = """
 	<screen name="MRUAPlayer_Menu" position="30,55" size="350,240" title="%s" >
@@ -489,6 +492,8 @@ class MRUAPlayer_Menu(Screen):
 		self.close(None)
 
 #-----------------------------------------------------------------------------------------------------------------------
+
+
 class MRUAPlayer_Suboptions2(Screen):
 	skin = """
 	<screen name="MRUAPlayer_Suboptions2" position="30,55" size="600,250" title="%s" >
@@ -729,6 +734,8 @@ class MRUAPlayer_Suboptions2(Screen):
 
 #-----------------------------------------------------------------------------------------------------------------------
 #Depreciated - Not used anymore
+
+
 class MRUAPlayer_SubOptions(Screen):
 	skin = """
 		<screen position="80,80" size="600,220" title="Subtitle Options" >

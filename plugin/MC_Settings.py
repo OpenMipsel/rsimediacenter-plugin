@@ -33,6 +33,7 @@ import os
 
 #------------------------------------------------------------------------------------------
 
+
 class MC_Settings(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
@@ -99,6 +100,7 @@ class MC_Settings(Screen):
 		self.close()
 			
 #------------------------------------------------------------------------------------------
+
 
 class MCS_SkinSelector(Screen):
 	skin = """

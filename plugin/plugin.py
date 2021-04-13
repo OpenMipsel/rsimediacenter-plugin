@@ -22,6 +22,7 @@ from MC_PictureViewer import MC_PictureViewer
 
 #------------------------------------------------------------------------------------------
 
+
 class DMC_MainMenu(Screen):
 
 	def __init__(self, session, args=0):
@@ -83,6 +84,7 @@ class DMC_MainMenu(Screen):
 
 
 # BUTTON MAINMENU MRUAPLAYER - AUDIOPLAYER
+
 	def startMC_AudioPlayer(self):
 		selection = self["menu"].getCurrent()
 		if selection is not None:
@@ -156,13 +158,16 @@ class DMC_MainMenu(Screen):
 
 #------------------------------------------------------------------------------------------
 
+
 def main(session, **kwargs):
 	session.open(DMC_MainMenu)
+
 
 def menu(menuid, **kwargs):
 	if menuid == "mainmenu":
 		return [(_("Media Center"), main, "dmc_mainmenu", 40)]
 	return []
+
 
 def Plugins(**kwargs):
 	if True:

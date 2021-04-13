@@ -18,6 +18,7 @@ from MC_Filelist import FileList
 config.plugins.mc_vp = ConfigSubsection()
 config.plugins.mc_vp.lastDir = ConfigText(default='mountpoint')
 
+
 class MC_VideoPlayer(Screen, HelpableScreen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
@@ -215,6 +216,7 @@ class MC_VideoPlayer(Screen, HelpableScreen):
 		from MC_Imdb import IMDB
 		name = self["filelist"].getName()
 		self.session.open(IMDB, name.partition('(')[0])
+
 
 class MC_VideoInfoView(Screen):
 	skin = """

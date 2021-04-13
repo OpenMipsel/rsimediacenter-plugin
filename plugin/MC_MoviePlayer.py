@@ -27,6 +27,7 @@ from os import path as os_path, remove as os_remove, listdir as os_listdir, syst
 
 from MC_SeekInput import SeekInput
 
+
 class MC_MoviePlayerSummary(Screen):
 	skin = """
 	<screen name="MoviePlayerSummary" position="0,0" size="90,64" id="3">
@@ -37,6 +38,7 @@ class MC_MoviePlayerSummary(Screen):
 
 	def __init__(self, session, parent):
 		Screen.__init__(self, session)
+
 
 class MC_MoviePlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarPVRState, InfoBarShowHide, HelpableScreen, InfoBarCueSheetSupport, InfoBarAudioSelection, InfoBarSubtitleSupport):
 	ALLOW_SUSPEND = True
@@ -260,6 +262,7 @@ class MC_MoviePlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, Inf
 
 	def createSummary(self):
 		return MC_MoviePlayerSummary
+
 
 class MC_MoviePlayer_Menu(Screen):
 	skin = """

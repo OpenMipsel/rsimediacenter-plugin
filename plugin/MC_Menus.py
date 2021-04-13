@@ -10,12 +10,15 @@ from Tools.LoadPixmap import LoadPixmap
 from Tools.Directories import fileExists
 
 # **spzTeam added** get images for menu
+
+
 class IniciaSelListMC(MenuList):
 	def __init__(self, list, enableWrapAround=False):
 		MenuList.__init__(self, list, enableWrapAround, eListboxPythonMultiContent)
 		self.l.setItemHeight(30)
 		self.l.setFont(0, gFont("Regular", 19))
 		self.l.setFont(1, gFont("Regular", 17))
+
 
 def IniciaSelListEntryMC(texto, imagen="na"):
 	res = [texto]
@@ -28,6 +31,7 @@ def IniciaSelListEntryMC(texto, imagen="na"):
 		res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 2, 2, 35, 25, fpng))
 	return res
 
+
 def ScalingmodeEntryComponent(text, active="no"):
 	res = [text]
 	if active == 'yes':
@@ -36,12 +40,15 @@ def ScalingmodeEntryComponent(text, active="no"):
 	
 	return res
 
+
 def SubOptionsEntryComponent(text):
 	res = [text]
 	res.append(MultiContentEntryText(pos=(0, 0), size=(1000, 30), font=0, text=text))
 	return res
 
 #Scaling mode menu
+
+
 class Scalingmode_Menu(Screen):
 	skin = """
 	<screen name="Scalingmode_Menu" position="30,55" size="350,180" title="%s" >

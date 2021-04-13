@@ -35,14 +35,17 @@ config.plugins.mc_pp.bgcolor = ConfigSelection(default="#00000000", choices=[("#
 config.plugins.mc_pp.framesize = ConfigSlider(default=30, increment=5, limits=(5, 99))
 config.plugins.mc_pp.loop = ConfigEnableDisable(default=True)
 
+
 def getAspect():
 	val = AVSwitch().getAspectRatioSetting()
 	return val / 2
+
 
 def getScale():
 	return AVSwitch().getFramebufferScale()
 
 #------------------------------------------------------------------------------------------
+
 
 class MC_PictureViewer(Screen, HelpableScreen):
 	def __init__(self, session):
@@ -106,7 +109,6 @@ class MC_PictureViewer(Screen, HelpableScreen):
 		self.picload.PictureData.get().append(self.showPic)
 		
 		self.onLayoutFinish.append(self.setConf)
-		
 		
 	def startslideshow(self):
 		self.session.openWithCallback(self.returnVal, MC_PicView, self.filelist.getFileList(), self.filelist.getSelectionIndex(), self.filelist.getCurrentDirectory(), True)
@@ -216,12 +218,14 @@ class MC_PictureViewer(Screen, HelpableScreen):
 		self.session.nav.playService(self.oldService)
 		self.close()
 
+
 #------------------------------------------------------------------------------------------
 T_INDEX = 0
 T_FRAME_POS = 1
 T_PAGE = 2
 T_NAME = 3
 T_FULL = 4
+
 
 class MC_PicThumbViewer(Screen, HelpableScreen):
 	def __init__(self, session, piclist, lastindex, path):
@@ -406,6 +410,7 @@ class MC_PicThumbViewer(Screen, HelpableScreen):
 		del self.picload
 		self.close(self.index + self.dirlistcount, True)
 #------------------------------------------------------------------------------------------
+
 
 class MC_PicView(Screen):
 	def __init__(self, session, filelist, index, path, startslide):
@@ -601,6 +606,7 @@ class Pic_Exif(Screen):
 
 #------------------------------------------------------------------------------------------
 
+
 class MC_PicSetup(Screen):
 	def __init__(self, session):
 		self.skin = """<screen position="120,180" size="480,310" title="Settings" >
@@ -642,6 +648,7 @@ class MC_PicSetup(Screen):
 		self["liste"].handleKey(KEY_0 + number)
 
 #--------------------------------------------------------------------------------------------------
+
 
 class MC_FolderOptions(Screen):
 	skin = """
@@ -694,6 +701,5 @@ class MC_FolderOptions(Screen):
 				self.session.open(MessageBox, _("Error: Cannot remove file / folder\n"), MessageBox.TYPE_INFO)
 			self.close()
 			
-		
 	def Exit(self):
 		self.close()
