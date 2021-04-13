@@ -80,7 +80,7 @@ class MC_VideoPlayer(Screen, HelpableScreen):
 		if self["filelist"].canDescent():
 			return
 		else:
-			self.session.open(MC_VideoInfoView, self["filelist"].getCurrentDirectory() + self["filelist"].getFilename() , self["filelist"].getFilename(), self["filelist"].getServiceRef())
+			self.session.open(MC_VideoInfoView, self["filelist"].getCurrentDirectory() + self["filelist"].getFilename(), self["filelist"].getFilename(), self["filelist"].getServiceRef())
 
 	def KeyExit(self):
 		self.filelist.gotoParent()
@@ -115,7 +115,7 @@ class MC_VideoPlayer(Screen, HelpableScreen):
 				self["filelist"].refresh()
 		
 		if self.pathname != "":
-			dvdFilelist = [ ]
+			dvdFilelist = []
 			dvdDevice = None
 			if fileExists(self.pathname+"VIDEO_TS.IFO"):
 				dvdFilelist.append(str(self.pathname[0:-1]))
@@ -232,7 +232,7 @@ class MC_VideoInfoView(Screen):
 			"ok": self.close
 		}, -1)
 		
-		tlist = [ ]
+		tlist = []
 		self["infolist"] = ServiceInfoList(tlist)
 		
 		currPlay = self.session.nav.getCurrentService()

@@ -116,7 +116,7 @@ class MC_MoviePlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, Inf
 				"AudioSelection": (self.audioSelection, _("Select audio track")),
 			}, -2)
 
-		self["NumberActions"] = NumberActionMap( [ "NumberActions"],
+		self["NumberActions"] = NumberActionMap(["NumberActions"],
 			{
 				"1": self.keyNumberGlobal,
 				"2": self.keyNumberGlobal,

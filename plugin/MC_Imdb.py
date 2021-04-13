@@ -157,8 +157,7 @@ class IMDB(Screen):
 			'(?:.*?<h4 class="inline">\s*(?P<g_writer>Drehbuch|Writer).*?</h4>.*?<a.*?><span class="itemprop" itemprop="name">(?P<writer>.*?)</span></a>)*'
 			'(?:.*?<h4 class="inline">\s*(?P<g_country>Land|Country):\s*</h4>.*?<a.*?><span class="itemprop" itemprop="name">(?P<country>.*?)</a>)*'
 			'(?:.*?<h4 class="inline">\s*(?P<g_premiere>Premiere|Release Date).*?</h4>\s+<span class="itemprop" itemprop="name">(?P<premiere>.*?)\s*<span)*'
-			'(?:.*?<h4 class="inline">\s*(?P<g_alternativ>Auch bekannt als|Also Known As):\s*</h4>\s*<span class="itemprop" itemprop="name">(?P<alternativ>.*?)\s*<span)*'
-			, re.DOTALL)
+			'(?:.*?<h4 class="inline">\s*(?P<g_alternativ>Auch bekannt als|Also Known As):\s*</h4>\s*<span class="itemprop" itemprop="name">(?P<alternativ>.*?)\s*<span)*'			, re.DOTALL)
 
 			self.extrainfomask = re.compile(
 			'(?:.*?<h4 class="inline">(?P<g_outline>Kurzbeschreibung|Plot Outline):</h4>(?P<outline>.+?)<)*'
@@ -178,8 +177,7 @@ class IMDB(Screen):
 			'(?:.*?<h4>(?P<g_goofs>Pannen|Goofs)</h4>\s*(?P<goofs>.+?)(?:Mehr|See more</a>|</div>))*'
 			'(?:.*?<h4>(?P<g_quotes>Dialogzitate|Quotes)</h4>\s*(?P<quotes>.+?)(?:Mehr|See more</a>|</div>))*'
 			'(?:.*?<h4>(?P<g_connections>Bez\S*?ge zu anderen Titeln|Connections)</h4>\s*(?P<connections>.+?)(?:Mehr|See more</a>|</div>))*'
-			'(?:.*?<h2>(?P<g_comments>Nutzerkommentare|User Reviews)</h2>.*?<a href="/user/ur\d{7,7}/comments">(?P<commenter>.+?)</a>.*?<p>(?P<comment>.+?)</p>)*'
-			, re.DOTALL)
+			'(?:.*?<h2>(?P<g_comments>Nutzerkommentare|User Reviews)</h2>.*?<a href="/user/ur\d{7,7}/comments">(?P<commenter>.+?)</a>.*?<p>(?P<comment>.+?)</p>)*'			, re.DOTALL)
 
 			self.genreblockmask = re.compile('<h4 class="inline">Genre:</h4>\s<div class="info-content">\s+?(.*?)\s+?(?:Mehr|See more|</p|<a class|</div>)', re.DOTALL)
 			self.ratingmask = re.compile('="ratingValue">(?P<rating>\d.*?)</', re.DOTALL)
@@ -216,7 +214,7 @@ class IMDB(Screen):
 			self["extralabel"].pageDown()
 
 	def showMenu(self):
-		if ( self.Page is 1 or self.Page is 2 ) and self.resultlist:
+		if (self.Page is 1 or self.Page is 2) and self.resultlist:
 			self["menu"].show()
 			self["stars"].hide()
 			self["starsbg"].hide()

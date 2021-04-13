@@ -67,7 +67,7 @@ class ChapterZap(Screen):
 
 		self["number"] = Label(self.field)
 
-		self["actions"] = NumberActionMap( [ "SetupActions" ],
+		self["actions"] = NumberActionMap(["SetupActions"],
 			{
 				"cancel": self.quit,
 				"ok": self.keyOK,
@@ -102,7 +102,7 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 	def change_infobar_seek_config(self):
 		config.seek.speeds_forward.value = [2, 4, 8, 16, 32, 64]
 		config.seek.speeds_backward.value = [8, 16, 32, 64]
-		config.seek.speeds_slowmotion.value = [ ]
+		config.seek.speeds_slowmotion.value = []
 		config.seek.enter_forward.value = "2"
 		config.seek.enter_backward.value = "2"
 		config.seek.on_pause.value = "play"
@@ -115,7 +115,7 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 		config.seek.enter_backward.value = self.saved_config_enter_backward
 		config.seek.on_pause.value = self.saved_config_seek_on_pause
 
-	def __init__(self, session, dvd_device=None, dvd_filelist=[ ], args=None):
+	def __init__(self, session, dvd_device=None, dvd_filelist=[], args=None):
 		Screen.__init__(self, session)
 		InfoBarBase.__init__(self)
 		InfoBarNotifications.__init__(self)
@@ -130,7 +130,7 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 		InfoBarPVRState.__init__(self)
 		self.dvdScreen = self.session.instantiateDialog(DVDOverlay)
 		
-		self.skinName = ["AZDVDPlayer", "DVDPlayer" ]
+		self.skinName = ["AZDVDPlayer", "DVDPlayer"]
 
 		self.oldService = self.session.nav.getCurrentlyPlayingServiceReference()
 		self.session.nav.stopService()
@@ -216,7 +216,7 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 				"AudioSelection": (self.audioSelection, _("Select audio track")),				
 			}, -2)
 			
-		self["NumberActions"] = NumberActionMap( [ "NumberActions"],
+		self["NumberActions"] = NumberActionMap(["NumberActions"],
 			{
 				"1": self.keyNumberGlobal,
 				"2": self.keyNumberGlobal,
@@ -550,7 +550,7 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 		if pathExists(devicepath):
 			from Components.Scanner import scanDevice
 			res = scanDevice(devicepath)
-			list = [ (r.description, r, res[r], self.session) for r in res ]
+			list = [(r.description, r, res[r], self.session) for r in res]
 			if list:
 				(desc, scanner, files, session) = list[0]
 				for file in files:

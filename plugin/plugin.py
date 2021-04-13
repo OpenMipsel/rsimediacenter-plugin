@@ -28,7 +28,7 @@ class DMC_MainMenu(Screen):
 		self.session = session
 		Screen.__init__(self, session)
 		
-		self.skinName = ["DMC_MainMenu", "menu_mainmenu" ]
+		self.skinName = ["DMC_MainMenu", "menu_mainmenu"]
 
 		self.oldService = self.session.nav.getCurrentlyPlayingServiceReference()
 		self.session.nav.stopService()

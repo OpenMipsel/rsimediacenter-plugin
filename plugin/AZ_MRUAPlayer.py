@@ -74,7 +74,7 @@ class MRUAPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBar
 	def change_infobar_seek_config(self):
 		config.seek.speeds_forward.value = [2, 4]
 		config.seek.speeds_backward.value = [2, 4]
-		config.seek.speeds_slowmotion.value = [ ]
+		config.seek.speeds_slowmotion.value = []
 		config.seek.enter_forward.value = "2"
 		config.seek.enter_backward.value = "2"
 		config.seek.on_pause.value = "play"
@@ -107,7 +107,7 @@ class MRUAPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBar
 		InfoBarSeek.__init__(self)
 		InfoBarPVRState.__init__(self)
 
-		self.skinName = ["MRUAPlayer", "DVDPlayer" ]
+		self.skinName = ["MRUAPlayer", "DVDPlayer"]
 
 		self.oldService = self.session.nav.getCurrentlyPlayingServiceReference()
 		self.session.nav.stopService()
@@ -182,7 +182,7 @@ class MRUAPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBar
 				"AudioSelection": (self.audioSelection, _("Select audio track")),
 			}, -2)
 
-		self["NumberActions"] = NumberActionMap( [ "NumberActions"],
+		self["NumberActions"] = NumberActionMap(["NumberActions"],
 			{
 				"1": self.keyNumberGlobal,
 				"2": self.keyNumberGlobal,
@@ -425,7 +425,7 @@ class MRUAPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBar
 		if pathExists(devicepath):
 			from Components.Scanner import scanDevice
 			res = scanDevice(devicepath)
-			list = [ (r.description, r, res[r], self.session) for r in res ]
+			list = [(r.description, r, res[r], self.session) for r in res]
 			if list:
 				(desc, scanner, files, session) = list[0]
 				for file in files:

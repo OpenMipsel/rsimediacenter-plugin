@@ -109,7 +109,7 @@ class MC_PictureViewer(Screen, HelpableScreen):
 		
 		
 	def startslideshow(self):
-		self.session.openWithCallback(self.returnVal , MC_PicView, self.filelist.getFileList(), self.filelist.getSelectionIndex(), self.filelist.getCurrentDirectory(), True)
+		self.session.openWithCallback(self.returnVal, MC_PicView, self.filelist.getFileList(), self.filelist.getSelectionIndex(), self.filelist.getCurrentDirectory(), True)
 
 	def up(self):
 		self["filelist"].up()
@@ -311,7 +311,7 @@ class MC_PicThumbViewer(Screen, HelpableScreen):
 			return
 
 		pos = self.positionlist[self.filelist[self.index][T_FRAME_POS]]
-		self["frame"].moveTo( pos[0], pos[1], 1)
+		self["frame"].moveTo(pos[0], pos[1], 1)
 		self["frame"].startMoving()
 		
 		if self.currPage != self.filelist[self.index][T_PAGE]:

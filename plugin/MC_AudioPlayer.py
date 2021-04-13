@@ -54,7 +54,7 @@ def getAspect():
 #------------------------------------------------------------------------------------------
 
 def PlaylistEntryComponent(serviceref):
-        res = [ serviceref ]
+        res = [serviceref]
         text = serviceref.getName()
         if text is "":
                 text = os_path.split(serviceref.getPath().split('/')[-1])[1]
@@ -136,7 +136,7 @@ class PlayList(MenuList):
                 return l and l[0]
 
         def getServiceRefList(self):
-                return [ x[0] for x in self.list ]
+                return [x[0] for x in self.list]
 
         def __len__(self):
                 return len(self.list)
@@ -375,7 +375,7 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 		if self["filelist"].canDescent():
 			return
 		else:
-			self.session.open(MC_AudioInfoView, self["filelist"].getCurrentDirectory() + self["filelist"].getFilename() , self["filelist"].getFilename(), self["filelist"].getServiceRef())			
+			self.session.open(MC_AudioInfoView, self["filelist"].getCurrentDirectory() + self["filelist"].getFilename(), self["filelist"].getFilename(), self["filelist"].getServiceRef())			
 
 	def JumpToFolder(self, jumpto=None):
 		if jumpto is None:
@@ -533,13 +533,13 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 		currPlay = self.session.nav.getCurrentService()
 		sVideoType = currPlay.info().getInfoString(iServiceInformation.sVideoType)
 		print "[__evDecodeError] video-codec %s can't be decoded by hardware" % (sVideoType)
-		self.session.open(MessageBox, _("This Dreambox can't decode %s video streams!") % sVideoType, type=MessageBox.TYPE_INFO,timeout=20 )
+		self.session.open(MessageBox, _("This Dreambox can't decode %s video streams!") % sVideoType, type=MessageBox.TYPE_INFO,timeout=20)
 
 	def __evPluginError(self):
 		currPlay = self.session.nav.getCurrentService()
 		message = currPlay.info().getInfoString(iServiceInformation.sUser+12)
-		print "[__evPluginError]" , message
-		self.session.open(MessageBox, message, type=MessageBox.TYPE_INFO,timeout=20 )		
+		print "[__evPluginError]", message
+		self.session.open(MessageBox, message, type=MessageBox.TYPE_INFO,timeout=20)		
 
 
 class MC_AudioPlaylist(Screen):
@@ -715,7 +715,7 @@ class MC_AudioPlaylist(Screen):
 		if self["filelist"].canDescent():
 			return
 		else:
-			self.session.open(MC_AudioInfoView, self["filelist"].getCurrentDirectory() + self["filelist"].getFilename() , self["filelist"].getFilename(), self["filelist"].getServiceRef())
+			self.session.open(MC_AudioInfoView, self["filelist"].getCurrentDirectory() + self["filelist"].getFilename(), self["filelist"].getFilename(), self["filelist"].getServiceRef())
 	
 	def Settings(self):
 		self.session.open(AudioPlayerSettings)
@@ -950,7 +950,7 @@ class MC_AudioInfoView(Screen):
 			"ok": self.close
 		}, -1)
 		
-		tlist = [ ]
+		tlist = []
 		self["infolist"] = ServiceInfoList(tlist)
 
 		currPlay = self.session.nav.getCurrentService()

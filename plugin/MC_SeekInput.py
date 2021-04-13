@@ -30,7 +30,7 @@ class SeekInput(Screen):
 			self["minutespixmap"].hide()
 			self["secondspixmap"].show()
 			
-			self["actions"] = NumberActionMap([ "MRUAPlayerActions" , "NumberActions", "OkCancelActions", "DirectionActions" ],
+			self["actions"] = NumberActionMap(["MRUAPlayerActions", "NumberActions", "OkCancelActions", "DirectionActions"],
 			{
 				"1": self.keyNumberGlobal,
 				"2": self.keyNumberGlobal,
