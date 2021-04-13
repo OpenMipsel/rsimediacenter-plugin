@@ -24,7 +24,7 @@ from MC_PictureViewer import MC_PictureViewer
 
 class DMC_MainMenu(Screen):
 
-	def __init__(self, session, args = 0):
+	def __init__(self, session, args=0):
 		self.session = session
 		Screen.__init__(self, session)
 		
@@ -167,8 +167,8 @@ def menu(menuid, **kwargs):
 def Plugins(**kwargs):
 	if True:
 		return [
-			PluginDescriptor(name = _("Media Center"), description = _("Media Center Plugin"), icon="plugin.png", where = PluginDescriptor.WHERE_PLUGINMENU, fnc = main),
-			PluginDescriptor(name = _("Media Center"), description = _("Media Center Plugin"), where = PluginDescriptor.WHERE_MENU, fnc = menu)]
+			PluginDescriptor(name=_("Media Center"), description=_("Media Center Plugin"), icon="plugin.png", where=PluginDescriptor.WHERE_PLUGINMENU, fnc=main),
+			PluginDescriptor(name=_("Media Center"), description=_("Media Center Plugin"), where=PluginDescriptor.WHERE_MENU, fnc=menu)]
 	else:
 		return [
-			PluginDescriptor(name = _("Media Center"), description = _("Media Center Plugin"), icon="plugin.png", where = PluginDescriptor.WHERE_PLUGINMENU, fnc = main)]
+			PluginDescriptor(name=_("Media Center"), description=_("Media Center Plugin"), icon="plugin.png", where=PluginDescriptor.WHERE_PLUGINMENU, fnc=main)]

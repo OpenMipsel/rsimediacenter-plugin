@@ -63,7 +63,7 @@ def PlaylistEntryComponent(serviceref):
         return res
 
 class PlayList(MenuList):
-        def __init__(self, enableWrapAround = False):
+        def __init__(self, enableWrapAround=False):
                 MenuList.__init__(self, playlist, enableWrapAround, eListboxPythonMultiContent)
                 self.l.setFont(0, gFont("Regular", 18))
                 self.l.setItemHeight(23)
@@ -175,8 +175,7 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 		MC_AudioPlayer.playlistplay = 0
 		MC_AudioPlayer.currPlaying = -1
 		
-		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
-			{
+		self.__event_tracker = ServiceEventTracker(screen=self, eventmap={
 				iPlayableService.evStopped: self.doEOF,
 				iPlayableService.evEOF: self.doEOF,
 				iPlayableService.evUpdatedInfo: self.__evUpdatedInfo,
@@ -220,7 +219,7 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 
 		self["currentfolder"].setText(str(currDir))
 		
-		self.filelist = FileList(currDir, showMountpoints = True, useServiceRef = True, showDirectories = True, showFiles = True, matchingPattern = "(?i)^.*\.(mp3|ogg|wav|wave|flac|m4a|m3u|pls|e2pls)", additionalExtensions = "4098:m3u 4098:e2pls 4098:pls")
+		self.filelist = FileList(currDir, showMountpoints=True, useServiceRef=True, showDirectories=True, showFiles=True, matchingPattern="(?i)^.*\.(mp3|ogg|wav|wave|flac|m4a|m3u|pls|e2pls)", additionalExtensions="4098:m3u 4098:e2pls 4098:pls")
 		self["filelist"] = self.filelist
 		self["thumbnail"] = Pixmap()
 		
@@ -378,7 +377,7 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 		else:
 			self.session.open(MC_AudioInfoView, self["filelist"].getCurrentDirectory() + self["filelist"].getFilename() , self["filelist"].getFilename(), self["filelist"].getServiceRef())			
 
-	def JumpToFolder(self, jumpto = None):
+	def JumpToFolder(self, jumpto=None):
 		if jumpto is None:
 			return
 		else:
@@ -415,12 +414,12 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 			self.playlist.addFile(self.filelist.getServiceRef())
 			self.playlist.updateList()
 
-	def addDirtoPls(self, directory, recursive = True):
+	def addDirtoPls(self, directory, recursive=True):
 		print "copyDirectory", directory
 		if directory == '/':
 			print "refusing to operate on /"
 			return
-		filelist = FileList(directory, useServiceRef = True, showMountpoints = False, isTop = True)
+		filelist = FileList(directory, useServiceRef=True, showMountpoints=False, isTop=True)
 
 		for x in filelist.getFileList():
 			if x[0][1] == True: #isDir
@@ -504,7 +503,7 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 			print "curplay is %s" % (MC_AudioPlayer.currPlaying)
 			self.PlayServicepls()
 		elif choice[1] == "copyfiles":
-			self.addDirtoPls(os_path.dirname(self.filelist.getSelection()[0].getPath()) + "/", recursive = False)
+			self.addDirtoPls(os_path.dirname(self.filelist.getSelection()[0].getPath()) + "/", recursive=False)
 		elif choice[1] == "deletefile":
 			self.deleteFile()
 		
@@ -534,13 +533,13 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 		currPlay = self.session.nav.getCurrentService()
 		sVideoType = currPlay.info().getInfoString(iServiceInformation.sVideoType)
 		print "[__evDecodeError] video-codec %s can't be decoded by hardware" % (sVideoType)
-		self.session.open(MessageBox, _("This Dreambox can't decode %s video streams!") % sVideoType, type = MessageBox.TYPE_INFO,timeout = 20 )
+		self.session.open(MessageBox, _("This Dreambox can't decode %s video streams!") % sVideoType, type=MessageBox.TYPE_INFO,timeout=20 )
 
 	def __evPluginError(self):
 		currPlay = self.session.nav.getCurrentService()
 		message = currPlay.info().getInfoString(iServiceInformation.sUser+12)
 		print "[__evPluginError]" , message
-		self.session.open(MessageBox, message, type = MessageBox.TYPE_INFO,timeout = 20 )		
+		self.session.open(MessageBox, message, type=MessageBox.TYPE_INFO,timeout=20 )		
 
 
 class MC_AudioPlaylist(Screen):
@@ -579,8 +578,7 @@ class MC_AudioPlaylist(Screen):
 		self.addPlaylistParser(PlaylistIOPLS, "pls")
 		self.addPlaylistParser(PlaylistIOInternal, "e2pls")
 		
-		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
-			{
+		self.__event_tracker = ServiceEventTracker(screen=self, eventmap={
 				iPlayableService.evEOF: self.updateFileInfo,
 				#iPlayableService.evStopped: self.StopPlayback,
 				#iPlayableService.evUser+11: self.__evDecodeError,
@@ -743,7 +741,7 @@ class MC_AudioPlaylist(Screen):
 			self["curplayingtitle"].setText(_("Now Playing:") + " " + sArtist + " - " + sTitle)
 
 	def save_playlist(self):
-		self.session.openWithCallback(self.save_pls,InputBox, title=_("Please enter filename (empty = use current date)"),windowTitle = _("Save Playlist"))
+		self.session.openWithCallback(self.save_pls,InputBox, title=_("Please enter filename (empty = use current date)"),windowTitle=_("Save Playlist"))
 
 	def save_pls(self, name):
 		if name is not None:
@@ -764,7 +762,7 @@ class MC_AudioPlaylist(Screen):
 				listpath.append((i,playlistdir + i))
 		except IOError,e:
 			print "Error while scanning subdirs ",e
-		self.session.openWithCallback(self.load_pls, ChoiceBox, title=_("Please select a playlist..."), list = listpath)
+		self.session.openWithCallback(self.load_pls, ChoiceBox, title=_("Please select a playlist..."), list=listpath)
 
 	def load_pls(self,path):
 		if path is not None:
@@ -785,7 +783,7 @@ class MC_AudioPlaylist(Screen):
 				listpath.append((i,playlistdir + i))
 		except IOError,e:
 			print "Error while scanning subdirs ",e
-		self.session.openWithCallback(self.delete_saved_pls, ChoiceBox, title=_("Please select a playlist to delete..."), list = listpath)
+		self.session.openWithCallback(self.delete_saved_pls, ChoiceBox, title=_("Please select a playlist to delete..."), list=listpath)
 
 	def delete_saved_pls(self,path):
 		if path is not None:

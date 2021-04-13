@@ -25,13 +25,13 @@ from os import path as os_path
 
 config.plugins.mc_pp = ConfigSubsection()
 config.plugins.mc_pp.slidetime = ConfigInteger(default=10, limits=(5, 60))
-config.plugins.mc_pp.resize = ConfigSelection(default="0", choices = [("0", _("simple")), ("1", _("better"))])
+config.plugins.mc_pp.resize = ConfigSelection(default="0", choices=[("0", _("simple")), ("1", _("better"))])
 config.plugins.mc_pp.cache = ConfigEnableDisable(default=True)
 config.plugins.mc_pp.lastDir = ConfigText(default='mountpoint')
-config.plugins.mc_pp.rotate = ConfigSelection(default="0", choices = [("0", _("none")), ("1", _("manual")), ("2", _("by Exif"))])
+config.plugins.mc_pp.rotate = ConfigSelection(default="0", choices=[("0", _("none")), ("1", _("manual")), ("2", _("by Exif"))])
 config.plugins.mc_pp.ThumbWidth = ConfigInteger(default=145, limits=(1, 999))
 config.plugins.mc_pp.ThumbHeight = ConfigInteger(default=120, limits=(1, 999))
-config.plugins.mc_pp.bgcolor = ConfigSelection(default="#00000000", choices = [("#00000000", _("black")),("#009eb9ff", _("blue")),("#00ff5a51", _("red")), ("#00ffe875", _("yellow")), ("#0038FF48", _("green"))])
+config.plugins.mc_pp.bgcolor = ConfigSelection(default="#00000000", choices=[("#00000000", _("black")),("#009eb9ff", _("blue")),("#00ff5a51", _("red")), ("#00ffe875", _("yellow")), ("#0038FF48", _("green"))])
 config.plugins.mc_pp.framesize = ConfigSlider(default=30,increment=5, limits=(5, 99))
 config.plugins.mc_pp.loop = ConfigEnableDisable(default=True)
 
@@ -86,7 +86,7 @@ class MC_PictureViewer(Screen, HelpableScreen):
 
 		self["currentfolder"].setText(str(currDir))
 
-		self.filelist = FileList(currDir, showMountpoints = True, matchingPattern = "(?i)^.*\.(jpeg|jpg|jpe|png|bmp)")
+		self.filelist = FileList(currDir, showMountpoints=True, matchingPattern="(?i)^.*\.(jpeg|jpg|jpe|png|bmp)")
 		self["filelist"] = self.filelist
 		self["filelist"].onSelectionChanged.append(self.selectionChanged)
 		self["thumbnail"] = Pixmap()
@@ -97,7 +97,7 @@ class MC_PictureViewer(Screen, HelpableScreen):
 		self["camera"] = StaticText("")
 		self["size"] = StaticText("")
 		list = []
-		self["fileinfo"] = List(list, enableWrapAround = False)
+		self["fileinfo"] = List(list, enableWrapAround=False)
 		
 		self.ThumbTimer = eTimer()
 		self.ThumbTimer.callback.append(self.showThumb)

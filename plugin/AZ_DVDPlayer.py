@@ -32,7 +32,7 @@ class DVDSummary(Screen):
 				Screen.__init__(self, session)
 
 class DVDOverlay(Screen):
-	def __init__(self, session, args = None):
+	def __init__(self, session, args=None):
 		desktop_size = getDesktop(0).size()
 		DVDOverlay.skin = """<screen name="DVDOverlay" position="0,0" size="%d,%d" flags="wfNoBorder" zPosition="-1" backgroundColor="transparent" />""" %(desktop_size.width(), desktop_size.height())
 		Screen.__init__(self, session)
@@ -115,11 +115,11 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 		config.seek.enter_backward.value = self.saved_config_enter_backward
 		config.seek.on_pause.value = self.saved_config_seek_on_pause
 
-	def __init__(self, session, dvd_device = None, dvd_filelist = [ ], args = None):
+	def __init__(self, session, dvd_device=None, dvd_filelist=[ ], args=None):
 		Screen.__init__(self, session)
 		InfoBarBase.__init__(self)
 		InfoBarNotifications.__init__(self)
-		InfoBarCueSheetSupport.__init__(self, actionmap = "MediaPlayerCueSheetActions")
+		InfoBarCueSheetSupport.__init__(self, actionmap="MediaPlayerCueSheetActions")
 		InfoBarShowHide.__init__(self)
 		InfoBarAudioSelection.__init__(self)
 		InfoBarSubtitleSupport.__init__(self)
@@ -150,8 +150,7 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 		
 		AZDVDPlayer.STATE = "NONE"
 
-		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
-			{
+		self.__event_tracker = ServiceEventTracker(screen=self, eventmap={
 				iPlayableService.evStopped: self.__serviceStopped,
 				iPlayableService.evStart: self.__serviceStarted,
 				iPlayableService.evUser+3: self.__osdFFwdInfoAvail,

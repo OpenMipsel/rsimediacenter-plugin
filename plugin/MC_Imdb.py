@@ -286,10 +286,10 @@ class IMDB(Screen):
 		self.session.openWithCallback(
 			self.menuCallback,
 			ChoiceBox,
-			list = list,
+			list=list,
 		)
 
-	def menuCallback(self, ret = None):
+	def menuCallback(self, ret=None):
 		ret and ret[1]()
 
 	def openYttrailer(self):
@@ -317,7 +317,7 @@ class IMDB(Screen):
 		self.session.openWithCallback(
 			self.gotSearchString,
 			NTIVirtualKeyBoard,
-			title = _("Enter text to search for")
+			title=_("Enter text to search for")
 		)
 
 	def openChannelSelection(self):
@@ -326,7 +326,7 @@ class IMDB(Screen):
 			IMDBChannelSelection
 		)
 
-	def gotSearchString(self, ret = None):
+	def gotSearchString(self, ret=None):
 		if ret:
 			self.eventName = ret
 			self.Page = 0

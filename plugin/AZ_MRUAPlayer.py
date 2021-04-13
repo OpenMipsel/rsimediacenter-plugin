@@ -34,7 +34,7 @@ import serviceazdvd
 
 
 config.plugins.mc_mrua = ConfigSubsection()
-config.plugins.mc_mrua.subenc = ConfigSelection(default="43", choices = [("42", _("Latin")), ("43", _("Utf-8"))])
+config.plugins.mc_mrua.subenc = ConfigSelection(default="43", choices=[("42", _("Latin")), ("43", _("Utf-8"))])
 config.plugins.mc_mrua.subpos = ConfigInteger(default=40, limits=(0, 100))
 config.plugins.mc_mrua.subcolorname = ConfigText("White", fixed_size=False)
 config.plugins.mc_mrua.subcolorinside = ConfigText("FFFFFFFF", fixed_size=False)
@@ -92,12 +92,12 @@ class MRUAPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBar
 		config.plugins.mc_mrua.subsize.value = self.saved_config_subsize 
 		config.plugins.mc_mrua.subdelay.value = self.saved_config_subdelay 
 
-	def __init__(self, session, ref = "", args = None):
+	def __init__(self, session, ref="", args=None):
 
 		Screen.__init__(self, session)
 		InfoBarBase.__init__(self)
 		InfoBarNotifications.__init__(self)
-		InfoBarCueSheetSupport.__init__(self, actionmap = "MediaPlayerCueSheetActions")
+		InfoBarCueSheetSupport.__init__(self, actionmap="MediaPlayerCueSheetActions")
 		InfoBarShowHide.__init__(self)
 		InfoBarAudioSelection.__init__(self)
 		InfoBarSubtitleSupport.__init__(self)
@@ -125,8 +125,7 @@ class MRUAPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBar
 		self.totalTitles = 0
 		self.currentTitle = 0
 
-		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
-			{
+		self.__event_tracker = ServiceEventTracker(screen=self, eventmap={
 				iPlayableService.evStopped: self.__serviceStopped,
 				iPlayableService.evStart: self.__serviceStarted,
 				iPlayableService.evUser+1: self.__statePlay,

@@ -111,7 +111,7 @@ class MCS_SkinSelector(Screen):
 	skinlist = []
 	root = "/usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/"
 
-	def __init__(self, session, args = None):
+	def __init__(self, session, args=None):
 
 		self.skin = MCS_SkinSelector.skin
 		Screen.__init__(self, session)

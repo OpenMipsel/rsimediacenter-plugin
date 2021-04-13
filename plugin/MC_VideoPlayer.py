@@ -42,7 +42,7 @@ class MC_VideoPlayer(Screen, HelpableScreen):
 		
 		self["currentfolder"].setText(str(currDir))
 		
-		self.filelist = FileList(currDir, showMountpoints = True, useServiceRef = True, showDirectories = True, showFiles = True, matchingPattern = "(?i)^.*\.(vob|mpg|mpeg|avi|mkv|dat|iso|img|mp4|divx|m2ts|wmv|flv|mov)")
+		self.filelist = FileList(currDir, showMountpoints=True, useServiceRef=True, showDirectories=True, showFiles=True, matchingPattern="(?i)^.*\.(vob|mpg|mpeg|avi|mkv|dat|iso|img|mp4|divx|m2ts|wmv|flv|mov)")
 		self["filelist"] = self.filelist
 		self["filelist"].onSelectionChanged.append(self.selectionChanged)
 		
@@ -132,7 +132,7 @@ class MC_VideoPlayer(Screen, HelpableScreen):
 			self.filelist.gotoParent()
 			if self.azbox == True:
 				from AZ_DVDPlayer import AZDVDPlayer
-				self.session.open(AZDVDPlayer, dvd_device = dvdDevice, dvd_filelist = dvdFilelist)
+				self.session.open(AZDVDPlayer, dvd_device=dvdDevice, dvd_filelist=dvdFilelist)
 			else:
 				print "Play dvd normal"
 				from Screens import DVD
@@ -146,7 +146,7 @@ class MC_VideoPlayer(Screen, HelpableScreen):
 				from MC_MoviePlayer import MC_MoviePlayer
 				self.session.open(MC_MoviePlayer, self["filelist"].getServiceRef())
 
-	def JumpToFolder(self, jumpto = None):
+	def JumpToFolder(self, jumpto=None):
 		if jumpto is None:
 			return
 		else:
@@ -190,7 +190,7 @@ class MC_VideoPlayer(Screen, HelpableScreen):
 				name = self["filelist"].getName()
 				self.session.open(IMDB, name.partition('(')[0])
 			except ImportError:
-				self.session.open(MessageBox, _("Cannot load IMDB, please check if python-html is installed"), MessageBox.TYPE_INFO, timeout = 5)
+				self.session.open(MessageBox, _("Cannot load IMDB, please check if python-html is installed"), MessageBox.TYPE_INFO, timeout=5)
 
 	def deleteDir(self):
 		self.session.openWithCallback(self.deleteDirConfirmed, MessageBox, _("Do you really want to delete this directory and it's content ?"))

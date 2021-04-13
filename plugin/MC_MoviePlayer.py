@@ -42,12 +42,12 @@ class MC_MoviePlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, Inf
 	ALLOW_SUSPEND = True
 	ENABLE_RESUME_SUPPORT = False
 
-	def __init__(self, session, ref = "", args = None):
+	def __init__(self, session, ref="", args=None):
 
 		Screen.__init__(self, session)
 		InfoBarBase.__init__(self)
 		InfoBarNotifications.__init__(self)
-		InfoBarCueSheetSupport.__init__(self, actionmap = "MediaPlayerCueSheetActions")
+		InfoBarCueSheetSupport.__init__(self, actionmap="MediaPlayerCueSheetActions")
 		InfoBarShowHide.__init__(self)
 		InfoBarAudioSelection.__init__(self)
 		InfoBarSubtitleSupport.__init__(self)
@@ -62,8 +62,7 @@ class MC_MoviePlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, Inf
 		self["audioLabel"] = Label("n/a")
 		self["subtitleLabel"] = Label("None")
 
-		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
-			{
+		self.__event_tracker = ServiceEventTracker(screen=self, eventmap={
 				iPlayableService.evStopped: self.__serviceStopped,
 				iPlayableService.evStart: self.__serviceStarted,
 				iPlayableService.evUpdatedInfo: self.__UpdatedInfo,
