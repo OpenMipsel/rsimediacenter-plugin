@@ -65,7 +65,7 @@ class SeekInput(Screen):
 					if self.length and self.position:
 						if command == "fwd":
 							self.increase()
-							print self.hours
+							print(self.hours)
 						elif command == "bwd":
 							self.decrease()
 						elif command == "totime":

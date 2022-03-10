@@ -13,5 +13,5 @@ from skin import loadSkin
 # Load Skin
 try:
 	loadSkin("../../../usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/skin.xml")
-except Exception, e:
+except Exception as e:
 	loadSkin("../../../usr/lib/enigma2/python/Plugins/Extensions/MediaCenter/skins/default/skin.xml")

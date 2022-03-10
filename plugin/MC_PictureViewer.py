@@ -525,7 +525,7 @@ class MC_PicView(Screen):
 			self.index = self.maxentry
 
 	def slidePic(self):
-		print "slide to next Picture index=" + str(self.lastindex)
+		print("slide to next Picture index=" + str(self.lastindex))
 		if config.plugins.mc_pp.loop.value == False and self.lastindex == self.maxentry:
 			self.PlayPause()
 		self.shownow = True
@@ -680,7 +680,7 @@ class MC_FolderOptions(Screen):
 		}, -1)
 
 	def okbuttonClick(self):
-		print "okbuttonClick"
+		print("okbuttonClick")
 		selection = self["menu"].getCurrent()
 		if selection is not None:
 			if selection[1] == "delete":

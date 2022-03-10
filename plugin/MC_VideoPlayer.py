@@ -135,7 +135,7 @@ class MC_VideoPlayer(Screen, HelpableScreen):
 				from AZ_DVDPlayer import AZDVDPlayer
 				self.session.open(AZDVDPlayer, dvd_device=dvdDevice, dvd_filelist=dvdFilelist)
 			else:
-				print "Play dvd normal"
+				print("Play dvd normal")
 				from Screens import DVD
 				self.session.open(DVD.DVDPlayer, dvd_filelist=dvdFilelist)
 

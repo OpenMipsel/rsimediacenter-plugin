@@ -80,9 +80,9 @@ class Scalingmode_Menu(Screen):
 
 	def buildList(self):
 		list = []
-		print "active mode "
-		print self.activemode
-		print "end active mode print"
+		print("active mode ")
+		print(self.activemode)
+		print("end active mode print")
 		for i in range(0, len(self.list)):
 			text = "" + self.list[i]
 			active = 'no'
@@ -97,8 +97,8 @@ class Scalingmode_Menu(Screen):
 			open("/proc/scalingmode", "w").write(str(selection))
 		except IOError:
 			pass
-		print "selection"
-		print selection
+		print("selection")
+		print(selection)
 		self.activemode = selection
 		config.plugins.mc_scal.scalingmode.value = selection
 		config.plugins.mc_scal.save()
