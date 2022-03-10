@@ -23,8 +23,8 @@ from Plugins.Plugin import PluginDescriptor
 
 try:
 	from twisted.web.client import getPage
-except Exception, e:
-	print "Media Center: Import twisted.web.client failed"
+except Exception as e:
+	print("Media Center: Import twisted.web.client failed")
 
 from os import path, walk
 
@@ -77,7 +77,7 @@ class MC_Settings(Screen):
 			elif selection[1] == "MCS_Update":
 				self.session.open(MCS_Update)
 			else:
-				print "config option selected"
+				print("config option selected")
 
 	def keyLeft(self):
 		self.processConfigKey(KEY_LEFT)
@@ -171,7 +171,7 @@ class MCS_SkinSelector(Screen):
 	def find(self, arg, dirname, names):
 		for x in names:
 			if x == "skin.xml":
-				if dirname <> self.root:
+				if dirname != self.root:
 					foldername = dirname.split('/')
 					subdir = foldername[-1]
 					self.skinlist.append(subdir)
@@ -185,7 +185,7 @@ class MCS_SkinSelector(Screen):
 		else:
 			skinfile = self["SkinList"].getCurrent() + "/skin.xml"
 
-		print "Skinselector: Selected Skin: " + self.root + skinfile
+		print("Skinselector: Selected Skin: " + self.root + skinfile)
 		config.plugins.mc_globalsettings.currentskin.path.value = skinfile
 		config.plugins.mc_globalsettings.currentskin.path.save()
 		restartbox = self.session.openWithCallback(self.restartGUI, MessageBox, _("GUI needs a restart to apply a new skin\nDo you want to Restart the GUI now?"), MessageBox.TYPE_YESNO)
@@ -242,7 +242,7 @@ class MCS_Update(Screen):
 		try:
 			getPage(self.url + "currentversion.txt").addCallback(self.GotMCUpdateInfo).addErrback(self.error)
 			self["text"].setText(_("Checking for updates..."))
-		except Exception, e:
+		except Exception as e:
 			self["text"].setText(_("Error: Twisted-Web not installed"))
 
 	def GotMCUpdateInfo(self, html):

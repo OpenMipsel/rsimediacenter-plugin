@@ -102,24 +102,24 @@ class DMC_MainMenu(Screen):
 
 	def procservice(self):
 		if self.azbox == True:
-			print "Setting Proc Player"
+			print("Setting Proc Player")
 			tmpfile = open('/proc/player', 'rb')
 			line = tmpfile.readline()
 			tmpfile.close()
-			print line
+			print(line)
 			if int(line[:-1]) == 1:
-				print 'Everything is freed up we can write to /proc/player'
+				print('Everything is freed up we can write to /proc/player')
 				open('/proc/player', 'w').write('2')
 				self.procstarted = True
 				return 1
 			elif int(line[:-1]) != 1:
-				print "Proc was not freed up yet so we can't continue"
+				print("Proc was not freed up yet so we can't continue")
 				return 2
 		else:
 			return 1
 
 	def okbuttonClick(self):
-		print "okbuttonClick"
+		print("okbuttonClick")
 		selection = self["menu"].getCurrent()
 		if selection is not None:
 			if selection[1] == "videos":
@@ -152,7 +152,7 @@ class DMC_MainMenu(Screen):
 			azplay_vctrl.volumeDialog.setValue(value)
 
 	def Exit(self):
-		print "Playing old service"
+		print("Playing old service")
 		self.session.nav.playService(self.oldService)
 		self.close()
 

@@ -139,28 +139,28 @@ class MC_MoviePlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, Inf
 		self.service = None
 
 	def __serviceStopped(self):
-		print "Received __serviceStopped"
+		print("Received __serviceStopped")
 		self.exit()
 
 	def __serviceStarted(self):
-		print "Received __serviceStarted"
+		print("Received __serviceStarted")
 		resfile = str(self.ref.getPath() + ".res")
 		try:
 			f = open(resfile, "r")
 			self.resumepos = int(f.readline())
 			f.close()
 			if self.resumepos:
-				print "Found Resume Position", self.resumepos
+				print("Found Resume Position", self.resumepos)
 				self.session.openWithCallback(self.resume, MessageBox, _("Resuming playback"), timeout=2, type=MessageBox.TYPE_INFO)
 		except:
 			pass
 
 	def resume(self, answer):
-		print self.resumepos
+		print(self.resumepos)
 		self.seekProcess(self.resumepos)
 
 	def __UpdatedInfo(self):
-		print "Received __UpdatedInfo"
+		print("Received __UpdatedInfo")
 		service = self.session.nav.getCurrentService()
 		audio = service.audioTracks()
 		if audio:
@@ -226,7 +226,7 @@ class MC_MoviePlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, Inf
 		self.exit()
 
 	def keyOk(self):
-		print "pressed ok"
+		print("pressed ok")
 		self.toggleShow()
 
 	def keyCancel(self):
@@ -244,7 +244,7 @@ class MC_MoviePlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, Inf
 			self.seekTotime()
 
 	def Start(self):
-		print "Starting Playback of file:", self.ref
+		print("Starting Playback of file:", self.ref)
 		if self.ref is None:
 			self.exit()
 		else:

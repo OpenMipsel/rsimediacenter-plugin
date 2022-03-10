@@ -272,16 +272,16 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 
 	def __osdFFwdInfoAvail(self):
 		self.setChapterLabel()
-		print "FFwdInfoAvail"
+		print("FFwdInfoAvail")
 
 	def __osdFBwdInfoAvail(self):
 		self.setChapterLabel()
-		print "FBwdInfoAvail"
+		print("FBwdInfoAvail")
 
 	def __osdAudioInfoAvail(self):
 		info = self.getServiceInterface("info")
 		audioTuple = info and info.getInfoObject(iServiceInformation.sUser + 6)
-		print "AudioInfoAvail ", repr(audioTuple)
+		print("AudioInfoAvail ", repr(audioTuple))
 		if audioTuple:
 			audioString = "%d: %s (%s)" % (audioTuple[0], audioTuple[1], audioTuple[2])
 			self["audioLabel"].setText(audioString)
@@ -292,7 +292,7 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 	def __osdSubtitleInfoAvail(self):
 		info = self.getServiceInterface("info")
 		subtitleTuple = info and info.getInfoObject(iServiceInformation.sUser + 7)
-		print "SubtitleInfoAvail ", repr(subtitleTuple)
+		print("SubtitleInfoAvail ", repr(subtitleTuple))
 		if subtitleTuple:
 			subtitleString = ""
 			if subtitleTuple[0] is not 0:
@@ -305,7 +305,7 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 	def __osdAngleInfoAvail(self):
 		info = self.getServiceInterface("info")
 		angleTuple = info and info.getInfoObject(iServiceInformation.sUser + 8)
-		print "AngleInfoAvail ", repr(angleTuple)
+		print("AngleInfoAvail ", repr(angleTuple))
 		if angleTuple:
 			angleString = ""
 			if angleTuple[1] > 1:
@@ -324,7 +324,7 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 			self.currentChapter = info.getInfo(iServiceInformation.sCurrentChapter)
 			self.totalChapters = info.getInfo(iServiceInformation.sTotalChapters)
 			self.setChapterLabel()
-			print "__chapterUpdated: %d/%d" % (self.currentChapter, self.totalChapters)
+			print("__chapterUpdated: %d/%d" % (self.currentChapter, self.totalChapters))
 
 	def __titleUpdated(self):
 		info = self.getServiceInterface("info")
@@ -332,7 +332,7 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 			self.currentTitle = info.getInfo(iServiceInformation.sCurrentTitle)
 			self.totalTitles = info.getInfo(iServiceInformation.sTotalTitles)
 			self.setChapterLabel()
-			print "__titleUpdated: %d/%d" % (self.currentTitle, self.totalTitles)
+			print("__titleUpdated: %d/%d" % (self.currentTitle, self.totalTitles))
 			if not self.in_menu:
 				self.doShow()
 
@@ -357,12 +357,12 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 
 	def FileBrowserClosed(self, val):
 		curref = self.session.nav.getCurrentlyPlayingServiceReference()
-		print "FileBrowserClosed", val
+		print("FileBrowserClosed", val)
 		if val is None:
 			self.exit()
 		else:
 			newref = eServiceReference(4371, 0, val)
-			print "play", newref.toString()
+			print("play", newref.toString())
 			if curref is None or curref != newref:
 				if newref.toString().endswith("/VIDEO_TS") or newref.toString().endswith("/"):
 					names = newref.toString().rsplit("/", 3)
@@ -370,13 +370,13 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 						name = str(names[1]) + " - " + str(names[2])
 					else:
 						name = names[2]
-					print "setting name to: ", self.service
+					print("setting name to: ", self.service)
 					newref.setName(str(name))
 				AZDVDPlayer.STATE = "PLAY"
 				self.session.nav.playService(newref)
 				self.service = self.session.nav.getCurrentService()
-				print "self.service", self.service
-				print "cur_dlg", self.session.current_dialog
+				print("self.service", self.service)
+				print("cur_dlg", self.session.current_dialog)
 
 	def createSummary(self):
 		return DVDSummary
@@ -417,7 +417,7 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 	def toggleInfo(self):
 		if not self.in_menu:
 			self.toggleShow()
-			print "toggleInfo"
+			print("toggleInfo")
 
 	def seekBeginning(self):
 		if self.service:
@@ -426,7 +426,7 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 				seekable.seekTo(0)
 
 	def keyNumberGlobal(self, number):
-		print "You pressed number " + str(number)
+		print("You pressed number " + str(number))
 		self.session.openWithCallback(self.numberEntered, ChapterZap, number)
 
 	def numberEntered(self, retval):
@@ -438,7 +438,7 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 		if self.service:
 			seekable = self.getSeek()
 			if seekable:
-				print "seek to chapter %d" % number
+				print("seek to chapter %d" % number)
 				seekable.seekChapter(number)
 
 	def menu(self):
@@ -520,7 +520,7 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 
 #override some InfoBarSeek functions
 	def playLastCB(self, answer): # overwrite infobar cuesheet function
-		print "playLastCB", answer, self.resume_point
+		print("playLastCB", answer, self.resume_point)
 		if self.service:
 			if answer == True:
 				seekable = self.getSeek()
@@ -541,7 +541,7 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 		return 0
 
 	def hotplugCB(self, dev, media_state):
-		print "[hotplugCB]", dev, media_state
+		print("[hotplugCB]", dev, media_state)
 		if dev == harddiskmanager.getCD():
 			if media_state == "1":
 				self.scanHotplug()
@@ -557,9 +557,9 @@ class AZDVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 			if list:
 				(desc, scanner, files, session) = list[0]
 				for file in files:
-					print file
+					print(file)
 					if file.mimetype == "video/x-dvd":
-						print "physical dvd found:", devicepath
+						print("physical dvd found:", devicepath)
 						self.physicalDVD = True
 						return
 		self.physicalDVD = False

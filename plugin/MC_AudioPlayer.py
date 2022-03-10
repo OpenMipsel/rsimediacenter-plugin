@@ -298,7 +298,7 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 				self.PlayServicepls()
 
 			else:
-				print "Play Next File ..."
+				print("Play Next File ...")
 				self.down()
 				self.PlayService()
 
@@ -313,7 +313,7 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 				self.PlayServicepls()
 
 			else:
-				print "Play previous File ..."
+				print("Play previous File ...")
 				self.up()
 				self.PlayService()
 
@@ -326,7 +326,7 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 		self.filelist.gotoParent()
 
 	def KeyYellow(self):
-		print "yellow"
+		print("yellow")
 
 	def visibility(self, force=1):
 		if self.isVisible == True:
@@ -352,9 +352,9 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 		MC_AudioPlayer.playlistplay = 1
 
 		x = self.playlist.getCurrentIndex()
-		print "x is %s" % (x)
+		print("x is %s" % (x))
 		x = len(self.playlist)
-		print "x is %s" % (x)
+		print("x is %s" % (x))
 		ref = self.playlist.getServiceRefList()[self.playlist.getCurrentIndex()]
 		self.session.nav.playService(ref)
 		MC_AudioPlayer.STATE = "PLAY"
@@ -418,9 +418,9 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 			self.playlist.updateList()
 
 	def addDirtoPls(self, directory, recursive=True):
-		print "copyDirectory", directory
+		print("copyDirectory", directory)
 		if directory == '/':
-			print "refusing to operate on /"
+			print("refusing to operate on /")
 			return
 		filelist = FileList(directory, useServiceRef=True, showMountpoints=False, isTop=True)
 
@@ -503,7 +503,7 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 		elif choice[1] == "copyandplay":
 			self.addFiletoPls()
 			MC_AudioPlayer.currPlaying = len(self.playlist) - 1
-			print "curplay is %s" % (MC_AudioPlayer.currPlaying)
+			print("curplay is %s" % (MC_AudioPlayer.currPlaying))
 			self.PlayServicepls()
 		elif choice[1] == "copyfiles":
 			self.addDirtoPls(os_path.dirname(self.filelist.getSelection()[0].getPath()) + "/", recursive=False)
@@ -511,7 +511,7 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 			self.deleteFile()
 
 	def doEOF(self):
-		print "MediaCenter: EOF Event AUDIO..."
+		print("MediaCenter: EOF Event AUDIO...")
 		if MC_AudioPlayer.playlistplay == 1:
 			next = self.playlist.getCurrentIndex() + 1
 			if next < len(self.playlist):
@@ -519,14 +519,14 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 				self.PlayServicepls()
 
 		elif self.PlaySingle == 0:
-			print "Play Next File ..."
+			print("Play Next File ...")
 			self.down()
 			if not self["filelist"].canDescent():
 				self.PlayService()
 			else:
 				self.StopPlayback()
 		else:
-			print "Stop Playback ..."
+			print("Stop Playback ...")
 			self.StopPlayback()
 
 	def __evUpdatedInfo(self):
@@ -535,13 +535,13 @@ class MC_AudioPlayer(Screen, HelpableScreen):
 	def __evDecodeError(self):
 		currPlay = self.session.nav.getCurrentService()
 		sVideoType = currPlay.info().getInfoString(iServiceInformation.sVideoType)
-		print "[__evDecodeError] video-codec %s can't be decoded by hardware" % (sVideoType)
+		print("[__evDecodeError] video-codec %s can't be decoded by hardware" % (sVideoType))
 		self.session.open(MessageBox, _("This Dreambox can't decode %s video streams!") % sVideoType, type=MessageBox.TYPE_INFO, timeout=20)
 
 	def __evPluginError(self):
 		currPlay = self.session.nav.getCurrentService()
 		message = currPlay.info().getInfoString(iServiceInformation.sUser + 12)
-		print "[__evPluginError]", message
+		print("[__evPluginError]", message)
 		self.session.open(MessageBox, message, type=MessageBox.TYPE_INFO, timeout=20)
 
 
@@ -626,12 +626,12 @@ class MC_AudioPlaylist(Screen):
 	def KeyOK(self):
 		if len(self.playlist.getServiceRefList()):
 			x = self.playlist.getSelectionIndex()
-			print "x is %s" % (x)
+			print("x is %s" % (x))
 			self.playlist.setCurrentPlaying(self.playlist.getSelectionIndex())
 			x = self.playlist.getCurrentIndex()
-			print "x is %s" % (x)
+			print("x is %s" % (x))
 			x = len(self.playlist)
-			print "x is %s" % (x)
+			print("x is %s" % (x))
 			self.PlayService()
 
 	def PlayPause(self):
@@ -727,7 +727,7 @@ class MC_AudioPlaylist(Screen):
 		self.close()
 
 	def updateFileInfo(self):
-		print "DOING EOF FOR 2"
+		print("DOING EOF FOR 2")
 		currPlay = self.session.nav.getCurrentService()
 		if currPlay is not None:
 			sTitle = currPlay.info().getInfoString(iServiceInformation.sTagTitle)
@@ -763,8 +763,8 @@ class MC_AudioPlaylist(Screen):
 		try:
 			for i in os_listdir(playlistdir):
 				listpath.append((i, playlistdir + i))
-		except IOError, e:
-			print "Error while scanning subdirs ", e
+		except IOError as e:
+			print("Error while scanning subdirs ", e)
 		self.session.openWithCallback(self.load_pls, ChoiceBox, title=_("Please select a playlist..."), list=listpath)
 
 	def load_pls(self, path):
@@ -784,8 +784,8 @@ class MC_AudioPlaylist(Screen):
 		try:
 			for i in os_listdir(playlistdir):
 				listpath.append((i, playlistdir + i))
-		except IOError, e:
-			print "Error while scanning subdirs ", e
+		except IOError as e:
+			print("Error while scanning subdirs ", e)
 		self.session.openWithCallback(self.delete_saved_pls, ChoiceBox, title=_("Please select a playlist to delete..."), list=listpath)
 
 	def delete_saved_pls(self, path):
@@ -797,8 +797,8 @@ class MC_AudioPlaylist(Screen):
 		if confirmed:
 			try:
 				os_remove(self.delname)
-			except OSError, e:
-				print "delete failed:", e
+			except OSError as e:
+				print("delete failed:", e)
 				self.session.open(MessageBox, _("Delete failed!"), MessageBox.TYPE_ERROR)
 
 	def addPlaylistParser(self, parser, extension):
@@ -882,7 +882,7 @@ class MediaPixmap(Pixmap):
 		self.instance.setPixmap(self.noCoverPixmap)
 
 	def embeddedCoverArt(self):
-		print "[embeddedCoverArt] found"
+		print("[embeddedCoverArt] found")
 		self.coverArtFileName = "/tmp/.id3coverart"
 		self.picload.startDecode(self.coverArtFileName)
 

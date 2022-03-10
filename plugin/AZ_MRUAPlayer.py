@@ -219,18 +219,18 @@ class MRUAPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBar
 		self["SeekActions"].setEnabled(False)
 
 	def __statePlay(self):
-		print "statePlay"
+		print("statePlay")
 
 	def __statePause(self):
-		print "statePause"
+		print("statePause")
 
 	def __osdStringAvail(self):
-		print "StringAvail"
+		print("StringAvail")
 
 	def __osdAudioInfoAvail(self):
 		info = self.getServiceInterface("info")
 		audioTuple = info and info.getInfoObject(iServiceInformation.sUser + 6)
-		print "AudioInfoAvail ", repr(audioTuple)
+		print("AudioInfoAvail ", repr(audioTuple))
 		if audioTuple:
 			audioString = "%d: %s (%s)" % (audioTuple[0], audioTuple[1], audioTuple[2])
 			self["audioLabel"].setText(audioString)
@@ -241,7 +241,7 @@ class MRUAPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBar
 	def __osdSubtitleInfoAvail(self):
 		info = self.getServiceInterface("info")
 		subtitleTuple = info and info.getInfoObject(iServiceInformation.sUser + 7)
-		print "SubtitleInfoAvail ", repr(subtitleTuple)
+		print("SubtitleInfoAvail ", repr(subtitleTuple))
 		if subtitleTuple:
 			subtitleString = ""
 			if subtitleTuple[0] is not 0:
@@ -310,7 +310,7 @@ class MRUAPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBar
 		self.session.openWithCallback(self.seekProcess, SeekInput, "totime")
 
 	def seekProcess(self, pts):
-		print "test seek to time"
+		print("test seek to time")
 		if pts is not -1:
 			if self.service:
 				seekable = self.getSeek()
@@ -358,12 +358,12 @@ class MRUAPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBar
 			configfile.save()
 
 	def Start(self):
-		print "Mrua Starting Playback", self.ref
+		print("Mrua Starting Playback", self.ref)
 		if self.ref is None:
 			self.exit()
 		else:
 			newref = eServiceReference(4370, 0, self.ref)
-			print "play", newref.toString()
+			print("play", newref.toString())
 			############# spaze team added for fix filenames ANSI to utf8
 			name = str(self.ref)
 			try:
@@ -377,8 +377,8 @@ class MRUAPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBar
 			self["chapterLabel"].setText(self.ref)
 			self.session.nav.playService(newref)
 			self.service = self.session.nav.getCurrentService()
-			print "self.service", self.service
-			print "cur_dlg", self.session.current_dialog
+			print("self.service", self.service)
+			print("cur_dlg", self.session.current_dialog)
 
 	def exit(self):
 		if self.service:
@@ -396,7 +396,7 @@ class MRUAPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBar
 
 #override some InfoBarSeek functions
 	def playLastCB(self, answer): # overwrite infobar cuesheet function
-		print "playLastCB", answer, self.resume_point
+		print("playLastCB", answer, self.resume_point)
 		if self.service:
 			if answer == True:
 				seekable = self.getSeek()
@@ -415,7 +415,7 @@ class MRUAPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBar
 		return 0
 
 	def hotplugCB(self, dev, media_state):
-		print "[hotplugCB]", dev, media_state
+		print("[hotplugCB]", dev, media_state)
 		if dev == harddiskmanager.getCD():
 			if media_state == "1":
 				self.scanHotplug()
@@ -431,9 +431,9 @@ class MRUAPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBar
 			if list:
 				(desc, scanner, files, session) = list[0]
 				for file in files:
-					print file
+					print(file)
 					if file.mimetype == "video/x-dvd":
-						print "physical dvd found:", devicepath
+						print("physical dvd found:", devicepath)
 						self.physicalDVD = True
 						return
 		self.physicalDVD = False
@@ -561,7 +561,7 @@ class MRUAPlayer_Suboptions2(Screen):
 	def getInfo(self):
 		info = self.getServiceInterface("info")
 		infoTuple = info and info.getInfoObject(iServiceInformation.sUser + 9)
-		print "Getting Subtitle Info ", repr(infoTuple)
+		print("Getting Subtitle Info ", repr(infoTuple))
 		if infoTuple:
 			self.size = infoTuple[0]
 			self.pos = infoTuple[1]
@@ -643,7 +643,7 @@ class MRUAPlayer_Suboptions2(Screen):
 			else:
 				self.colorindex = 0
 			color = self.colors[self.colorindex].getElementsByTagName('Name')[0].childNodes[0].nodeValue
-			print color
+			print(color)
 			config.plugins.mc_mrua.subcolorname.value = self.colors[self.colorindex].getElementsByTagName('Name')[0].childNodes[0].nodeValue
 			config.plugins.mc_mrua.subcolorinside.value = self.colors[self.colorindex].getElementsByTagName('inside')[0].childNodes[0].nodeValue
 			config.plugins.mc_mrua.subcoloroutside.value = self.colors[self.colorindex].getElementsByTagName('outside')[0].childNodes[0].nodeValue
@@ -652,7 +652,7 @@ class MRUAPlayer_Suboptions2(Screen):
 		#Encoding
 		if selection == 3 and self.enc == 1:
 			config.plugins.mc_mrua.subenc.handleKey(KEY_RIGHT)
-			print config.plugins.mc_mrua.subenc.value
+			print(config.plugins.mc_mrua.subenc.value)
 			if config.plugins.mc_mrua.subenc.value == "42":
 				self["encval"].setText(_("Latin-1"))
 			else:
@@ -690,7 +690,7 @@ class MRUAPlayer_Suboptions2(Screen):
 			else:
 				self.colorindex = self.colorcount
 			color = self.colors[self.colorindex].getElementsByTagName('Name')[0].childNodes[0].nodeValue
-			print color
+			print(color)
 			config.plugins.mc_mrua.subcolorname.value = self.colors[self.colorindex].getElementsByTagName('Name')[0].childNodes[0].nodeValue
 			config.plugins.mc_mrua.subcolorinside.value = self.colors[self.colorindex].getElementsByTagName('inside')[0].childNodes[0].nodeValue
 			config.plugins.mc_mrua.subcoloroutside.value = self.colors[self.colorindex].getElementsByTagName('outside')[0].childNodes[0].nodeValue
@@ -699,7 +699,7 @@ class MRUAPlayer_Suboptions2(Screen):
 		#Encoding
 		if selection == 3 and self.enc == 1:
 			config.plugins.mc_mrua.subenc.handleKey(KEY_LEFT)
-			print config.plugins.mc_mrua.subenc.value
+			print(config.plugins.mc_mrua.subenc.value)
 			if config.plugins.mc_mrua.subenc.value == "42":
 				self["encval"].setText(_("Latin-1"))
 			else:
@@ -714,7 +714,7 @@ class MRUAPlayer_Suboptions2(Screen):
 			keys.keyPressed(iServiceKeys.keyUser + 4)
 
 	def Dosave(self):
-		print "Saving settings as default"
+		print("Saving settings as default")
 		self["note"].setText(_("Please use left/right keys to change settings...SAVED"))
 		self.save = True
 
